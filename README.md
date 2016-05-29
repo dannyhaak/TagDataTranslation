@@ -17,6 +17,8 @@ The following schemes are supported:
 The following programming languages are supported:
 - C# (Microsoft and Xamarin Mono runtime)
 
+[![Build Status](https://travis-ci.org/dannyhaak/TagDataTranslation.svg?branch=master)](https://travis-ci.org/dannyhaak/TagDataTranslation)
+
 ## Example
 
 The following code is an example on how to use the library.
