@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated from annotated java  -->
+<xsd:schema targetNamespace="urn:epcglobal:tdt:xsd:1" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+			<epcglobal:copyright>Copyright ©2005-2011 EPCglobal Inc. / GS1, All Rights Reserved.</epcglobal:copyright>
+			<epcglobal:disclaimer>EPCglobal Inc., its members, officers, directors, employees, or agents shall not be liable for any injury, loss, damages, financial or otherwise, arising from, related to, or caused by the use of this document.  The use of said document shall constitute your express consent to the foregoing exculpation.</epcglobal:disclaimer>
+			<epcglobal:specification>Tag Data Translation (TDT) version 1.6</epcglobal:specification>
+    ]]></xsd:documentation>
+	</xsd:annotation>
+
+	<!-- PadDirectionList.xsd specifies an enumerated list of two permitted values, either LEFT or RIGHT, used for the values of the padDir and bitPadDir attributes of the field element or rule element -->
+	<!-- As values of bitPadDir, they indicate whether binary padding (with 'zero' bits) should occur to the left or right of the encoded string in order to reach an expected number of bits, specified by the bitLength attribute -->
+	<!-- As values of padDir, they indicate whether padding with the padChar character should occur to the left or right of the encoded string in order to reach an expected number of characters, specified by the length attribute -->
+	<xsd:simpleType name="PadDirectionList">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="LEFT"/>
+			<xsd:enumeration value="RIGHT"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated from annotated java  -->
+<xsd:schema targetNamespace="urn:epcglobal:tdt:xsd:1" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+			<epcglobal:copyright>Copyright ©2005-2011 EPCglobal Inc. / GS1, All Rights Reserved.</epcglobal:copyright>
+			<epcglobal:disclaimer>EPCglobal Inc., its members, officers, directors, employees, or agents shall not be liable for any injury, loss, damages, financial or otherwise, arising from, related to, or caused by the use of this document.  The use of said document shall constitute your express consent to the foregoing exculpation.</epcglobal:disclaimer>
+			<epcglobal:specification>Tag Data Translation (TDT) version 1.6</epcglobal:specification>
+    ]]></xsd:documentation>
+	</xsd:annotation>
+	
+	<!-- ModeList.xsd specifies an enumerated list of two permitted values of the 'type' attribute of the 'rule' element, either 'EXTRACT' or 'FORMAT' -->
+	<!-- Rules of type 'EXTRACT' are performed after parsing the input, while those of type 'FORMAT' are performed before formatting the ouput using the grammar string --> 
+	<xsd:simpleType name="ModeList">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="EXTRACT"/>
+			<xsd:enumeration value="FORMAT"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

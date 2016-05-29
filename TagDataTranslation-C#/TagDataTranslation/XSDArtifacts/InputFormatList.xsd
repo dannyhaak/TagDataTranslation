@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:epcglobal:tdt:xsd:1" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+			<epcglobal:copyright>Copyright ©2005-2011 Epcglobal Inc. / GS1, All Rights Reserved.</epcglobal:copyright>
+			<epcglobal:disclaimer>EPCglobal Inc., its members, officers, directors, employees, or agents shall not be liable for any injury, loss, damages, financial or otherwise, arising from, related to, or caused by the use of this document.  The use of said document shall constitute your express consent to the foregoing exculpation.</epcglobal:disclaimer>
+			<epcglobal:specification>Tag Data Translation (TDT) version 1.6</epcglobal:specification>
+    ]]></xsd:documentation>
+	</xsd:annotation>
+
+	<!-- InputFormatList.xsd specifies an enumerated list of permitted values for the 'inputFormat' attribute of the 'rule' element, e.g. BINARY, STRING -->
+	<xsd:simpleType name="InputFormatList">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="BINARY"/>
+			<xsd:enumeration value="STRING"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

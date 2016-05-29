@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:epcglobal:tdt:xsd:1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tdt="urn:epcglobal:tdt:xsd:1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+			<epcglobal:copyright>Copyright ©2005-2011 Epcglobal Inc. / GS1, All Rights Reserved.</epcglobal:copyright>
+			<epcglobal:disclaimer>EPCglobal Inc., its members, officers, directors, employees, or agents shall not be liable for any injury, loss, damages, financial or otherwise, arising from, related to, or caused by the use of this document.  The use of said document shall constitute your express consent to the foregoing exculpation.</epcglobal:disclaimer>
+			<epcglobal:specification>Tag Data Translation (TDT) version 1.4</epcglobal:specification>
+    ]]></xsd:documentation>
+	</xsd:annotation>
+
+	<!-- LevelTypeList.xsd specifies an enumerated list of permitted values for the 'type' attribute of the 'level' element, e.g. BINARY, TAG_ENCODING, ONS_HOSTNAME, ELEMENT_STRING -->
+	<!-- TDT 1.6 introduces two new permitted values:
+		'ELEMENT_STRING' for a bare GS1 element string including application identifiers followed by the corresponding values, but without parentheses or other delimiters.
+		'TEI' (Text Element Identifier) provides a string representation for the SPEC2000-var EPC identifier, for ease of translation from TEI-encoded identifiers (e.g. from existing nameplates, barcodes, etc. 
+	  -->		
+	<xsd:simpleType name="LevelTypeList">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="BINARY"/>
+			<xsd:enumeration value="TAG_ENCODING"/>
+			<xsd:enumeration value="PURE_IDENTITY"/>
+			<xsd:enumeration value="LEGACY"/>
+			<xsd:enumeration value="LEGACY_ALT"/>
+			<xsd:enumeration value="LEGACY_AI"/>
+			<xsd:enumeration value="ELEMENT_STRING"/>
+			<xsd:enumeration value="TEI"/>
+			<xsd:enumeration value="ONS_HOSTNAME"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:epcglobal:tdt:xsd:1" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+			<epcglobal:copyright>Copyright ©2005-2011 EPCglobal Inc. / GS1, All Rights Reserved.</epcglobal:copyright>
+			<epcglobal:disclaimer>EPCglobal Inc., its members, officers, directors, employees, or agents shall not be liable for any injury, loss, damages, financial or otherwise, arising from, related to, or caused by the use of this document.  The use of said document shall constitute your express consent to the foregoing exculpation.</epcglobal:disclaimer>
+			<epcglobal:specification>Tag Data Translation (TDT) version 1.6</epcglobal:specification>
+    ]]></xsd:documentation>
+	</xsd:annotation>
+
+	<!-- The following include directives refer to XSD files that specify enumerated lists that constrain permitted values for some attributes mentioned in this schema document -->
+	
+	<!-- LevelTypeList.xsd specifies an enumerated list of permitted values for the 'type' attribute of the 'level' element, e.g. BINARY, TAG_ENCODING, ONS_HOSTNAME, ELEMENT_STRING -->
+	<xsd:include schemaLocation="./LevelTypeList.xsd"/>
+	
+	<!-- InputFormatList.xsd specifies an enumerated list of permitted values for the 'inputFormat' attribute of the 'rule' element, e.g. BINARY, STRING -->
+	<xsd:include schemaLocation="./InputFormatList.xsd"/>
+	
+	<!-- ModeList.xsd specifies an enumerated list of two permitted values of the 'type' attribute of the 'rule' element, either 'EXTRACT' or 'FORMAT' -->
+	<xsd:include schemaLocation="./ModeList.xsd"/>
+	
+	<!-- CompactionMethodList.xsd specifies an enumerated list of supported compaction methods (used as the value of the compaction attribute of the field element within the binary level only) 
+		 Permitted values include 32-bit, 16-bit, 8-bit, 7-bit, 6-bit, 5-bit -->
+	<xsd:include schemaLocation="./CompactionMethodList.xsd"/>
+	
+	<!-- PadDirectionList.xsd specifies an enumerated list of two permitted values, either LEFT or RIGHT, used for the values of the padDir and bitPadDir attributes of the field element or rule element -->
+	<xsd:include schemaLocation="./PadDirectionList.xsd"/>
+
+				
+	<!-- A TDT definition file is expressed as an EpcTagDataTranslation complexType -->
+	<!-- it contains one or more elements named 'scheme', of complexType tdt:Scheme -->
+	<xsd:element name="epcTagDataTranslation" type="tdt:EpcTagDataTranslation"/>
+
+	<xsd:complexType name="EpcTagDataTranslation">
+		<xsd:sequence>
+			<xsd:element name="scheme" type="tdt:Scheme" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="version" type="xsd:string" use="required"/>
+		<xsd:attribute name="date" type="xsd:dateTime" use="required"/>
+		<xsd:attribute name="epcTDSVersion" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	
+	<!-- Each EPC construct (e.g. SGTIN-96, SGTIN-198) is contained within an element named 'scheme' of complexType tdt:Scheme -->
+	<!-- Each scheme element indicates its name and optionally an optionKey and tagLength -->
+	
+	<!-- the optionKey is used to select a particular element named 'option' based on the value of a parameter whose name or key is specified in optionKey -->
+	<!-- for EPC constructs derived from GS1 identifier keys, the optionKey attribute is usually set to the value "gs1companyprefixlength" to indicate that the value of this parameter (in the range 6-12) should be used -->
+	<!-- for selecting the appropriate option.  This is the mechanism used within TDT definition files to model the partition tables that appear in the EPCglobal Tag Data Standard -->
+
+	<!-- TDS 1.6 introduces a new variable-length EPC cosntruct for aerospace & defence, Spec2000-var.  In this scheme, no optionKey attribute is specified, although 6 option elements appear within each level element -->
+	<!-- in order to allow for UID constructs of type 1, 2 or 3 to be constructed, based on either a CAGE code or DODAAC code serving as the identifier of the manufacturer or a specific aircraft part -->
+
+	<!-- the tagLength is used with fixed-length EPC constructs to indicate which length of EPC construct is intended for this definition file -->
+	<!-- e.g. there are multiple definition files for SGTIN EPC constructs and we would select the one with tagLength="198" if we want to encode an alphanumeric serial number -->
+
+	<!-- Because of changes introduced in TDS 1.6 with Spec2000-var, the attributes optionKey and tagLength are no longer required for all definition files conforming to TDT 1.6 XSD schema -->
+
+	<!-- each scheme element contains a number of elements named 'level', of type tdt:Level -->
+	<xsd:complexType name="Scheme">
+		<xsd:sequence>
+			<xsd:element name="level" type="tdt:Level" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="optionKey" type="xsd:string"/>
+		<xsd:attribute name="tagLength" type="xsd:integer"/>
+	</xsd:complexType>
+	
+
+	<!-- The level element groups together the encoding / decoding rules and grammar / patterns for a particular level of representation, which is indicated by the 'type' attribute of type tdt:LevelTypeList -->
+	<!-- The type attribute (of type tdt:LevelTypeList) indicates the level of representation, such as BINARY, TAG_ENCODING, PURE_IDENTITY.  Refer to LevelTypeList.xsd for an enumerate list of permitted values -->
+	<!-- The prefixMatch attribute indicates a string that should always match at the start of the string representation for this level. This is used to enable auto-detection of different levels of representation -->
+	<!-- For binary representation, the value of the prefixMatch attribute is the binary header, usually expressed as an 8-character ASCII string of zeroes and ones -->
+	<!-- For URI representations, the value of the prefixMatch attribute is the URI prefix, such as urn:epc:id:sgtin:  or urn:epc:tag:sgtin-96: -->
+	<!-- The attribute 'requiredParsingParameters' is a comma-separated string list of any parameters that must be specified in order to successfully parse the input from this level, such as parameters required by rule elements of type 'EXTRACT' -->
+	<!-- The attribute 'requiredFormattingParameters' is a comma-separated string list of any parameters that must be specified in order to successfully format the output at this level, such as parameters required by rule elements of type 'FORMAT' -->
+	<!-- Nested within each level element are one or more elements named 'option' (of type tdt:Option) and zero or more elements named 'rule' (of type tdt:Rule). -->
+	<xsd:complexType name="Level">
+		<xsd:sequence>
+			<xsd:element name="option" type="tdt:Option" maxOccurs="unbounded"/>
+			<xsd:element name="rule" type="tdt:Rule" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="tdt:LevelTypeList" use="required"/>
+		<xsd:attribute name="prefixMatch" type="xsd:string"/>
+		<xsd:attribute name="requiredParsingParameters" type="xsd:string"/>
+		<xsd:attribute name="requiredFormattingParameters" type="xsd:string"/>
+	</xsd:complexType>
+				
+	<!-- The option element is used to handle variations within a scheme, such as handling of GS1 company prefixes that can vary in length from 6 to 12 digits - or handling of alternative constructs in the case of Spec2000-var -->
+	<!-- In the case of EPC constructs derived from GS1 keys, the option element typically corresponds to the row of the corresponding partition table within the EPCglobal Tag Data Standard 
+	     and the value of the optionKey is a numeric string that indicates the length of the GS1 company prefix that must match in order for this particular option to be considered.  -->
+	<!-- Each option includes a grammar attribute whose value is a grammar string for formatting output -->
+	<!-- Most options also include a pattern attribute whose value is a regular expression that can be used for parsing the input -->
+	<!-- Option elements contain elements named field, of type tdt:Field, which represent structural components or fields that are present within an EPC -->
+	<xsd:complexType name="Option">
+		<xsd:sequence>
+			<xsd:element name="field" type="tdt:Field" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="optionKey" type="xsd:string" use="required"/>
+		<xsd:attribute name="pattern" type="xsd:string"/>
+		<xsd:attribute name="grammar" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<!-- The rule element is used to express various processing rules that are performed either after parsing the input or before formatting the output -->
+	<!-- The value of the attribute named 'type' is either 'EXTRACT' (for rules that are performed after parsing the input) or 'FORMAT'  for rules that are performed before formatting the ouput using the grammar string --> 
+	<!-- The value of the attribute named 'seq' indicates a precedence or sequence number for the order in which rules should be performed; rules should be executed in increasing order of the 'seq' value -->
+	<!-- The attribute named 'newFieldName' specifies the name of a new field whose value is equal to the result of performing the rule -->
+	<!-- The characterSet attribute expressed constraints on the permitted character set for the results of performing the rule -->
+	<!-- The padChar attribute (if present) indicates a character that should be used to pad the result if necessary -->
+	<!-- The padDir attribute (if present) indicates whether any padding should be to the left or the right of the string value obtained from performing the rule -->
+	<!-- The bitPadDir attribute (if present) indicates whether any padding at the binary level should be to the left or right of the binary string value obtained from performing the rule -->
+	<!-- The decimalMinimum attribute (if present) specifies the minimum permitted value for the resulting field if it is a numeric string -->
+	<!-- The decimalMaximum attribute (if present) specifies the maximum permitted value for the resulting field if it is a numeric string -->
+	<!-- The length attribute (if present) specifies the required length for the resulting string after padding with padChar -->
+	<!-- The function attribute describes the functional method for obtaining the resulting string given a number of field values as parameters to that function -->
+	<!-- The tableURL attribute specifies the URL of a lookup table used with this rule -->
+	<!-- The tableParams attribute specifies *** -->
+	<!-- The tableXPath attribute specifies an XPath expression for performing a lookup in the table if the table is an XML document -->
+	<!-- The tableSQL attribute specifies an SQL statement that can be used to perform a lookup if the table is a table within a relational database -->
+	<xsd:complexType name="Rule">
+		<xsd:attribute name="type" type="tdt:ModeList" use="required"/>
+		<xsd:attribute name="inputFormat" type="tdt:InputFormatList" use="required"/>
+		<xsd:attribute name="seq" type="xsd:integer" use="required"/>
+		<xsd:attribute name="newFieldName" type="xsd:string" use="required"/>
+		<xsd:attribute name="characterSet" type="xsd:string" use="required"/>
+		<xsd:attribute name="padChar" type="xsd:string"/>
+		<xsd:attribute name="padDir" type="tdt:PadDirectionList"/>
+		<xsd:attribute name="bitPadDir" type="tdt:PadDirectionList"/>
+		<xsd:attribute name="bitLength" type="xsd:integer"/>
+		<xsd:attribute name="decimalMinimum" type="xsd:string"/>
+		<xsd:attribute name="decimalMaximum" type="xsd:string"/>
+		<xsd:attribute name="length" type="xsd:string"/>
+		<xsd:attribute name="function" type="xsd:string" use="required"/>
+		<xsd:attribute name="tableURL" type="xsd:string"/>
+		<xsd:attribute name="tableParams" type="xsd:string"/>
+		<xsd:attribute name="tableXPath" type="xsd:string"/>
+		<xsd:attribute name="tableSQL" type="xsd:string"/>
+	</xsd:complexType>
+
+	<!-- The field element represent a structural component or field that is present within an EPC -->
+	<!-- The name attribute specifies a name (key) for the field -->
+	<!-- The seq attribute indicates the sequence position in which that field appears within regular expression backreferences expressed in the pattern -->
+	<!-- The bitLength attribute (if present within the BINARY level only) specifies the required number of bits for this field -->
+	<!-- The characterSet attribute specifies the permitted character set for this field -->
+	<!-- The compaction attribute (if present within the BINARY level only) indicates the method for compacting the non-binary string value into binary (e.g. using 6-bit compaction or 7-bit compaction) -->
+	<!-- The compression attribute (not currently used) indicates a compression method for compressing the string value into binary -->
+	<!-- The padChar attribute (if present) indicates a character that should be used to pad the field if necessary -->
+	<!-- The padDir attribute (if present) indicates whether any padding should be to the left or the right of the string value of the field -->
+	<!-- The bitPadDir attribute (if present) indicates whether any padding at the binary level should be to the left or right of the binary string value of the field -->
+	<!-- The decimalMinimum attribute (if present) specifies the minimum permitted value for the field if it is a numeric string -->
+	<!-- The decimalMaximum attribute (if present) specifies the maximum permitted value for the field if it is a numeric string -->
+	<!-- The length attribute (if present) specifies the required length for the field after padding with padChar -->
+	<xsd:complexType name="Field">
+		<xsd:attribute name="seq" type="xsd:integer" use="required"/>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="bitLength" type="xsd:integer"/>
+		<xsd:attribute name="characterSet" type="xsd:string" use="required"/>
+		<xsd:attribute name="compaction" type="tdt:CompactionMethodList"/>
+		<xsd:attribute name="compression" type="xsd:string"/>
+		<xsd:attribute name="padChar" type="xsd:string"/>
+		<xsd:attribute name="padDir" type="tdt:PadDirectionList"/>
+		<xsd:attribute name="bitPadDir" type="tdt:PadDirectionList"/>
+		<xsd:attribute name="decimalMinimum" type="xsd:string"/>
+		<xsd:attribute name="decimalMaximum" type="xsd:string"/>
+		<xsd:attribute name="length" type="xsd:integer"/>
+	</xsd:complexType>
+
+
+</xsd:schema>

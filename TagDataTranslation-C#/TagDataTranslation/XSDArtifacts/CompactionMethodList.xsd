@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated from annotated java  -->
+<xsd:schema targetNamespace="urn:epcglobal:tdt:xsd:1" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+			<epcglobal:copyright>Copyright ©2005-2011 Epcglobal Inc., All Rights Reserved.</epcglobal:copyright>
+			<epcglobal:disclaimer>EPCglobal Inc., its members, officers, directors, employees, or agents shall not be liable for any injury, loss, damages, financial or otherwise, arising from, related to, or caused by the use of this document.  The use of said document shall constitute your express consent to the foregoing exculpation.</epcglobal:disclaimer>
+			<epcglobal:specification>Tag Data Translation (TDT) version 1.6</epcglobal:specification>
+    ]]></xsd:documentation>
+	</xsd:annotation>
+
+	<!-- CompactionMethodList.xsd specifies an enumerated list of supported compaction methods (used as the value of the compaction attribute of the field element within the binary level only) 
+		 Permitted values include 32-bit, 16-bit, 8-bit, 7-bit, 6-bit, 5-bit 
+		 Uncompacted ASCII bytes are denoted as '8-bit' compaction
+		 '7-bit' compaction refers to ASCII bytes that have been compacted to 7 bits by truncation of the most significant bit 
+		 '6-bit' compaction refers to ASCII bytes that have been compacted to 7 bits by truncation of the two most significant bits.  It allows for encoding of uppercase alphanumeric and symbol characters within ASCII range 32-95 
+		 '5-bit' compaction refers to ASCII bytes that have been compacted to 7 bits by truncation of the three most significant bits.  It allows for encoding of uppercase alphabetic characters and some symbol characters within ASCII range 64-95 
+		 '16-bit' and '32-bit' values are not in use in any current TDT definition file but allow for future multi-byte representation of characters outside of the ASCII / ISO Latin character set if necessary in a future version of TDS / TDT.
+		 In fields or rules where no compaction attribute is specified, the field is assumed to be treated as an unsigned positive integer and encoded/decoded accordingly.
+		 -->
+	<xsd:simpleType name="CompactionMethodList">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="32-bit"/>
+			<xsd:enumeration value="16-bit"/>
+			<xsd:enumeration value="8-bit"/>
+			<xsd:enumeration value="7-bit"/>
+			<xsd:enumeration value="6-bit"/>
+			<xsd:enumeration value="5-bit"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{09976AB0-2818-4AF4-B786-7A70A2486C26}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>TagDataTranslation</RootNamespace>
+    <AssemblyName>TagDataTranslation</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Serialization" />
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.4.3.3\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TDTEngine.cs" />
+    <Compile Include="XSDArtifacts\XSDArtifacts.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="XMLArtifacts\" />
+    <Folder Include="XSDArtifacts\" />
+    <Folder Include="FilterValueTables\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="XSDArtifacts\EpcTagDataTranslation.xsd" />
+    <None Include="XSDArtifacts\PadDirectionList.xsd" />
+    <None Include="XSDArtifacts\ModeList.xsd" />
+    <None Include="XSDArtifacts\ManagerTranslation.xsd" />
+    <None Include="XSDArtifacts\LevelTypeList.xsd" />
+    <None Include="XSDArtifacts\InputFormatList.xsd" />
+    <None Include="XSDArtifacts\CompactionMethodList.xsd" />
+    <None Include="FilterValueTables\filter-USDOD-64.csv" />
+    <None Include="FilterValueTables\filter-SGLN-64.csv" />
+    <None Include="FilterValueTables\filter-SGTIN-96.csv" />
+    <None Include="FilterValueTables\filter-SSCC-96.csv" />
+    <None Include="FilterValueTables\filter-GRAI-64.csv" />
+    <None Include="FilterValueTables\filter-GDTI-96.csv" />
+    <None Include="FilterValueTables\filter-GIAI-96.csv" />
+    <None Include="FilterValueTables\filter-SGLN-195.csv" />
+    <None Include="FilterValueTables\filter-GIAI-64.csv" />
+    <None Include="FilterValueTables\filter-USDOD-96.csv" />
+    <None Include="FilterValueTables\filter-SSCC-64.csv" />
+    <None Include="FilterValueTables\filter-GRAI-96.csv" />
+    <None Include="FilterValueTables\filter-GDTI-113.csv" />
+    <None Include="FilterValueTables\filter-GRAI-170.csv" />
+    <None Include="FilterValueTables\filter-GSRN-96.csv" />
+    <None Include="FilterValueTables\filter-SGLN-96.csv" />
+    <None Include="FilterValueTables\filter-ADI-var.csv" />
+    <None Include="FilterValueTables\filter-SGTIN-64.csv" />
+    <None Include="FilterValueTables\filter-GIAI-202.csv" />
+    <None Include="FilterValueTables\filter-SGTIN-198.csv" />
+    <None Include="FilterValueTables\filter-GID-96.csv" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XMLArtifacts\ADI-var.xml" />
+    <EmbeddedResource Include="XMLArtifacts\GDTI-113.xml" />
+    <EmbeddedResource Include="XMLArtifacts\GDTI-96.xml" />
+    <EmbeddedResource Include="XMLArtifacts\GIAI-202.xml" />
+    <EmbeddedResource Include="XMLArtifacts\GIAI-96.xml" />
+    <EmbeddedResource Include="XMLArtifacts\GID-96.xml" />
+    <EmbeddedResource Include="XMLArtifacts\GRAI-170.xml" />
+    <EmbeddedResource Include="XMLArtifacts\GRAI-96.xml" />
+    <EmbeddedResource Include="XMLArtifacts\GSRN-96.xml" />
+    <EmbeddedResource Include="XMLArtifacts\SGLN-195.xml" />
+    <EmbeddedResource Include="XMLArtifacts\SGLN-96.xml" />
+    <EmbeddedResource Include="XMLArtifacts\SGTIN-198.xml" />
+    <EmbeddedResource Include="XMLArtifacts\SGTIN-96.xml" />
+    <EmbeddedResource Include="XMLArtifacts\SSCC-96.xml" />
+    <EmbeddedResource Include="XMLArtifacts\USDOD-96.xml" />
+  </ItemGroup>
+</Project>
