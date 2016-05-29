@@ -7,9 +7,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle ("TagDataTranslationTest")]
 [assembly: AssemblyDescription ("")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("Nedap N.V.")]
+[assembly: AssemblyCompany ("Danny Haak")]
 [assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("Nedap N.V.")]
+[assembly: AssemblyCopyright ("Danny Haak")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -24,4 +24,3 @@ using System.Runtime.CompilerServices;
 
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
-

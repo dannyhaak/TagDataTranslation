@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle ("TagDataTranslation")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("TagDataTranslation library according to the GS1 EPC TDT 1.6 standard (for RAIN RFID).")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("Nedap N.V.")]
+[assembly: AssemblyCompany ("Danny Haak")]
 [assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("Nedap N.V.")]
+[assembly: AssemblyCopyright ("Danny Haak")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -24,4 +24,3 @@ using System.Runtime.CompilerServices;
 
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
-
