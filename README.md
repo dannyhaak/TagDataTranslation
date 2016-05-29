@@ -54,16 +54,16 @@ The converted value into one of the above formats as String.
 ### Throws
 
 **TDTTranslationException** – Throws exceptions due to the following reason:
-1. `TDTFileNotFound `– Reports if the engine could not locate the configured definition file to compile.
-2. `TDTFieldBelowMinimum` - Reports a (numeric) Field that fell below the decimalMinimum value allowed by the TDT markup
-3. `TDTFieldAboveMaximum` - Reports a (numeric) Field that exceeded the decimalMaximum value allowed by the TDT markup
-4. `TDTFieldOutsideCharacterSet` - Reports a Field containing characters outside the characterSet range allowed by the TDT markup
-5. `TDTUndefinedField `- Reports a Field required for the output or an intermediate rule, whose value is undefined
-6. `TDTSchemeNotFound` - Reported if no matching Scheme can be found via prefixMatch
-7. `TDTLevelNotFound` - Reported if no matching Level can be found via prefixMatch
-8. `TDTOptionNotFound` - Reported if no matching Option can be found via the optionKey or via matching the pattern
-9. `TDTLookupFailed` - Reported if lookup in an external table failed to provide a value – reports table URI and path expression.
-10. `TDTNumericOverflow` – Reported when a numeric overflow occurs when handling numeric values such as serial number.
+1. `TDTFileNotFound` Reports if the engine could not locate the configured definition file to compile.
+2. `TDTFieldBelowMinimum` Reports a (numeric) Field that fell below the decimalMinimum value allowed by the TDT markup
+3. `TDTFieldAboveMaximum` Reports a (numeric) Field that exceeded the decimalMaximum value allowed by the TDT markup
+4. `TDTFieldOutsideCharacterSet` Reports a Field containing characters outside the characterSet range allowed by the TDT markup
+5. `TDTUndefinedField` Reports a Field required for the output or an intermediate rule, whose value is undefined
+6. `TDTSchemeNotFound` Reported if no matching Scheme can be found via prefixMatch
+7. `TDTLevelNotFound` Reported if no matching Level can be found via prefixMatch
+8. `TDTOptionNotFound` Reported if no matching Option can be found via the optionKey or via matching the pattern
+9. `TDTLookupFailed` Reported if lookup in an external table failed to provide a value – reports table URI and path expression.
+10. `TDTNumericOverflow` Reported when a numeric overflow occurs when handling numeric values such as serial number.
 
 ## License
 
