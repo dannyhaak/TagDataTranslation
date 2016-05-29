@@ -42,7 +42,7 @@ Translates epcIdentifier from one representation into another within the same co
 ### Parameters
 
 | Parameter     | Description |
-| ------------- |:-----------:|
+| ------------- | ----------- |
 | epcIdentifier | The epcIdentifier to be converted. This should be expressed as a string, in accordance with one of the grammars or patterns in the TDT markup files, i.e. a binary string consisting of characters '0' and '1', a URI (either tag-encoding or pure-identity formats), or a serialized identifier expressed as in Table 3. |
 | parameterList | This is a parameter string containing key value pairs, using the semicolon [';'] as delimiter between key=value pairs. For example, to convert a GTIN code the parameter string would look like the following: `filter=3;companyprefixlength=7;tagLength=96` |
 | outputFormat  | The output format into which the epcIdentifier SHALL be converted. The following are the formats supported: `BINARY`, `LEGACY`, `LEGACY_AI`, `TAG_ENCODING`,  `PURE_IDENTITY` |
