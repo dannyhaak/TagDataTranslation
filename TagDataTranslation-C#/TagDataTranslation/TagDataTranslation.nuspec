@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>TagDataTranslation</id>
+        <version>0.1</version>
+        <owners>Danny Haak</owners>
+        <authors>Danny Haak</authors>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <licenseUrl>https://raw.githubusercontent.com/dannyhaak/TagDataTranslation/master/LICENSE</licenseUrl>
+        <title>TagDataTranslation</title>
+        <description>Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID.</description>
+        <projectUrl>https://github.com/dannyhaak/TagDataTranslation</projectUrl>
+        <copyright>Danny Haak</copyright>
+        <tags>rfid gs1 epc tdt rain sgtin sgln sscc pure-identity tag-uri hex binary translate</tags>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System.Numerics" />
+            <frameworkAssembly assemblyName="System.Xml" />
+            <frameworkAssembly assemblyName="System.Xml.Serialization" />
+        </frameworkAssemblies>
+        <dependencies>
+            <dependency id="NLog" version="4.0.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin/Release/TagDataTranslation.dll" target="lib/net40/" />
+    </files>
+</package>

@@ -77,6 +77,7 @@
     <None Include="FilterValueTables\filter-SGTIN-198.csv" />
     <None Include="FilterValueTables\filter-GID-96.csv" />
     <None Include="packages.config" />
+    <None Include="TagDataTranslation.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="XMLArtifacts\ADI-var.xml" />
