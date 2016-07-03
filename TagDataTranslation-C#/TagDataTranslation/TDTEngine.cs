@@ -511,7 +511,7 @@ namespace TagDataTranslation
 
                         if (padCharInTagEncoding && !padCharInBinary) {
                             // Strip at the padDir edge of any successive characters indicated by padChar attribute.
-                            if (binaryField.padDir.Equals (PadDirectionList.LEFT)) {
+                            if (tagEncodingField.padDir.Equals (PadDirectionList.LEFT)) {
                                 variableElement = variableElement.TrimStart (tagEncodingField.padChar [0]);
                             } else {
                                 variableElement = variableElement.TrimEnd (tagEncodingField.padChar [0]);
@@ -520,7 +520,7 @@ namespace TagDataTranslation
 
                         if (!padCharInTagEncoding && padCharInBinary) {
                             // Pad at the padDir edge with character indicated by padChar attribute to reach a total length of characters indicated by length attribute
-                            if (tagEncodingField.padDir.Equals (PadDirectionList.LEFT)) {
+                            if (binaryField.padDir.Equals (PadDirectionList.LEFT)) {
                                 variableElement = variableElement.PadLeft (int.Parse (binaryField.length), binaryField.padChar [0]);
                             } else { 
                                 variableElement = variableElement.PadRight (int.Parse (binaryField.length), binaryField.padChar [0]);
