@@ -19,29 +19,20 @@ namespace TagDataTranslationUnitTest
             string outputFormat = @"PURE_IDENTITY";
             TDTEngine engine = new TDTEngine();
 
-            Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat), "TDTFieldAboveMaximum");
-        }
-
-        [Test ()]
-        public void TestCaseExceptionTDTFieldOutsideCharacterSet ()
-        {
-            string epcIdentifier = @"gtin=00037000302414;serial=$$";
-            string parameterList = @"filter=3;gs1companyprefixlength=7;tagLength=96";
-            string outputFormat = @"PURE_IDENTITY";
-            TDTEngine engine = new TDTEngine();
-
-            Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat), "TDTFieldOutsideCharacterSet");
+            var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
+            Assert.That(ex.Message, Is.EqualTo("TDTFieldAboveMaximum"));
         }
 
         [Test ()]
         public void TestCaseExceptionTDTUndefinedField ()
         {
             string epcIdentifier = @"gtin=00037000302414;serial=1";
-            string parameterList = @"filter=3;tagLength=96";
-            string outputFormat = @"PURE_IDENTITY";
+            string parameterList = @"gs1companyprefixlength=7;tagLength=96";
+            string outputFormat = @"BINARY";
             TDTEngine engine = new TDTEngine();
 
-            Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat), "TDTUndefinedField");
+            var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
+            Assert.That(ex.Message, Is.EqualTo("TDTUndefinedField"));
         }
 
         [Test ()]
@@ -52,7 +43,8 @@ namespace TagDataTranslationUnitTest
             string outputFormat = @"PURE_IDENTITY";
             TDTEngine engine = new TDTEngine();
 
-            Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat), "TDTSchemeNotFound");
+            var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
+            Assert.That(ex.Message, Is.EqualTo("TDTSchemeNotFound"));
         }
 
         [Test ()]
@@ -63,7 +55,20 @@ namespace TagDataTranslationUnitTest
             string outputFormat = @"PURE_IDENTITY";
             TDTEngine engine = new TDTEngine();
 
-            Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat), "TDTOptionNotFound");
+            var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
+            Assert.That(ex.Message, Is.EqualTo("TDTOptionNotFound"));
+        }
+        
+        [Test ()]
+        public void TestCaseExceptionTDTTDTOptionNotFound_2 ()
+        {
+            string epcIdentifier = @"gtin=00037000302414;serial=$$";
+            string parameterList = @"filter=3;gs1companyprefixlength=7;tagLength=96";
+            string outputFormat = @"PURE_IDENTITY";
+            TDTEngine engine = new TDTEngine();
+
+            var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
+            Assert.That(ex.Message, Is.EqualTo("TDTOptionNotFound"));
         }
 
         /*
