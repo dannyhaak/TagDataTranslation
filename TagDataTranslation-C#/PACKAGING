@@ -1,0 +1,6 @@
+1. Build the Release configuration, this will generate a .nupkg file
+2. Due to a bug, dates are wrong
+3. Unzip the file
+4. Execute 'find . -exec touch {} \;'
+5. Zip the contents of the directory (not in a subdir)
+6. Rename to .nupkg

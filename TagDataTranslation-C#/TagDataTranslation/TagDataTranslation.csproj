@@ -27,6 +27,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="nuget pack TagDataTranslation.nuspec" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -80,8 +85,6 @@
     <None Include="FilterValueTables\filter-GID-96.csv" />
     <None Include="TagDataTranslation.nuspec" />
     <None Include="packages.config" />
-    <None Include="NLog.xsd" />
-    <None Include="NLog.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="XMLArtifacts\ADI-var.xml" />

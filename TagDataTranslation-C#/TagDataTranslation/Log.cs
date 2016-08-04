@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿#if DEBUG
+using NLog;
 
 namespace TagDataTranslation
 {
@@ -14,3 +15,4 @@ namespace TagDataTranslation
         }
     }
 }
+#endif

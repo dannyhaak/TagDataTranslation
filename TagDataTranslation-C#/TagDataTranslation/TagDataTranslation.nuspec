@@ -2,7 +2,7 @@
 <package>
     <metadata>
         <id>TagDataTranslation</id>
-        <version>0.1</version>
+        <version>0.2</version>
         <owners>Danny Haak</owners>
         <authors>Danny Haak</authors>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
@@ -17,9 +17,6 @@
             <frameworkAssembly assemblyName="System.Xml" />
             <frameworkAssembly assemblyName="System.Xml.Serialization" />
         </frameworkAssemblies>
-        <dependencies>
-            <dependency id="NLog" version="4.0.0" />
-        </dependencies>
     </metadata>
     <files>
         <file src="bin/Release/TagDataTranslation.dll" target="lib/net40/" />

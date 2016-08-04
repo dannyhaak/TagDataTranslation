@@ -14,23 +14,29 @@ namespace TagDataTranslation
 {
     public class TDTEngine
     {
-        List<EpcTagDataTranslation> epcTagDataTranslations = new List<EpcTagDataTranslation>();
+        List<EpcTagDataTranslation> epcTagDataTranslations = new List<EpcTagDataTranslation> ();
 
         public TDTEngine ()
         {
+#if DEBUG
             Log.Instance.Trace ("Initializing TDTEngine");
+#endif
 
-            var serializer = new XmlSerializer (typeof(EpcTagDataTranslation));
+            var serializer = new XmlSerializer (typeof (EpcTagDataTranslation));
 
-            var assembly = Assembly.GetExecutingAssembly();
-            foreach (string filename in assembly.GetManifestResourceNames()) {
+            var assembly = Assembly.GetExecutingAssembly ();
+            foreach (string filename in assembly.GetManifestResourceNames ()) {
                 if (filename.EndsWith (".xml")) {
+#if DEBUG
                     Log.Instance.Trace ("Parsing file: {0}", filename);
-                        using (var stream = assembly.GetManifestResourceStream(filename)) {
+#endif
+                    using (var stream = assembly.GetManifestResourceStream (filename)) {
                         using (var reader = XmlReader.Create (stream)) {
                             EpcTagDataTranslation epcTagDataTranslation = (EpcTagDataTranslation)serializer.Deserialize (reader);
                             epcTagDataTranslations.Add (epcTagDataTranslation);
+#if DEBUG
                             Log.Instance.Trace ("Loaded {0} version {1} date {2}", epcTagDataTranslation.scheme [0].name, epcTagDataTranslation.version, epcTagDataTranslation.date);
+#endif
                         }
                     }
                 }
@@ -42,13 +48,15 @@ namespace TagDataTranslation
             // Translation process according to the TDT standard.
 
             // 1. SETUP
+#if DEBUG
             Log.Instance.Debug ("1. SETUP");
             Log.Instance.Info ("Input to TDT is {0}, {1}", epcIdentifier, parameterList);
+#endif
 
             // Read the input value and the supplied extra parameters.
 
             // Populate an associative array of key-value pairs with the supplied extra parameters.
-            Dictionary <string, string> parameterDictionary = new Dictionary<string, string> ();
+            Dictionary<string, string> parameterDictionary = new Dictionary<string, string> ();
             ParseInput (parameterList, parameterDictionary);
 
             // During the translation process, this associative array will be populated with additional
@@ -56,11 +64,15 @@ namespace TagDataTranslation
             // 'EXTRACT' or 'FORMAT'
 
             // Note the desired outbound level.
-            LevelTypeList outputFormatType = (LevelTypeList)Enum.Parse (typeof(LevelTypeList), outputFormat);
+            LevelTypeList outputFormatType = (LevelTypeList)Enum.Parse (typeof (LevelTypeList), outputFormat);
+#if DEBUG
             Log.Instance.Trace ("Outbound level is {0}", outputFormatType);
+#endif
 
             // 2. DETERMINE THE CODING SCHEME AND INBOUND REPRESENTATION LEVEL.
+#if DEBUG
             Log.Instance.Debug ("2. DETERMINE THE CODING SCHEME AND INBOUND REPRESENTATION LEVEL.");
+#endif
 
             // To find the scheme and level that matches the input value, consider all schemes and the
             // prefixMatch attribute of each level element within each scheme.
@@ -89,18 +101,24 @@ namespace TagDataTranslation
                         }
 
                         inputLevelsSchemes.Add (l, s);
+#if DEBUG
                         Log.Instance.Trace ("Inbound level candidate is {0}.{1}", l.type, s.name);
+#endif
                     }
                 }
             }
 
             if (inputLevelsSchemes.Count == 0) {
+#if DEBUG
                 Log.Instance.Error ("No matching schemes found, check input {0} for validness", epcIdentifier);
+#endif
                 throw new TDTTranslationException ("TDTSchemeNotFound");
             }
 
             // 3. DETERMINE THE OPTION THAT MATCHES THE INPUT VALUE
+#if DEBUG
             Log.Instance.Debug ("3. DETERMINE THE OPTION THAT MATCHES THE INPUT VALUE");
+#endif
 
             // To find the option that matches the input value, consider any scheme+level candidates
             // from the previous step.
@@ -148,7 +166,9 @@ namespace TagDataTranslation
                     // When a match is found, this option should be considered further and the corresponding
                     // value of the optionKey attribute of the option element should be noted for use in
                     // step 6.
+#if DEBUG
                     Log.Instance.Trace ("Found a match {0}.{1}.{2}", l.type, s.name, o.optionKey);
+#endif
 
                     // unescape input if Pure Identity or Tag Encoding
                     string epcIdentifierUnescaped;
@@ -160,7 +180,9 @@ namespace TagDataTranslation
 
                     Regex regex = new Regex ("^" + o.pattern + "$");
                     if (regex.IsMatch (epcIdentifierUnescaped)) {
+#if DEBUG
                         Log.Instance.Trace ("Also matches the regex {0}", o.pattern);
+#endif
                         inputScheme = s;
                         inputLevel = l;
                         inputOption = o;
@@ -169,26 +191,34 @@ namespace TagDataTranslation
                     }
                 }
             }
-            
+
             if (inputOption == null) {
+#if DEBUG
                 Log.Instance.Error ("No matching option found, check input {0} for validness", epcIdentifier);
+#endif
                 throw new TDTTranslationException ("TDTOptionNotFound");
             }
 
             // check if all parsing parameters are present
             if (inputLevel.requiredParsingParameters != null) {
-                foreach (string s in inputLevel.requiredParsingParameters.Split(',')) {
+                foreach (string s in inputLevel.requiredParsingParameters.Split (',')) {
                     if (!parameterDictionary.ContainsKey (s)) {
-                        Log.Instance.Error ("Undefined field {0} (required by parsing parameters)", s);
+#if DEBUG
+                    Log.Instance.Error ("Undefined field {0} (required by parsing parameters)", s);
+#endif
                         throw new TDTTranslationException ("TDTUndefinedField");
                     }
                 }
             }
 
+#if DEBUG
             Log.Instance.Trace ("Input is scheme {0}, level {1}, option {2}", inputScheme.name, inputLevel.type, inputOption.pattern);
+#endif
 
             // 4. PARSE THE INPUT VALUE TO EXTRACT VALUES FOR EACH FIELD WITHIN THE OPTION
+#if DEBUG
             Log.Instance.Debug ("4. PARSE THE INPUT VALUE TO EXTRACT VALUES FOR EACH FIELD WITHIN THE OPTION");
+#endif
 
             // Having found a scheme, level and option matching the input value, consider the field
             // elements nested within the option element.
@@ -204,13 +234,15 @@ namespace TagDataTranslation
             Match m = r.Match (epcIdentifier);
 
             if (!m.Success) {
+#if DEBUG
                 Log.Instance.Error ("Error in parsing input string {0} according to option pattern {1}", epcIdentifier, inputOption.pattern);
+#endif
                 throw new TDTTranslationException ("TDTEPCIdentifierParseException");
             }
 
             // sort all fields on seq
-            Field[] fields = inputOption.field;
-            Field[] fieldsSorted = fields.OrderBy (c => c.seq).ToArray ();
+            Field [] fields = inputOption.field;
+            Field [] fieldsSorted = fields.OrderBy (c => c.seq).ToArray ();
 
             for (int i = 1; i < m.Groups.Count; i++) {
                 Field inputField = fieldsSorted [i - 1];
@@ -221,7 +253,9 @@ namespace TagDataTranslation
                 // value of the field falls entirely within the specified character set.
                 if (inputField.characterSet != null) {
                     if (!ValidateCharacterset (variableElement, inputField.characterSet)) {
+#if DEBUG
                         Log.Instance.Error ("Character set validation error; input {0} does not match {1}", variableElement, inputField.characterSet);
+#endif
                         throw new TDTTranslationException ("TDTFieldOutsideCharacterSet");
                     }
                 }
@@ -317,7 +351,9 @@ namespace TagDataTranslation
 
                     if (padCharInBinary && padCharInTagEncoding) {
                         // error in TDT definition file
+#if DEBUG
                         Log.Instance.Error("Error in TDT file: 'padChar' defined in both BINARY and TAG_ENCODING");
+#endif
                         throw new TDTTranslationException (@"TDTInvalidDefinitionFile");
                     }
 
@@ -333,7 +369,7 @@ namespace TagDataTranslation
                         // Pad at the padDir edge with character indicated by padChar attribute to reach a total length of characters indicated by length attribute
                         if (tagEncodingField.padDir.Equals (PadDirectionList.LEFT)) {
                             variableElement = variableElement.PadLeft (int.Parse (tagEncodingField.length), tagEncodingField.padChar [0]);
-                        } else { 
+                        } else {
                             variableElement = variableElement.PadRight (int.Parse (tagEncodingField.length), tagEncodingField.padChar [0]);
                         }
                     }
@@ -344,7 +380,9 @@ namespace TagDataTranslation
                 if (inputField.decimalMinimum != null) {
                     BigInteger integer = BigInteger.Parse (variableElement);
                     if (ValidateMinimum (integer, inputField.decimalMinimum)) {
+#if DEBUG
                         Log.Instance.Error("Integer {0} lower than minimum {1}", integer, inputField.decimalMinimum);
+#endif
                         throw new TDTTranslationException ("TDTFieldBelowMinimum");
                     }
                 }
@@ -354,28 +392,36 @@ namespace TagDataTranslation
                 if (inputField.decimalMaximum != null) {
                     BigInteger integer = BigInteger.Parse (variableElement);
                     if (ValidateMaximum (integer, inputField.decimalMaximum)) {
+#if DEBUG
                         Log.Instance.Error("Integer {0} larger than maximum {1}", integer, inputField.decimalMaximum);
+#endif
                         throw new TDTTranslationException ("TDTFieldAboveMaximum");
                     }
                 }
 
+#if DEBUG
                 Log.Instance.Trace ("Found field {0} with value {1}", name, variableElement);
+#endif
                 parameterDictionary [name] = variableElement;
             }
 
             // 5. PERFORM ANY RULES OF TYPE EXTRACT WITHIN THE INBOUND OPTION IN ORDER TO CALCULATE ADDITIONAL DERIVED FIELDS
+#if DEBUG
             Log.Instance.Debug ("5. PERFORM ANY RULES OF TYPE EXTRACT WITHIN THE INBOUND OPTION IN ORDER TO CALCULATE ADDITIONAL DERIVED FIELDS");
+#endif
 
             // Now run the rules that have attribute type="EXTRACT" in sequence, to determine any
             // additional derived fields that must be calculated after parsing of the input value.
             if (inputLevel.rule != null) {
-                Rule[] extractRules = inputLevel.rule;
-                Rule[] extractRulesSorted = extractRules.OrderBy(c => c.seq).ToArray();
+                Rule [] extractRules = inputLevel.rule;
+                Rule [] extractRulesSorted = extractRules.OrderBy (c => c.seq).ToArray ();
                 ExecuteRules (extractRulesSorted, ModeList.EXTRACT, parameterDictionary);
             }
 
             // 6. FIND THE CORRESPONDING OPTION IN THE OUTBOUND REPRESENTATION
+#if DEBUG
             Log.Instance.Debug ("6. FIND THE CORRESPONDING OPTION IN THE OUTBOUND REPRESENTATION");
+#endif
 
             // To find the corresponding option in the outbound representation within the same scheme, 
             // select the level element having the desired outbound representation and within that, 
@@ -396,22 +442,28 @@ namespace TagDataTranslation
             }
 
             if (outputLevel == null || outputOption == null) {
+#if DEBUG
                 Log.Instance.Error("No matching output level and/or option found");
+#endif
                 throw new TDTTranslationException ("TDTOutputNotKnown");
             }
 
             // check if all formatting parameters are present
             if (outputLevel.requiredFormattingParameters != null) {
-                foreach (string s in outputLevel.requiredFormattingParameters.Split(',')) {
+                foreach (string s in outputLevel.requiredFormattingParameters.Split (',')) {
                     if (!parameterDictionary.ContainsKey (s)) {
+#if DEBUG
                         Log.Instance.Error("Undefined field {0} (required by formatting parameters)", s);
+#endif
                         throw new TDTTranslationException ("TDTUndefinedField");
                     }
                 }
             }
 
             // 7. PERFORM ANY RULES OF TYPE FORMAT WITHIN THE OUTBOUND REPRESENTATION IN ORDER TO CALCULATE ADDITIONAL DERIVED FIELDS
+#if DEBUG
             Log.Instance.Debug ("7. PERFORM ANY RULES OF TYPE FORMAT WITHIN THE OUTBOUND REPRESENTATION IN ORDER TO CALCULATE ADDITIONAL DERIVED FIELDS");
+#endif
 
             // Run any rules with attribute type="FORMAT" in sequence, to determine any additional
             // derived fields that must be calculated in order to prepare the output format.
@@ -421,20 +473,24 @@ namespace TagDataTranslation
             // numeric range (if decimalMinimum or decimalMaximum are specified) and
             // performing any necessary padding or stripping of characters.
             if (outputLevel.rule != null) {
-                Rule[] formatRules = outputLevel.rule;
-                Rule[] formatRulesSorted = formatRules.OrderBy(c => c.seq).ToArray();
+                Rule [] formatRules = outputLevel.rule;
+                Rule [] formatRulesSorted = formatRules.OrderBy (c => c.seq).ToArray ();
                 ExecuteRules (formatRulesSorted, ModeList.FORMAT, parameterDictionary);
             }
 
             // 8. USE THE GRAMMAR string AND SUBSTITUTIONS FROM THE ASSOCIATIVE ARRAY TO BUILD THE OUTPUT VALUE
+#if DEBUG
             Log.Instance.Debug ("8. USE THE GRAMMAR string AND SUBSTITUTIONS FROM THE ASSOCIATIVE ARRAY TO BUILD THE OUTPUT VALUE");
+#endif
 
             // Consider the grammar string for that option as a sequence of fixed literal strings (the 
             // characters between the single quotes) interspersed with a number of variable elements, 
             // whose key names are indicated by alphanumeric strings without any enclosing single 
             // quotation marks.
             string grammarstring = outputOption.grammar;
+#if DEBUG
             Log.Instance.Trace ("Output grammar: {0}", grammarstring);
+#endif
 
             StringBuilder outputString = new StringBuilder ();
 
@@ -453,7 +509,9 @@ namespace TagDataTranslation
                     // variable element, substituting the corresponding value in place of the key name.
                     string variableElement;
                     if (!parameterDictionary.TryGetValue (s, out variableElement)) {
+#if DEBUG
                         Log.Instance.Error("Undefined field {0} (required by output)", s);
+#endif
                         throw new TDTTranslationException ("TDTUndefinedField");
                     }
 
@@ -504,7 +562,9 @@ namespace TagDataTranslation
 
                         if (padCharInTagEncoding && padCharInBinary) {
                             // error in TDT definition file
+#if DEBUG
                             Log.Instance.Error("Error in TDT file: 'padChar' defined in both BINARY and TAG_ENCODING");
+#endif
                             throw new TDTTranslationException (@"TDTInvalidDefinitionFile");
                         }
 
@@ -521,7 +581,7 @@ namespace TagDataTranslation
                             // Pad at the padDir edge with character indicated by padChar attribute to reach a total length of characters indicated by length attribute
                             if (binaryField.padDir.Equals (PadDirectionList.LEFT)) {
                                 variableElement = variableElement.PadLeft (int.Parse (binaryField.length), binaryField.padChar [0]);
-                            } else { 
+                            } else {
                                 variableElement = variableElement.PadRight (int.Parse (binaryField.length), binaryField.padChar [0]);
                             }
                         }
@@ -532,7 +592,7 @@ namespace TagDataTranslation
                             StringBuilder bits = new StringBuilder ();
 
                             // For each character of the string, starting at the left, perform compaction of the corresponding ASCII byte,
-                            byte[] bytes = Encoding.ASCII.GetBytes (variableElement);
+                            byte [] bytes = Encoding.ASCII.GetBytes (variableElement);
 
                             int compactionBits = 0;
                             switch (binaryField.compaction) {
@@ -591,7 +651,9 @@ namespace TagDataTranslation
                 }
             }
 
+#if DEBUG
             Log.Instance.Info ("TDT output: {0}", outputString.ToString ());
+#endif
 
             return outputString.ToString ();
         }
@@ -670,7 +732,7 @@ namespace TagDataTranslation
 
         #region Rules
 
-        void ExecuteRules (Rule[] rules, ModeList modeList, Dictionary<string, string> parameterDictionary)
+        void ExecuteRules (Rule [] rules, ModeList modeList, Dictionary<string, string> parameterDictionary)
         {
             if (rules == null)
                 return;
@@ -682,13 +744,13 @@ namespace TagDataTranslation
                     string newFieldName = r.newFieldName;
 
                     // get functionname and parameters
-                    string[] functionSplit = r.function.Split (new char[]{ '(', ',', ')' }, 128);
+                    string [] functionSplit = r.function.Split (new char [] { '(', ',', ')' }, 128);
                     string functionName = functionSplit [0];
-                    string[] functionParameters = new string[functionSplit.Length - 2];
+                    string [] functionParameters = new string [functionSplit.Length - 2];
                     Array.Copy (functionSplit, 1, functionParameters, 0, functionSplit.Length - 2);
                     int l = functionParameters.Length;
 
-                    string newFieldValue = default(string);
+                    string newFieldValue = default (string);
 
                     switch (functionName) {
                     case "SUBSTR":
@@ -718,7 +780,9 @@ namespace TagDataTranslation
                         break;
                     // TODO: Implement additional functions.
                     default:
+#if DEBUG
                         Log.Instance.Error("Rule {0} not implemented", functionName);
+#endif
                         throw new TDTTranslationException ("TDTNotImplementedException");
                     }
 
@@ -726,7 +790,9 @@ namespace TagDataTranslation
                     // falls entirely within the permitted characterSet (if specified) 
                     if (r.characterSet != null) {
                         if (!ValidateCharacterset (newFieldValue, r.characterSet)) {
+#if DEBUG
                             Log.Instance.Error("Character set validation error; input {0} does not match {1}", newFieldValue, r.characterSet);
+#endif
                             throw new TDTTranslationException ("TDTFieldOutsideCharacterSet");
                         }
                     }
@@ -736,7 +802,9 @@ namespace TagDataTranslation
                     if (r.decimalMinimum != null) {
                         BigInteger integer = BigInteger.Parse (newFieldValue);
                         if (ValidateMinimum (integer, r.decimalMinimum)) {
+#if DEBUG
                             Log.Instance.Error("Integer {0} lower than minimum {1}", integer, r.decimalMinimum);
+#endif
                             throw new TDTTranslationException ("TDTFieldBelowMinimum");
                         }
                     }
@@ -744,12 +812,16 @@ namespace TagDataTranslation
                     if (r.decimalMaximum != null) {
                         BigInteger integer = BigInteger.Parse (newFieldValue);
                         if (ValidateMaximum (integer, r.decimalMaximum)) {
+#if DEBUG
                             Log.Instance.Error("Integer {0} larger than maximum {1}", integer, r.decimalMaximum);
+#endif
                             throw new TDTTranslationException ("TDTFieldAboveMaximum");
                         }
                     }
 
+#if DEBUG
                     Log.Instance.Trace ("{0}; field {1} now has value {2}", r.function, r.newFieldName, newFieldValue);
+#endif
 
                     // and performing any necessary padding or stripping of characters.
                     //TODO: Implement padding or stripping of characters.
@@ -834,7 +906,7 @@ namespace TagDataTranslation
 
         #endregion
 
-        void ParseInput (string input, Dictionary <string, string> parameterDictionary)
+        void ParseInput (string input, Dictionary<string, string> parameterDictionary)
         {
             if (input.Length > 0) {
                 foreach (string s in input.Split (';')) {
@@ -845,7 +917,7 @@ namespace TagDataTranslation
 
     }
 
-    public class TDTTranslationException: Exception
+    public class TDTTranslationException : Exception
     {
 
         public TDTTranslationException (string message) : base (message)
