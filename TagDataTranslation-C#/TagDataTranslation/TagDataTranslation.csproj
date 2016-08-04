@@ -8,6 +8,7 @@
     <RootNamespace>TagDataTranslation</RootNamespace>
     <AssemblyName>TagDataTranslation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ReleaseVersion>0.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,15 +32,16 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Serialization" />
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.4.3.3\lib\net45\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.4.3.6\lib\net45\NLog.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TDTEngine.cs" />
     <Compile Include="XSDArtifacts\XSDArtifacts.cs" />
+    <Compile Include="Log.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -76,8 +78,10 @@
     <None Include="FilterValueTables\filter-GIAI-202.csv" />
     <None Include="FilterValueTables\filter-SGTIN-198.csv" />
     <None Include="FilterValueTables\filter-GID-96.csv" />
-    <None Include="packages.config" />
     <None Include="TagDataTranslation.nuspec" />
+    <None Include="packages.config" />
+    <None Include="NLog.xsd" />
+    <None Include="NLog.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="XMLArtifacts\ADI-var.xml" />
