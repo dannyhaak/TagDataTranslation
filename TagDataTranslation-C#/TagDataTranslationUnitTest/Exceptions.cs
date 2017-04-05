@@ -70,6 +70,30 @@ namespace TagDataTranslationUnitTest
             var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
             Assert.That(ex.Message, Is.EqualTo("TDTOptionNotFound"));
         }
+        
+        [Test ()]
+        public void TestCaseExceptionParameterList ()
+        {
+            string epcIdentifier = @"string";
+            string parameterList = @"string";
+            string outputFormat = @"string";
+            TDTEngine engine = new TDTEngine();
+
+            var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
+            Assert.That(ex.Message, Is.EqualTo("TDTParameterErrorException"));
+        }
+        
+        [Test ()]
+        public void TestCaseExceptionOutputFormat ()
+        {
+            string epcIdentifier = @"gtin=00037000302414;serial=1041970";
+            string parameterList = @"filter=3;gs1companyprefixlength=7;tagLength=96";
+            string outputFormat = @"string";
+            TDTEngine engine = new TDTEngine();
+
+            var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
+            Assert.That(ex.Message, Is.EqualTo("TDTOutputFormatUnknownException"));
+        }
 
         /*
         1. TDTFileNotFound – Reports if the engine could not locate the configured definition file to compile.

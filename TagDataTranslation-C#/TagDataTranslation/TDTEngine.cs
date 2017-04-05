@@ -57,14 +57,24 @@ namespace TagDataTranslation
 
             // Populate an associative array of key-value pairs with the supplied extra parameters.
             Dictionary<string, string> parameterDictionary = new Dictionary<string, string> ();
-            ParseInput (parameterList, parameterDictionary);
+            try {
+                ParseInput (parameterList, parameterDictionary);
+            } catch (Exception e) {
+                throw new TDTTranslationException ("TDTParameterErrorException");
+            }
 
             // During the translation process, this associative array will be populated with additional
             // values of extracted fields or fields obtained through the application of rules of type
             // 'EXTRACT' or 'FORMAT'
 
             // Note the desired outbound level.
-            LevelTypeList outputFormatType = (LevelTypeList)Enum.Parse (typeof (LevelTypeList), outputFormat);
+            LevelTypeList outputFormatType;
+            try {
+                outputFormatType = (LevelTypeList)Enum.Parse (typeof (LevelTypeList), outputFormat);
+            } catch (Exception e) {
+                throw new TDTTranslationException ("TDTOutputFormatUnknownException");
+            }
+            
 #if DEBUG
             Log.Instance.Trace ("Outbound level is {0}", outputFormatType);
 #endif
@@ -690,7 +700,7 @@ namespace TagDataTranslation
                 hex.Append (Convert.ToString (integer, 16));
             }
 
-            return hex.ToString ().ToUpper ();
+            return hex.ToString ();
         }
 
         #endregion
