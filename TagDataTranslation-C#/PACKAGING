@@ -1,4 +1,4 @@
-1. Build the Release configuration, this will generate a .nupkg file
+﻿1. Run 'nuget pack TagDataTranslation.nuspec' in the main folder
 2. Due to a bug, dates are wrong
 3. Unzip the file
 4. Execute 'find . -exec touch {} \;'

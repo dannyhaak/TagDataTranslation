@@ -7,7 +7,8 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>TagDataTranslationTest</RootNamespace>
     <AssemblyName>TagDataTranslationTest</AssemblyName>
-    <ReleaseVersion>0.2.1</ReleaseVersion>
+    <ReleaseVersion>0.3.1</ReleaseVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,28 +30,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.4.3.10\lib\net45\NLog.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\TagDataTranslation\TagDataTranslation.csproj">
-      <Project>{09976AB0-2818-4AF4-B786-7A70A2486C26}</Project>
-      <Name>TagDataTranslation</Name>
+    <ProjectReference Include="..\TagDataTranslation-netstandard\TagDataTranslation-netstandard.csproj">
+      <Project>{C6BE1460-6A71-4C3A-AD7F-4496F3353EB0}</Project>
+      <Name>TagDataTranslation-netstandard</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="NLog.xsd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

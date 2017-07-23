@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7CE786E6-3FB9-445E-8EB7-0100886270C1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>TagDataTranslationnet</RootNamespace>
+    <AssemblyName>TagDataTranslation-net</AssemblyName>
+    <ReleaseVersion>0.3.1</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\TagDataTranslation\TDTEngine.cs">
+      <Link>TDTEngine.cs</Link>
+    </Compile>
+    <Compile Include="..\TagDataTranslation\XSDArtifacts\XSDArtifacts.cs">
+      <Link>XSDArtifacts\XSDArtifacts.cs</Link>
+    </Compile>
+    <Compile Include="..\TagDataTranslation\TDTTranslationException.cs">
+      <Link>TDTTranslationException.cs</Link>
+    </Compile>
+    <Compile Include="..\TagDataTranslation\TranslateResult.cs">
+      <Link>TranslateResult.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\ADI-var.xml">
+      <Link>XMLArtifacts\ADI-var.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GDTI-113.xml">
+      <Link>XMLArtifacts\GDTI-113.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GDTI-96.xml">
+      <Link>XMLArtifacts\GDTI-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GIAI-202.xml">
+      <Link>XMLArtifacts\GIAI-202.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GIAI-96.xml">
+      <Link>XMLArtifacts\GIAI-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GID-96.xml">
+      <Link>XMLArtifacts\GID-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GRAI-170.xml">
+      <Link>XMLArtifacts\GRAI-170.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GRAI-96.xml">
+      <Link>XMLArtifacts\GRAI-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GSRN-96.xml">
+      <Link>XMLArtifacts\GSRN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGLN-195.xml">
+      <Link>XMLArtifacts\SGLN-195.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGLN-96.xml">
+      <Link>XMLArtifacts\SGLN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGTIN-198.xml">
+      <Link>XMLArtifacts\SGTIN-198.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGTIN-96.xml">
+      <Link>XMLArtifacts\SGTIN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SSCC-96.xml">
+      <Link>XMLArtifacts\SSCC-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\USDOD-96.xml">
+      <Link>XMLArtifacts\USDOD-96.xml</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

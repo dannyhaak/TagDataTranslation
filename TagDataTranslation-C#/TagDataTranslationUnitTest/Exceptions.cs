@@ -95,6 +95,18 @@ namespace TagDataTranslationUnitTest
             Assert.That(ex.Message, Is.EqualTo("TDTOutputFormatUnknownException"));
         }
 
+        [Test ()]
+        public void TestCaseExceptionFilterValueNull ()
+        {
+			string epcIdentifier = @"gtin=00037000302414;serial=1041970";
+			string parameterList = @"filter=null;gs1companyprefixlength=7;tagLength=96";
+			string outputFormat = @"TAG_ENCODING";
+			TDTEngine engine = new TDTEngine();
+
+            var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
+			Assert.That(ex.Message, Is.EqualTo("TDTFieldOutsideCharacterSet"));
+        }
+
         /*
         1. TDTFileNotFound – Reports if the engine could not locate the configured definition file to compile.
         2. TDTFieldBelowMinimum - Reports a (numeric) Field that fell below the decimalMinimum value allowed by the TDT markup

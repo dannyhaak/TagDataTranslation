@@ -1,0 +1,32 @@
+﻿<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>TagDataTranslation</id>
+        <version>0.3.1-beta</version>
+        <owners>Danny Haak</owners>
+        <authors>Danny Haak</authors>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <licenseUrl>https://raw.githubusercontent.com/dannyhaak/TagDataTranslation/master/LICENSE</licenseUrl>
+        <title>TagDataTranslation</title>
+        <description>Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID.</description>
+        <projectUrl>https://github.com/dannyhaak/TagDataTranslation</projectUrl>
+        <copyright>Danny Haak</copyright>
+        <tags>rfid gs1 epc tdt rain sgtin sgln sscc pure-identity tag-uri hex binary translate</tags>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System.Numerics" targetFramework="net40" />
+            <frameworkAssembly assemblyName="System.Xml" targetFramework="net40" />
+            <frameworkAssembly assemblyName="System.Xml.Serialization" targetFramework="net40" />
+        </frameworkAssemblies>
+        <dependencies>
+            <group targetFramework="netstandard1.4">
+	            <dependency id="System.ComponentModel.Primitives" version="4.3.0" />
+	            <dependency id="System.Runtime.Serialization.Formatters" version="4.3.0" />
+	            <dependency id="System.Xml.XmlSerializer" version="4.3.0" />
+            </group >
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="TagDataTranslation-net/bin/Release/TagDataTranslation-net.dll" target="lib/net40/" />
+        <file src="TagDataTranslation-netstandard/bin/Release/netstandard1.4/*" target="lib/netstandard1.4/" />
+    </files>
+</package>

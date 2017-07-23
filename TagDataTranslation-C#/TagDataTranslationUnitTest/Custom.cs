@@ -263,7 +263,7 @@ namespace TagDataTranslationUnitTest
             string parameterList = @"filter=1;gs1companyprefixlength=10;tagLength=113";
 
             string result1 = engine.Translate(epcIdentifier, parameterList, @"BINARY");
-            string expect = @"3A28075BCD1502000000006695170000";
+            string expect = @"3a28075bcd1502000000006695170000";
             Assert.AreEqual(expect, engine.BinaryToHex(result1));
 
             string result2 = engine.Translate(epcIdentifier, parameterList, @"TAG_ENCODING");

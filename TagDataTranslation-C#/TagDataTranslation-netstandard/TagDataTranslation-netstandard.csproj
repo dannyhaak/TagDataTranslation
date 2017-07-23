@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <ReleaseVersion>0.3.1</ReleaseVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\TagDataTranslation\TDTEngine.cs">
+      <Link>TDTEngine.cs</Link>
+    </Compile>
+    <Compile Include="..\TagDataTranslation\XSDArtifacts\XSDArtifacts.cs">
+      <Link>XSDArtifacts\XSDArtifacts.cs</Link>
+    </Compile>
+    <Compile Include="..\TagDataTranslation\TDTTranslationException.cs">
+      <Link>TDTTranslationException.cs</Link>
+    </Compile>
+    <Compile Include="..\TagDataTranslation\TranslateResult.cs">
+      <Link>TranslateResult.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\ADI-var.xml">
+      <Link>XMLArtifacts\ADI-var.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GDTI-113.xml">
+      <Link>XMLArtifacts\GDTI-113.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GDTI-96.xml">
+      <Link>XMLArtifacts\GDTI-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GIAI-202.xml">
+      <Link>XMLArtifacts\GIAI-202.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GIAI-96.xml">
+      <Link>XMLArtifacts\GIAI-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GID-96.xml">
+      <Link>XMLArtifacts\GID-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GRAI-170.xml">
+      <Link>XMLArtifacts\GRAI-170.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GRAI-96.xml">
+      <Link>XMLArtifacts\GRAI-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GSRN-96.xml">
+      <Link>XMLArtifacts\GSRN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGLN-195.xml">
+      <Link>XMLArtifacts\SGLN-195.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGLN-96.xml">
+      <Link>XMLArtifacts\SGLN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGTIN-198.xml">
+      <Link>XMLArtifacts\SGTIN-198.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGTIN-96.xml">
+      <Link>XMLArtifacts\SGTIN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SSCC-96.xml">
+      <Link>XMLArtifacts\SSCC-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\USDOD-96.xml">
+      <Link>XMLArtifacts\USDOD-96.xml</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

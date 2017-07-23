@@ -9,7 +9,7 @@ using TagDataTranslation;
 namespace TagDataTranslationUnitTest
 {
     [TestFixture ()]
-    public class Standard
+    public class TDTStandard
     {
         [Test ()]
         public void TestCasePage13TDTStandard ()

@@ -15,7 +15,8 @@ The following schemes are supported:
 - USDOD-96
 
 The following programming languages are supported:
-- C# (Microsoft and Xamarin Mono runtime)
+- C# .NET Framework 4.0  (Microsoft and Xamarin Mono runtime)
+- C# .NET Standard 1.4
 
 [![Build Status](https://travis-ci.org/dannyhaak/TagDataTranslation.svg?branch=master)](https://travis-ci.org/dannyhaak/TagDataTranslation)
 
