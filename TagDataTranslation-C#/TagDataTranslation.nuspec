@@ -2,7 +2,7 @@
 <package>
     <metadata>
         <id>TagDataTranslation</id>
-        <version>0.3.1-beta</version>
+        <version>0.3.1</version>
         <owners>Danny Haak</owners>
         <authors>Danny Haak</authors>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
