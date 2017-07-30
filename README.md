@@ -2,6 +2,8 @@
 
 Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID. Comes with unit tests and a demonstration application.
 
+An online demo is available at https://www.mimasu.nl.
+
 The following schemes are supported:
 - ADI-var
 - GDTI-96 and GDTI-113
