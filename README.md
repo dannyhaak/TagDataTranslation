@@ -1,16 +1,20 @@
 ## Synopsis
 
-Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID. Comes with unit tests and a demonstration application.
+Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID, and updated for Tag Data Standard 1.10 (with beta support for TDS 1.11). Comes with unit tests and a demonstration application.
 
 The following schemes are supported:
 - ADI-var
-- GDTI-96 and GDTI-113
-- GIAI-96 and GIAI-202
+- CPI-96, CPI-var
+- GTDI-96, GDTI-174
+- GIAI-96, GIAI-202
 - GID-96
-- GRAI-96
+- GRAI-96, GRAI-170
 - GSRN-96
-- SGLN-96 and SGLN-195
-- SGTIN-96 and SGTIN-198
+- GSRNP-96
+- ITIP-110, ITIP-212 (beta support)
+- SGCN-96
+- SGLN-96, SGLN-195
+- SGTIN-96, SGTIN-198
 - SSCC-96
 - USDOD-96
 
