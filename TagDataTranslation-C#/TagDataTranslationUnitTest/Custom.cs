@@ -339,7 +339,7 @@ namespace TagDataTranslationUnitTest
         {
             TDTEngine engine = new TDTEngine();
             string epcIdentifier = @"ADI CAG 99AH2/PNO 123/SEQ 145";
-            string parameterList = @"filter=1;tagLength=98";
+            string parameterList = @"filter=1";
 
             string result1 = engine.Translate(epcIdentifier, parameterList, @"BINARY");
             string expect = engine.HexToBinary(@"3B060E79048CB1CB3031D3500000").Substring(0, 98);
