@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tdt:epcTagDataTranslation version="1.6" date="2011-01-20T12:21:00Z" epcTDSVersion="1.6" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:epcglobal:tdt:xsd:1 EpcTagDataTranslation.xsd">
-	<scheme name="GSRN-96" optionKey="gs1companyprefixlength" tagLength="96">
+<tdt:epcTagDataTranslation version="1.11" date="2017-08-01T09:41:00Z" epcTDSVersion="1.11" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:epcglobal:tdt:xsd:1 EpcTagDataTranslation.xsd">
+    <scheme name="GSRN-96" optionKey="gs1companyprefixlength" tagLength="96">
 		<level type="BINARY" prefixMatch="00101101" requiredFormattingParameters="filter,taglength">
 			<option optionKey="12" pattern="00101101([01]{3})000([01]{40})([01]{18})000000000000000000000000" grammar="'00101101' filter '000' gs1companyprefix serviceref '000000000000000000000000'">
 				<field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
@@ -134,25 +134,25 @@
 			<rule type="FORMAT" inputFormat="STRING" seq="2" newFieldName="checkdigit" characterSet="[0-9]*" length="1" function="GS1CHECKSUM(gsrnprefix)"/>
 		</level>
 		<level type="LEGACY_AI" prefixMatch="(8018)" requiredParsingParameters="gs1companyprefixlength">
-			<option optionKey="12" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="12" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="11" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="11" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="10" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="10" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="9" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="9" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="8" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="8" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="7" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="7" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="6" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="6" pattern="\(8018\)([0-9]{18})" grammar="'(8018)' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
 			<rule type="EXTRACT" inputFormat="STRING" seq="1" newFieldName="gsrnprefix" characterSet="[0-9]*" length="17" function="SUBSTR(gsrn,0,17)"/>
@@ -162,25 +162,25 @@
 			<rule type="FORMAT" inputFormat="STRING" seq="2" newFieldName="checkdigit" characterSet="[0-9]*" length="1" function="GS1CHECKSUM(gsrnprefix)"/>
 		</level>
 		<level type="ELEMENT_STRING" prefixMatch="8018" requiredParsingParameters="gs1companyprefixlength">
-			<option optionKey="12" pattern="8018([0-9]{18})" grammar="'8018' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="12" pattern="8018([0-9]{18})" grammar="'8018' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="11" pattern="8018([0-9]{18})" grammar="'8018' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="11" pattern="8018([0-9]{18})" grammar="'8018' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="10" pattern="8018([0-9]{18})" grammar="'8018' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="10" pattern="8018([0-9]{18})" grammar="'8018' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="9" pattern="8018([0-9]{18})" grammar="'8018' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="9" pattern="8018([0-9]{18})" grammar="'8018' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="8" pattern="8018([0-9]{18})" grammar="'8018' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="8" pattern="8018([0-9]{18})" grammar="'8018' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="7" pattern="8018([0-9]{18})" grammar="'8018' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="7" pattern="8018([0-9]{18})" grammar="'8018' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
-			<option optionKey="6" pattern="8018([0-9]{18})" grammar="'8018' extensiondigit gs1companyprefix servicerefremainder checkdigit">
+			<option optionKey="6" pattern="8018([0-9]{18})" grammar="'8018' gs1companyprefix serviceref checkdigit">
 				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999999" characterSet="[0-9]*" length="18" padChar="0" padDir="LEFT" name="gsrn"/>
 			</option>
 			<rule type="EXTRACT" inputFormat="STRING" seq="1" newFieldName="gsrnprefix" characterSet="[0-9]*" length="17" function="SUBSTR(gsrn,0,17)"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tdt:epcTagDataTranslation version="1.6" date="2011-01-20T12:20:00Z" epcTDSVersion="1.6" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:epcglobal:tdt:xsd:1 EpcTagDataTranslation.xsd">
-	<scheme name="SSCC-96" optionKey="gs1companyprefixlength" tagLength="96">
+<tdt:epcTagDataTranslation version="1.11" date="2017-08-01T09:41:00Z" epcTDSVersion="1.11" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:epcglobal:tdt:xsd:1 EpcTagDataTranslation.xsd">
+    <scheme name="SSCC-96" optionKey="gs1companyprefixlength" tagLength="96">
 		<level type="BINARY" prefixMatch="00110001" requiredFormattingParameters="filter,taglength">
 			<option optionKey="12" pattern="00110001([01]{3})000([01]{40})([01]{18})000000000000000000000000" grammar="'00110001' filter '000' gs1companyprefix serialref '000000000000000000000000'">
 				<field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>

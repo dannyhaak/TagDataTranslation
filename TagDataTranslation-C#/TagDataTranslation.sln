@@ -48,4 +48,6 @@ Global
 		$0.VersionControlPolicy = $2
 		version = 0.3.1
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
 EndGlobal

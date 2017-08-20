@@ -40,6 +40,8 @@
     <Compile Include="Custom.cs" />
     <Compile Include="Timing.cs" />
     <Compile Include="PreviousBugs.cs" />
+    <Compile Include="TDSStandard.cs" />
+    <Compile Include="TDSStandardCPLengthVariation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

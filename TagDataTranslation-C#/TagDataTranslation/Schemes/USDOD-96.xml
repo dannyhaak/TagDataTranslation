@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tdt:epcTagDataTranslation version="1.6" date="2011-01-20T12:20:00Z" epcTDSVersion="1.6" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:epcglobal:tdt:xsd:1 EpcTagDataTranslation.xsd">
-	<scheme name="USDOD-96" optionKey="1" tagLength="96">
+<tdt:epcTagDataTranslation version="1.11" date="2017-08-01T09:41:00Z" epcTDSVersion="1.11" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:epcglobal:tdt:xsd:1 EpcTagDataTranslation.xsd">
+    <scheme name="USDOD-96" optionKey="1" tagLength="96">
 		<level type="BINARY" prefixMatch="00101111" requiredFormattingParameters="filter,taglength">
 			<option optionKey="1" pattern="00101111([01]{4})([01]{48})([01]{36})" grammar="'00101111' filter cageordodaac serial">
 				<field seq="1" decimalMinimum="0" decimalMaximum="15" characterSet="[01]*" bitPadDir="LEFT" bitLength="4" name="filter"/>
