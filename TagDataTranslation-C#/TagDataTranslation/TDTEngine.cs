@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace TagDataTranslation
@@ -13,20 +15,26 @@ namespace TagDataTranslation
     public class TDTEngine
     {
         List<EpcTagDataTranslation> epcTagDataTranslations = new List<EpcTagDataTranslation>();
+        Dictionary<string, int> gcpPrefixLengths = new Dictionary<string, int>();
+        Dictionary<string, Dictionary<int, string>> filterValueTables = new Dictionary<string, Dictionary<int, string>>();
 
-		public TDTEngine()
+        public TDTEngine()
         {
             var serializer = new XmlSerializer(typeof(EpcTagDataTranslation));
 
 #if NETSTANDARD1_4
             var assembly = typeof(TagDataTranslation.TDTEngine).GetTypeInfo().Assembly;
-#else 
+            var schemeFilenameStart = "TagDataTranslation-netstandard.Schemes.";
+            var filterFilenameStart = "TagDataTranslation-netstandard.FilterValueTables.";
+#else
             var assembly = Assembly.GetExecutingAssembly ();
+            var schemeFilenameStart = "TagDataTranslationnet.Schemes.";
+            var filterFilenameStart = "TagDataTranslationnet.FilterValueTables.";
 #endif
 
             foreach (string filename in assembly.GetManifestResourceNames())
             {
-                if (filename.EndsWith(".xml", StringComparison.CurrentCulture) && filename.StartsWith("TagDataTranslation", StringComparison.CurrentCulture))
+                if (filename.EndsWith(".xml", StringComparison.CurrentCulture) && filename.StartsWith(schemeFilenameStart, StringComparison.CurrentCulture))
                 {
                     using (var stream = assembly.GetManifestResourceStream(filename))
                     {
@@ -35,6 +43,38 @@ namespace TagDataTranslation
                             EpcTagDataTranslation epcTagDataTranslation = (EpcTagDataTranslation)serializer.Deserialize(reader);
                             epcTagDataTranslations.Add(epcTagDataTranslation);
                         }
+                    }
+                }
+
+                if (filename.EndsWith(".csv", StringComparison.CurrentCulture) && filename.StartsWith(filterFilenameStart, StringComparison.CurrentCulture))
+                {
+                    using (var stream = assembly.GetManifestResourceStream(filename))
+                    {
+                        using (StreamReader sr = new StreamReader(stream))
+                        {
+                            string scheme = filename.Split('-')[2].Split('.')[0];
+
+                            filterValueTables.Add(scheme, new Dictionary<int, string>());
+
+                            while (sr.Peek() >= 0)
+                            {
+                                string line = sr.ReadLine();
+                                int filterValue = int.Parse(line.Split(',')[0]);
+                                string description = line.Split(',')[1].Trim('"');
+                                filterValueTables[scheme].Add(filterValue, description);
+                            }
+                        }
+                    }
+                }
+
+                if (filename.EndsWith("gcpprefixformatlist.xml", StringComparison.CurrentCulture))
+                {
+                    using (var stream = assembly.GetManifestResourceStream(filename))
+                    {
+                        var xdoc = XDocument.Load(stream);
+
+                        // parse the file into a dictionary
+                        gcpPrefixLengths = xdoc.Root.Descendants().ToDictionary(k => (string)k.FirstAttribute.Value, k => int.Parse(k.LastAttribute.Value));
                     }
                 }
             }
@@ -208,6 +248,11 @@ namespace TagDataTranslation
                         break;
                     }
                 }
+
+                if (inputOption != null)
+                {
+                    break;
+                }
             }
 
             if (inputOption == null)
@@ -218,7 +263,8 @@ namespace TagDataTranslation
             // add option key and scheme name to parameter dictionary
             parameterDictionary.Add("optionkey", inputOption.optionKey);
             parameterDictionary.Add("schemename", inputScheme.name);
-            if (!parameterDictionary.ContainsKey("taglength")) {
+            if (!parameterDictionary.ContainsKey("taglength"))
+            {
                 parameterDictionary.Add("taglength", inputScheme.tagLength);
             }
 
@@ -413,6 +459,12 @@ namespace TagDataTranslation
                         {
                             variableElement = variableElement.PadRight(int.Parse(tagEncodingField.length), tagEncodingField.padChar[0]);
                         }
+
+                        // Manage the exception where the length is set to 0.
+                        if (int.Parse(tagEncodingField.length) == 0)
+                        {
+                            variableElement = "";
+                        }
                     }
                 }
 
@@ -420,10 +472,14 @@ namespace TagDataTranslation
                 // decimal minimum value specified.
                 if (inputField.decimalMinimum != null)
                 {
-                    BigInteger integer = BigInteger.Parse(variableElement);
-                    if (ValidateMinimum(integer, inputField.decimalMinimum))
+                    // only check if the length is larger than zero
+                    if (variableElement.Length > 0)
                     {
-                        throw new TDTTranslationException("TDTFieldBelowMinimum");
+                        BigInteger integer = BigInteger.Parse(variableElement);
+                        if (ValidateMinimum(integer, inputField.decimalMinimum))
+                        {
+                            throw new TDTTranslationException("TDTFieldBelowMinimum");
+                        }
                     }
                 }
 
@@ -431,10 +487,14 @@ namespace TagDataTranslation
                 // the decimal maximum value specified.
                 if (inputField.decimalMaximum != null)
                 {
-                    BigInteger integer = BigInteger.Parse(variableElement);
-                    if (ValidateMaximum(integer, inputField.decimalMaximum))
+                    // only check if the length is larger than zero
+                    if (variableElement.Length > 0)
                     {
-                        throw new TDTTranslationException("TDTFieldAboveMaximum");
+                        BigInteger integer = BigInteger.Parse(variableElement);
+                        if (ValidateMaximum(integer, inputField.decimalMaximum))
+                        {
+                            throw new TDTTranslationException("TDTFieldAboveMaximum");
+                        }
                     }
                 }
 
@@ -494,7 +554,7 @@ namespace TagDataTranslation
 
                     outputLevel = l;
 
-                    foreach(Option o in l.option)
+                    foreach (Option o in l.option)
                     {
                         if (o.optionKey == parameterDictionary["optionkey"])
                         {
@@ -517,9 +577,9 @@ namespace TagDataTranslation
                 {
                     if (!parameterDictionary.ContainsKey(s))
                     {
-						var exception = new TDTTranslationException("TDTUndefinedField");
-						exception.Data.Add("key", s);
-						throw exception;
+                        var exception = new TDTTranslationException("TDTUndefinedField");
+                        exception.Data.Add("key", s);
+                        throw exception;
                     }
                 }
             }
@@ -570,9 +630,9 @@ namespace TagDataTranslation
                     string variableElement;
                     if (!parameterDictionary.TryGetValue(s, out variableElement))
                     {
-						var exception = new TDTTranslationException("TDTUndefinedField");
-						exception.Data.Add("key", s);
-						throw exception;
+                        var exception = new TDTTranslationException("TDTUndefinedField");
+                        exception.Data.Add("key", s);
+                        throw exception;
                     }
 
                     // Note that if the outbound representation is binary, it is necessary to convert values from 
@@ -729,18 +789,20 @@ namespace TagDataTranslation
                                 variableElement = variableElement.PadRight(int.Parse(binaryField.bitLength), '0');
                             }
                         }
-                    } else {
-						// Validate field
-						foreach (var f in outputOption.field)
-						{
-							if (f.name == s)
-							{
-								if (!ValidateCharacterset(variableElement, f.characterSet))
-								{
-									throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
-								}
-							}
-						}
+                    }
+                    else
+                    {
+                        // Validate field
+                        foreach (var f in outputOption.field)
+                        {
+                            if (f.name == s)
+                            {
+                                if (!ValidateCharacterset(variableElement, f.characterSet))
+                                {
+                                    throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
+                                }
+                            }
+                        }
                     }
 
                     if (outputLevel.type == LevelTypeList.PURE_IDENTITY || outputLevel.type == LevelTypeList.TAG_ENCODING)
@@ -988,6 +1050,9 @@ namespace TagDataTranslation
 
         bool ValidateCharacterset(string input, string characterSet)
         {
+            if (input.Length == 0)
+                return true;
+
             Regex r = new Regex(characterSet.TrimEnd('*'));
             return r.IsMatch(input);
         }
@@ -1008,6 +1073,8 @@ namespace TagDataTranslation
 
         #endregion
 
+        #region Helper
+
         void ParseInput(string input, Dictionary<string, string> parameterDictionary)
         {
             if (input.Length > 0)
@@ -1018,5 +1085,27 @@ namespace TagDataTranslation
                 }
             }
         }
+
+        public PrefixLengthResult GetPrefixLength(string input)
+        {
+            var prefixLength = gcpPrefixLengths.Where(x => input.StartsWith(x.Key, StringComparison.CurrentCulture)).FirstOrDefault();
+
+            return new PrefixLengthResult() { Prefix = prefixLength.Key, Length = prefixLength.Value };
+        }
+
+        public Dictionary<int, string> GetFilterValueTable(string scheme)
+        {
+            var filterValueTable = new Dictionary<int, string>();
+
+            scheme = scheme.ToUpper();
+
+            if (filterValueTables.ContainsKey(scheme)) {
+                filterValueTable = filterValueTables[scheme];
+            }
+
+            return filterValueTable;
+        }
+
+        #endregion
     }
 }

@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<tdt:epcTagDataTranslation version="1.11" date="2017-08-01T09:41:00Z" epcTDSVersion="1.11" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:epcglobal:tdt:xsd:1 EpcTagDataTranslation.xsd">
+	<scheme name="CPI-96" optionKey="gs1companyprefixlength" tagLength="96">
+		<level type="BINARY" prefixMatch="00111100" requiredFormattingParameters="filter,taglength">
+            <option optionKey="12" pattern="00111100([01]{3})000([01]{40})([01]{11})([01]{31})" grammar="'00111100' filter '000' gs1companyprefix cpref serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="40" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="999" characterSet="[01]*" bitPadDir="LEFT" bitLength="11" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[01]*" bitPadDir="LEFT" bitLength="31" name="serial"/>
+            </option>
+            <option optionKey="11" pattern="00111100([01]{3})001([01]{37})([01]{14})([01]{31})" grammar="'00111100' filter '001' gs1companyprefix cpref serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="99999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="37" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="9999" characterSet="[01]*" bitPadDir="LEFT" bitLength="14" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[01]*" bitPadDir="LEFT" bitLength="31" name="serial"/>
+            </option>
+            <option optionKey="10" pattern="00111100([01]{3})010([01]{34})([01]{17})([01]{31})" grammar="'00111100' filter '010' gs1companyprefix cpref serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="9999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="34" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="99999" characterSet="[01]*" bitPadDir="LEFT" bitLength="17" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[01]*" bitPadDir="LEFT" bitLength="31" name="serial"/>
+            </option>
+            <option optionKey="9" pattern="00111100([01]{3})011([01]{30})([01]{21})([01]{31})" grammar="'00111100' filter '011' gs1companyprefix cpref serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="30" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="21" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[01]*" bitPadDir="LEFT" bitLength="31" name="serial"/>
+            </option>
+            <option optionKey="8" pattern="00111100([01]{3})100([01]{27})([01]{24})([01]{31})" grammar="'00111100' filter '100' gs1companyprefix cpref serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="99999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="27" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="9999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="24" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[01]*" bitPadDir="LEFT" bitLength="31" name="serial"/>
+            </option>
+			<option optionKey="7" pattern="00111100([01]{3})101([01]{24})([01]{27})([01]{31})" grammar="'00111100' filter '101' gs1companyprefix cpref serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="9999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="24" name="gs1companyprefix"/>
+				<field seq="3" decimalMinimum="0" decimalMaximum="99999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="27" name="cpref"/>
+				<field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[01]*" bitPadDir="LEFT" bitLength="31" name="serial"/>
+			</option>
+            <option optionKey="6" pattern="00111100([01]{3})110([01]{20})([01]{31})([01]{31})" grammar="'00111100' filter '110' gs1companyprefix cpref serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="20" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="31" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[01]*" bitPadDir="LEFT" bitLength="31" name="serial"/>
+            </option>
+		</level>
+		<level type="TAG_ENCODING" prefixMatch="urn:epc:tag:cpi-96" requiredFormattingParameters="filter,taglength">
+            <option optionKey="12" pattern="urn:epc:tag:cpi-96:([0-7]{1})\.([0-9]{12})\.([0-9]{1,3})\.([0-9]{1,10})" grammar="'urn:epc:tag:cpi-96:' filter '.' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[0-7]*" length="1" padChar="0" padDir="LEFT" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999999999999" characterSet="[0-9]*" length="12" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="11" pattern="urn:epc:tag:cpi-96:([0-7]{1})\.([0-9]{11})\.([0-9]{1,4})\.([0-9]{1,10})" grammar="'urn:epc:tag:cpi-96:' filter '.' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[0-7]*" length="1" padChar="0" padDir="LEFT" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="99999999999" characterSet="[0-9]*" length="11" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="9999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="10" pattern="urn:epc:tag:cpi-96:([0-7]{1})\.([0-9]{10})\.([0-9]{1,5})\.([0-9]{1,10})" grammar="'urn:epc:tag:cpi-96:' filter '.' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[0-7]*" length="1" padChar="0" padDir="LEFT" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="9999999999" characterSet="[0-9]*" length="10" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="99999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="9" pattern="urn:epc:tag:cpi-96:([0-7]{1})\.([0-9]{9})\.([0-9]{1,6})\.([0-9]{1,10})" grammar="'urn:epc:tag:cpi-96:' filter '.' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[0-7]*" length="1" padChar="0" padDir="LEFT" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999999999" characterSet="[0-9]*" length="9" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="999999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="8" pattern="urn:epc:tag:cpi-96:([0-7]{1})\.([0-9]{8})\.([0-9]{1,7})\.([0-9]{1,10})" grammar="'urn:epc:tag:cpi-96:' filter '.' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[0-7]*" length="1" padChar="0" padDir="LEFT" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="99999999" characterSet="[0-9]*" length="8" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="9999999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+			<option optionKey="7" pattern="urn:epc:tag:cpi-96:([0-7]{1})\.([0-9]{7})\.([0-9]{1,8})\.([0-9]{1,10})" grammar="'urn:epc:tag:cpi-96:' filter '.' gs1companyprefix '.' cpref '.' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[0-7]*" length="1" padChar="0" padDir="LEFT" name="filter"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="9999999" characterSet="[0-9]*" length="7" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+				<field seq="3" decimalMinimum="0" decimalMaximum="99999999" characterSet="[0-9]*" name="cpref"/>
+				<field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+            <option optionKey="6" pattern="urn:epc:tag:cpi-96:([0-7]{1})\.([0-9]{6})\.([0-9]{1,9})\.([0-9]{1,10})" grammar="'urn:epc:tag:cpi-96:' filter '.' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[0-7]*" length="1" padChar="0" padDir="LEFT" name="filter"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999999" characterSet="[0-9]*" length="6" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="999999999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="4" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+		</level>
+		<level type="PURE_IDENTITY" prefixMatch="urn:epc:id:cpi">
+            <option optionKey="12" pattern="urn:epc:id:cpi:([0-9]{12})\.([0-9]{1,3})\.([0-9]{1,10})" grammar="'urn:epc:id:cpi:' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999" characterSet="[0-9]*" length="12" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="11" pattern="urn:epc:id:cpi:([0-9]{11})\.([0-9]{1,4})\.([0-9]{1,10})" grammar="'urn:epc:id:cpi:' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="99999999999" characterSet="[0-9]*" length="11" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="9999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="10" pattern="urn:epc:id:cpi:([0-9]{10})\.([0-9]{1,5})\.([0-9]{1,10})" grammar="'urn:epc:id:cpi:' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="9999999999" characterSet="[0-9]*" length="10" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="99999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="9" pattern="urn:epc:id:cpi:([0-9]{9})\.([0-9]{1,6})\.([0-9]{1,10})" grammar="'urn:epc:id:cpi:' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999" characterSet="[0-9]*" length="9" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="8" pattern="urn:epc:id:cpi:([0-9]{8})\.([0-9]{1,7})\.([0-9]{1,10})" grammar="'urn:epc:id:cpi:' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="99999999" characterSet="[0-9]*" length="8" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="9999999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+			<option optionKey="7" pattern="urn:epc:id:cpi:([0-9]{7})\.([0-9]{1,8})\.([0-9]{1,10})" grammar="'urn:epc:id:cpi:' gs1companyprefix '.' cpref '.' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="9999999" characterSet="[0-9]*" length="7" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="99999999" characterSet="[0-9]*" name="cpref"/>
+				<field seq="3" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+            <option optionKey="6" pattern="urn:epc:id:cpi:([0-9]{6})\.([0-9]{1,9})\.([0-9]{1,10})" grammar="'urn:epc:id:cpi:' gs1companyprefix '.' cpref '.' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999" characterSet="[0-9]*" length="6" padChar="0" padDir="LEFT" name="gs1companyprefix"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="999999999" characterSet="[0-9]*" name="cpref"/>
+                <field seq="3" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+		</level>
+		<level type="LEGACY_AI" prefixMatch="(8010)" requiredParsingParameters="gs1companyprefixlength">
+			<option optionKey="12" pattern="\(8010\)([0-9]{13,15})\(8011\)([0-9]{1,10})" grammar="'(8010)' gs1companyprefix cpref '(8011)' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+			<option optionKey="11" pattern="\(8010\)([0-9]{12,15})\(8011\)([0-9]{1,10})" grammar="'(8010)' gs1companyprefix cpref '(8011)' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+			<option optionKey="10" pattern="\(8010\)([0-9]{11,15})\(8011\)([0-9]{1,10})" grammar="'(8010)' gs1companyprefix cpref '(8011)' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+			<option optionKey="9" pattern="\(8010\)([0-9]{10,15})\(8011\)([0-9]{1,10})" grammar="'(8010)' gs1companyprefix cpref '(8011)' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+			<option optionKey="8" pattern="\(8010\)([0-9]{9,15})\(8011\)([0-9]{1,10})" grammar="'(8010)' gs1companyprefix cpref '(8011)' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+			<option optionKey="7" pattern="\(8010\)([0-9]{8,15})\(8011\)([0-9]{1,10})" grammar="'(8010)' gs1companyprefix cpref '(8011)' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+			<option optionKey="6" pattern="\(8010\)([0-9]{7,15})\(8011\)([0-9]{1,10})" grammar="'(8010)' gs1companyprefix cpref '(8011)' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+			<rule type="EXTRACT" inputFormat="STRING" seq="4" newFieldName="cpref" characterSet="[0-9]*" function="SUBSTR(cpi,gs1companyprefixlength)"/>
+            <rule type="EXTRACT" inputFormat="STRING" seq="5" newFieldName="gs1companyprefix" characterSet="[0-9]*" function="SUBSTR(cpi,0,gs1companyprefixlength)"/>
+		</level>
+		<level type="ELEMENT_STRING" prefixMatch="8010" requiredParsingParameters="gs1companyprefixlength">
+			<option optionKey="12" pattern="8010([0-9]{13,15})8011([0-9]{1,10})" grammar="'8010' gs1companyprefix cpref '8011' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+            <option optionKey="11" pattern="8010([0-9]{12,15})8011([0-9]{1,10})" grammar="'8010' gs1companyprefix cpref '8011' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+            <option optionKey="10" pattern="8010([0-9]{11,15})8011([0-9]{1,10})" grammar="'8010' gs1companyprefix cpref '8011' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+            <option optionKey="9" pattern="8010([0-9]{10,15})8011([0-9]{1,10})" grammar="'8010' gs1companyprefix cpref '8011' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+            <option optionKey="8" pattern="8010([0-9]{9,15})8011([0-9]{1,10})" grammar="'8010' gs1companyprefix cpref '8011' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+			<option optionKey="7" pattern="8010([0-9]{8,15})8011([0-9]{1,10})" grammar="'8010' gs1companyprefix cpref '8011' serial">
+				<field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+				<field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+            <option optionKey="6" pattern="8010([0-9]{7,15})8011([0-9]{1,10})" grammar="'8010' gs1companyprefix cpref '8011' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+			</option>
+            <rule type="EXTRACT" inputFormat="STRING" seq="4" newFieldName="cpref" characterSet="[0-9]*" function="SUBSTR(cpi,gs1companyprefixlength)"/>
+            <rule type="EXTRACT" inputFormat="STRING" seq="5" newFieldName="gs1companyprefix" characterSet="[0-9]*" function="SUBSTR(cpi,0,gs1companyprefixlength)"/>
+		</level>
+		<level type="LEGACY" prefixMatch="cpi" requiredParsingParameters="gs1companyprefixlength">
+            <option optionKey="12" pattern="cpi=([0-9]{13,15});serial=([0-9]{1,10})" grammar="'cpi=' gs1companyprefix cpref ';serial=' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="11" pattern="cpi=([0-9]{12,15});serial=([0-9]{1,10})" grammar="'cpi=' gs1companyprefix cpref ';serial=' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="10" pattern="cpi=([0-9]{11,15});serial=([0-9]{1,10})" grammar="'cpi=' gs1companyprefix cpref ';serial=' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="9" pattern="cpi=([0-9]{10,15});serial=([0-9]{1,10})" grammar="'cpi=' gs1companyprefix cpref ';serial=' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="8" pattern="cpi=([0-9]{9,15});serial=([0-9]{1,10})" grammar="'cpi=' gs1companyprefix cpref ';serial=' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="7" pattern="cpi=([0-9]{8,15});serial=([0-9]{1,10})" grammar="'cpi=' gs1companyprefix cpref ';serial=' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <option optionKey="6" pattern="cpi=([0-9]{7,15});serial=([0-9]{1,10})" grammar="'cpi=' gs1companyprefix cpref ';serial=' serial">
+                <field seq="1" decimalMinimum="0" decimalMaximum="999999999999999" characterSet="[0-9]*" name="cpi"/>
+                <field seq="2" decimalMinimum="0" decimalMaximum="2147483647" characterSet="[0-9]*" name="serial"/>
+            </option>
+            <rule type="EXTRACT" inputFormat="STRING" seq="4" newFieldName="cpref" characterSet="[0-9]*" function="SUBSTR(cpi,gs1companyprefixlength)"/>
+            <rule type="EXTRACT" inputFormat="STRING" seq="5" newFieldName="gs1companyprefix" characterSet="[0-9]*" function="SUBSTR(cpi,0,gs1companyprefixlength)"/>
+        </level>
+	</scheme>
+</tdt:epcTagDataTranslation>

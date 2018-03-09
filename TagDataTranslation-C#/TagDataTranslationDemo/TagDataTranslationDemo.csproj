@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>TagDataTranslationTest</RootNamespace>
     <AssemblyName>TagDataTranslationTest</AssemblyName>
-    <ReleaseVersion>0.3.1</ReleaseVersion>
+    <ReleaseVersion>1.0.0</ReleaseVersion>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

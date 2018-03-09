@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TagDataTranslationnet</RootNamespace>
     <AssemblyName>TagDataTranslation-net</AssemblyName>
-    <ReleaseVersion>0.3.1</ReleaseVersion>
+    <ReleaseVersion>1.0.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,6 +30,7 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -45,52 +46,118 @@
     <Compile Include="..\TagDataTranslation\TranslateResult.cs">
       <Link>TranslateResult.cs</Link>
     </Compile>
+    <Compile Include="..\TagDataTranslation\PrefixLengthResult.cs">
+      <Link>PrefixLengthResult.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\ADI-var.xml">
-      <Link>XMLArtifacts\ADI-var.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\ADI-var.xml">
+      <Link>Schemes\ADI-var.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GDTI-113.xml">
-      <Link>XMLArtifacts\GDTI-113.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\CPI-96.xml">
+      <Link>Schemes\CPI-96.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GDTI-96.xml">
-      <Link>XMLArtifacts\GDTI-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\CPI-var.xml">
+      <Link>Schemes\CPI-var.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GIAI-202.xml">
-      <Link>XMLArtifacts\GIAI-202.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GDTI-174.xml">
+      <Link>Schemes\GDTI-174.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GIAI-96.xml">
-      <Link>XMLArtifacts\GIAI-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GDTI-96.xml">
+      <Link>Schemes\GDTI-96.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GID-96.xml">
-      <Link>XMLArtifacts\GID-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GIAI-202.xml">
+      <Link>Schemes\GIAI-202.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GRAI-170.xml">
-      <Link>XMLArtifacts\GRAI-170.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GIAI-96.xml">
+      <Link>Schemes\GIAI-96.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GRAI-96.xml">
-      <Link>XMLArtifacts\GRAI-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GID-96.xml">
+      <Link>Schemes\GID-96.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\GSRN-96.xml">
-      <Link>XMLArtifacts\GSRN-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GRAI-170.xml">
+      <Link>Schemes\GRAI-170.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGLN-195.xml">
-      <Link>XMLArtifacts\SGLN-195.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GRAI-96.xml">
+      <Link>Schemes\GRAI-96.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGLN-96.xml">
-      <Link>XMLArtifacts\SGLN-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GSRN-96.xml">
+      <Link>Schemes\GSRN-96.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGTIN-198.xml">
-      <Link>XMLArtifacts\SGTIN-198.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\GSRNP-96.xml">
+      <Link>Schemes\GSRNP-96.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SGTIN-96.xml">
-      <Link>XMLArtifacts\SGTIN-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\ITIP-110.xml">
+      <Link>Schemes\ITIP-110.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\SSCC-96.xml">
-      <Link>XMLArtifacts\SSCC-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\ITIP-212.xml">
+      <Link>Schemes\ITIP-212.xml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\TagDataTranslation\XMLArtifacts\USDOD-96.xml">
-      <Link>XMLArtifacts\USDOD-96.xml</Link>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\SGCN-96.xml">
+      <Link>Schemes\SGCN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\SGLN-195.xml">
+      <Link>Schemes\SGLN-195.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\SGLN-96.xml">
+      <Link>Schemes\SGLN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\SGTIN-198.xml">
+      <Link>Schemes\SGTIN-198.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\SGTIN-96.xml">
+      <Link>Schemes\SGTIN-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\SSCC-96.xml">
+      <Link>Schemes\SSCC-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\Schemes\USDOD-96.xml">
+      <Link>Schemes\USDOD-96.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\GCPPrefixFormatList\gcpprefixformatlist.xml">
+      <Link>GCPPrefixFormatList\gcpprefixformatlist.xml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-ADI.csv">
+      <Link>FilterValueTables\filter-ADI.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-CPI.csv">
+      <Link>FilterValueTables\filter-CPI.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-GDTI.csv">
+      <Link>FilterValueTables\filter-GDTI.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-GIAI.csv">
+      <Link>FilterValueTables\filter-GIAI.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-GID.csv">
+      <Link>FilterValueTables\filter-GID.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-GRAI.csv">
+      <Link>FilterValueTables\filter-GRAI.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-GSRN.csv">
+      <Link>FilterValueTables\filter-GSRN.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-GSRNP.csv">
+      <Link>FilterValueTables\filter-GSRNP.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-ITIP.csv">
+      <Link>FilterValueTables\filter-ITIP.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-SGCN.csv">
+      <Link>FilterValueTables\filter-SGCN.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-SGLN.csv">
+      <Link>FilterValueTables\filter-SGLN.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-SGTIN.csv">
+      <Link>FilterValueTables\filter-SGTIN.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-SSCC.csv">
+      <Link>FilterValueTables\filter-SSCC.csv</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\TagDataTranslation\FilterValueTables\filter-USDOD.csv">
+      <Link>FilterValueTables\filter-USDOD.csv</Link>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

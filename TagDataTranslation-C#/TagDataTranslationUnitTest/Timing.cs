@@ -19,7 +19,6 @@ namespace TagDataTranslationUnitTest
             stopWatch.Start();
 
             TDTEngine engine = new TDTEngine();
-            Console.WriteLine("Started engine {0}", engine);
 
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
@@ -47,7 +46,6 @@ namespace TagDataTranslationUnitTest
             foreach (string epcIdentifier in epcIdentifiers) {
                 string resultBinary = engine.Translate(epcIdentifier, parameterList, @"BINARY");
                 string resultPureIdentity = engine.Translate(resultBinary, parameterList, @"PURE_IDENTITY");
-                Console.WriteLine("Results: {0} {1}", resultBinary, resultPureIdentity);
             }
 
             stopWatch.Stop();

@@ -255,23 +255,23 @@ namespace TagDataTranslationUnitTest
         }
 
         [Test ()]
-        public void TestGDTI113 ()
+        public void TestGDTI174 ()
         {
             TDTEngine engine = new TDTEngine();
 
-            string epcIdentifier = @"gdti=01234567890123445678";
-            string parameterList = @"filter=1;gs1companyprefixlength=10;tagLength=113";
+            string epcIdentifier = @"gdti=01234567890123445678&;/d";
+            string parameterList = @"filter=2;gs1companyprefixlength=11;tagLength=174";
 
             string result1 = engine.Translate(epcIdentifier, parameterList, @"BINARY");
-            string expect = @"3a28075bcd1502000000006695170000";
+            string expect = @"3e440932c05a42cda346ad9bb84ced7e400000000000";
             Assert.AreEqual(expect, engine.BinaryToHex(result1));
 
             string result2 = engine.Translate(epcIdentifier, parameterList, @"TAG_ENCODING");
-            expect = @"urn:epc:tag:gdti-113:1.0123456789.01.3445678";
+            expect = @"urn:epc:tag:gdti-174:2.01234567890.1.3445678%26;%2Fd";
             Assert.AreEqual(expect, result2);
 
             string result3 = engine.Translate(result2, parameterList, @"PURE_IDENTITY");
-            expect = @"urn:epc:id:gdti:0123456789.01.3445678";
+            expect = @"urn:epc:id:gdti:01234567890.1.3445678%26;%2Fd";
             Assert.AreEqual(expect, result3);
 
             string result4 = engine.Translate(result3, parameterList, @"LEGACY");
@@ -339,7 +339,7 @@ namespace TagDataTranslationUnitTest
         {
             TDTEngine engine = new TDTEngine();
             string epcIdentifier = @"ADI CAG 99AH2/PNO 123/SEQ 145";
-            string parameterList = @"filter=1;tagLength=98";
+            string parameterList = @"filter=1";
 
             string result1 = engine.Translate(epcIdentifier, parameterList, @"BINARY");
             string expect = engine.HexToBinary(@"3B060E79048CB1CB3031D3500000").Substring(0, 98);

@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TagDataTranslationUnitTest</RootNamespace>
     <AssemblyName>TagDataTranslationUnitTest</AssemblyName>
-    <ReleaseVersion>0.3.1</ReleaseVersion>
+    <ReleaseVersion>1.0.0</ReleaseVersion>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -31,7 +31,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.3.7.1\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +40,8 @@
     <Compile Include="Custom.cs" />
     <Compile Include="Timing.cs" />
     <Compile Include="PreviousBugs.cs" />
+    <Compile Include="TDSStandard.cs" />
+    <Compile Include="TDSStandardCPLengthVariation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

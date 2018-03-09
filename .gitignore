@@ -4,6 +4,7 @@
 #build
 [Oo]bj/
 [Bb]in/
+[O]out/
 packages/
 TestResults/
 
@@ -40,3 +41,5 @@ Thumbs.db
 *.dotCover
 
 *.nupkg
+.vs
+out
