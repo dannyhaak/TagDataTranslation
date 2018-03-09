@@ -1,6 +1,6 @@
 ## Synopsis
 
-Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID, and updated for Tag Data Standard 1.10 (with beta support for TDS 1.11). Comes with unit tests and a demonstration application.
+Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID, and updated for Tag Data Standard 1.11. Comes with unit tests and a demonstration application.
 
 The following schemes are supported:
 - ADI-var
@@ -11,7 +11,7 @@ The following schemes are supported:
 - GRAI-96, GRAI-170
 - GSRN-96
 - GSRNP-96
-- ITIP-110, ITIP-212 (beta support)
+- ITIP-110, ITIP-212
 - SGCN-96
 - SGLN-96, SGLN-195
 - SGTIN-96, SGTIN-198
@@ -24,7 +24,7 @@ The following programming languages are supported:
 
 ## Example
 
-The following code is an example on how to use the library.
+The following code is an example on how to use the library, to go from a GTIN and serial to hexadecimal.
 
 ```
 TDTEngine engine = new TDTEngine ();
@@ -34,9 +34,20 @@ string binary = engine.Translate(epcIdentifier, parameterList, @"BINARY");
 string binaryHex = engine.BinaryToHex(binary);
 ```
 
+Or the other way around.
+
+```
+TDTEngine engine = new TDTEngine ();
+string epcIdentifier = engine.HexToBinary(@"30340242201d8840009efdf7");
+string parameterList = @"tagLength=96";
+string legacy = engine.Translate(epcIdentifier, parameterList, @"LEGACY");
+```
+
 ## API
 
-The library follows the client API as defined in the standard.
+The library follows the client API as defined in the standard and there are some additional helper functions.
+
+### Translate
 
 ```
 public String translate(String epcIdentifier, String parameterList, String outputFormat)
@@ -44,7 +55,7 @@ public String translate(String epcIdentifier, String parameterList, String outpu
 
 Translates epcIdentifier from one representation into another within the same coding scheme.
 
-### Parameters
+#### Parameters
 
 | Parameter     | Description |
 | ------------- | ----------- |
@@ -52,11 +63,11 @@ Translates epcIdentifier from one representation into another within the same co
 | parameterList | This is a parameter string containing key value pairs, using the semicolon [';'] as delimiter between key=value pairs. For example, to convert a GTIN code the parameter string would look like the following: `filter=3;companyprefixlength=7;tagLength=96` |
 | outputFormat  | The output format into which the epcIdentifier SHALL be converted. The following are the formats supported: `BINARY`, `LEGACY`, `LEGACY_AI`, `TAG_ENCODING`,  `PURE_IDENTITY` |
 
-### Returns
+#### Returns
 
 The converted value into one of the above formats as String.
 
-### Throws
+#### Throws
 
 **TDTTranslationException** – Throws exceptions due to the following reason:
 
@@ -70,6 +81,47 @@ The converted value into one of the above formats as String.
 8. `TDTOptionNotFound` Reported if no matching Option can be found via the optionKey or via matching the pattern
 9. `TDTLookupFailed` Reported if lookup in an external table failed to provide a value – reports table URI and path expression.
 10. `TDTNumericOverflow` Reported when a numeric overflow occurs when handling numeric values such as serial number.
+
+### GetPrefixLength
+
+```
+public PrefixLengthResult GetPrefixLength(string input)
+```
+
+Gets the GS1 Prefix Length for the given identifier. Based on the gcpprefixformatlist.xml file from GS1 (GCP Length Table, https://www.gs1.org/standards/bc-epc-interop).
+
+#### Parameters
+
+| Parameter     | Description |
+| ------------- | ----------- |
+| input | Identifier for which to find the GS1 Prefix Length. Input as string. |
+
+#### Returns
+
+An object with the following properties.
+
+| Property     | Description |
+| ------------- | ----------- |
+| Prefix | The full GS1 Prefix as a string. |
+| Length | The length of the GS1 Prefix as integer. |
+
+### GetFilterValueTable
+
+```
+public Dictionary<int, string> GetFilterValueTable(string scheme)
+```
+
+Gets the Filter Value table for the provided scheme. 
+
+#### Parameters
+
+| Parameter     | Description |
+| ------------- | ----------- |
+| scheme | The GS1 EPC scheme for which to retrieve the Filter Value Table. Input as string. |
+
+#### Returns
+
+A dictionary with an integer as key (Filter Value) and a string as value (description).
 
 ## License
 

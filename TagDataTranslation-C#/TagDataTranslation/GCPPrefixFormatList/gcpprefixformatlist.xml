@@ -1,5 +1,5 @@
 <!-- edited with XMLSpy v2014 sp1 (x64) (http://www.altova.com) by IT TEAM (GS1 AISBL) -->
-<GCPPrefixFormatList date="2016-12-19T12:34:00Z">
+<GCPPrefixFormatList date="2017-12-11T12:22:00Z">
 	<!-- a list of GS1 prefixes (country prefixes) is available at http://www.gs1.org/company-prefix -->
 	<!-- Explicit EXCLUSIONS:
 	The GCP Length Determination Tool project has defined a number of "Excluded" prefixes which are excluded from the GCP resolution process and have been assigned a nominal length of 0 in this file, as a sentinel value.
@@ -77,7 +77,7 @@
 	<entry prefix="089" gcpLength="10"/>
 	<!-- 200-299 Restricted distribution EXCLUDED -->
 	<entry prefix="2" gcpLength="0"/>
-	<!-- 030-379 GS1 France -->
+	<!-- 300-379 GS1 France -->
 	<entry prefix="30" gcpLength="6"/>
 	<entry prefix="31" gcpLength="6"/>
 	<entry prefix="32" gcpLength="6"/>
@@ -13629,7 +13629,66 @@
 	<entry prefix="6287" gcpLength="9"/>
 	<entry prefix="6288" gcpLength="6"/>
 	<!-- 629 GS1 United Arab Emirates -->
-	<entry prefix="629" gcpLength="12"/>
+	<entry prefix="62900" gcpLength="6"/>
+	<entry prefix="629012" gcpLength="6"/>
+	<entry prefix="629013" gcpLength="6"/>
+	<entry prefix="629014" gcpLength="6"/>
+	<entry prefix="629017" gcpLength="6"/>
+	<entry prefix="629019" gcpLength="6"/>
+	<entry prefix="62902" gcpLength="6"/>
+	<entry prefix="62903" gcpLength="6"/>
+	<entry prefix="62904" gcpLength="5"/>
+	<entry prefix="62905" gcpLength="5"/>
+	<entry prefix="62907" gcpLength="5"/>
+	<entry prefix="62909" gcpLength="5"/>
+	<entry prefix="629100" gcpLength="7"/>
+	<entry prefix="629101" gcpLength="7"/>
+	<entry prefix="629102" gcpLength="7"/>
+	<entry prefix="629103" gcpLength="7"/>
+	<entry prefix="629104" gcpLength="7"/>
+	<entry prefix="629105" gcpLength="7"/>
+	<entry prefix="6291060" gcpLength="7"/>
+	<entry prefix="6291061" gcpLength="7"/>
+	<entry prefix="6291062" gcpLength="7"/>
+	<entry prefix="6291067" gcpLength="7"/>
+	<entry prefix="62910698" gcpLength="8"/>
+	<entry prefix="629107" gcpLength="7"/>
+	<entry prefix="629108" gcpLength="7"/>
+	<entry prefix="6291100" gcpLength="9"/>
+	<entry prefix="6291101" gcpLength="9"/>
+	<entry prefix="6291102" gcpLength="9"/>
+	<entry prefix="6291103" gcpLength="9"/>
+	<entry prefix="6291104" gcpLength="9"/>
+	<entry prefix="6291105" gcpLength="9"/>
+	<entry prefix="6291106" gcpLength="9"/>
+	<entry prefix="62911070" gcpLength="9"/>
+	<entry prefix="62911071" gcpLength="9"/>
+	<entry prefix="62911072" gcpLength="9"/>
+	<entry prefix="629110730" gcpLength="9"/>
+	<entry prefix="629110731" gcpLength="9"/>
+	<entry prefix="629110732" gcpLength="9"/>
+	<entry prefix="629110733" gcpLength="9"/>
+	<entry prefix="629110734" gcpLength="11"/>
+	<entry prefix="629110735" gcpLength="9"/>
+	<entry prefix="629110736" gcpLength="9"/>
+	<entry prefix="629110737" gcpLength="9"/>
+	<entry prefix="629110738" gcpLength="9"/>
+	<entry prefix="629110739" gcpLength="9"/>
+	<entry prefix="62911074" gcpLength="9"/>
+	<entry prefix="62911075" gcpLength="9"/>
+	<entry prefix="62911076" gcpLength="9"/>
+	<entry prefix="62911077" gcpLength="9"/>
+	<entry prefix="62911078" gcpLength="9"/>
+	<entry prefix="629111" gcpLength="7"/>
+	<entry prefix="62915" gcpLength="5"/>
+	<entry prefix="6292" gcpLength="5"/>
+	<entry prefix="6293" gcpLength="5"/>
+	<entry prefix="6294" gcpLength="8"/>
+	<entry prefix="62950" gcpLength="9"/>
+	<entry prefix="62951" gcpLength="7"/>
+	<entry prefix="6296" gcpLength="10"/>
+	<entry prefix="6297" gcpLength="10"/>
+	<entry prefix="6299" gcpLength="5"/>
 	<!-- 640-649 GS1 Finland -->
 	<entry prefix="6400000" gcpLength="9"/>
 	<entry prefix="6400001" gcpLength="7"/>
@@ -18895,6 +18954,7 @@
 	<!-- 900-919 GS1 Austria -->
 	<entry prefix="900" gcpLength="7"/>
 	<entry prefix="901" gcpLength="7"/>
+	<entry prefix="902" gcpLength="7"/>
 	<entry prefix="903" gcpLength="7"/>
 	<entry prefix="904" gcpLength="7"/>
 	<entry prefix="905" gcpLength="7"/>
