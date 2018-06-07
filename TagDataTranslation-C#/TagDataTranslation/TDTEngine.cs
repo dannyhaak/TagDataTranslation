@@ -52,7 +52,7 @@ namespace TagDataTranslation
                     {
                         using (StreamReader sr = new StreamReader(stream))
                         {
-                            string scheme = filename.Split('-')[2].Split('.')[0];
+                            string scheme = filename.Split('.')[2].Split('-')[1];
 
                             filterValueTables.Add(scheme, new Dictionary<int, string>());
 

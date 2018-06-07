@@ -43,3 +43,4 @@ Thumbs.db
 *.nupkg
 .vs
 out
+/TagDataTranslation-C\#/TagDataTranslation.1.0.0.nupkg.zip

@@ -2,16 +2,17 @@
 <package>
     <metadata>
         <id>TagDataTranslation</id>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <owners>Danny Haak</owners>
         <authors>Danny Haak</authors>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <licenseUrl>https://raw.githubusercontent.com/dannyhaak/TagDataTranslation/master/LICENSE</licenseUrl>
         <title>TagDataTranslation</title>
-        <description>Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID.</description>
+        <description>Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.11 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID.</description>
         <projectUrl>https://github.com/dannyhaak/TagDataTranslation</projectUrl>
         <copyright>Danny Haak</copyright>
         <tags>rfid gs1 epc tdt rain sgtin sgln sscc pure-identity tag-uri hex binary translate</tags>
+        <releaseNotes>Fixes bug that made library unusable in non-.Net Core projects</releaseNotes>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System.Numerics" targetFramework="net40" />
             <frameworkAssembly assemblyName="System.Xml" targetFramework="net40" />

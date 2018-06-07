@@ -46,7 +46,7 @@ Global
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$0.VersionControlPolicy = $2
-		version = 1.0.0
+		version = 1.0.1
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
