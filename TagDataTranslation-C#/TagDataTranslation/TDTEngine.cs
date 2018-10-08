@@ -20,6 +20,8 @@ namespace TagDataTranslation
 
         public TDTEngine()
         {
+            Console.WriteLine("[TagDataTranslation] This library is free for non-commercial use only. Please contact tdt@mimasu.nl for licensing information.");
+
             var serializer = new XmlSerializer(typeof(EpcTagDataTranslation));
 
 #if NETSTANDARD1_4

@@ -2,7 +2,7 @@
 <package>
     <metadata>
         <id>TagDataTranslation</id>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <owners>Danny Haak</owners>
         <authors>Danny Haak</authors>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
@@ -12,7 +12,7 @@
         <projectUrl>https://github.com/dannyhaak/TagDataTranslation</projectUrl>
         <copyright>Danny Haak</copyright>
         <tags>rfid gs1 epc tdt rain sgtin sgln sscc pure-identity tag-uri hex binary translate</tags>
-        <releaseNotes>Fixes bug that made library unusable in non-.Net Core projects</releaseNotes>
+        <releaseNotes>Update licensing information.</releaseNotes>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System.Numerics" targetFramework="net40" />
             <frameworkAssembly assemblyName="System.Xml" targetFramework="net40" />
