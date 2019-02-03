@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.11.0\build\NUnit.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -7,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TagDataTranslationUnitTest</RootNamespace>
     <AssemblyName>TagDataTranslationUnitTest</AssemblyName>
-    <ReleaseVersion>1.0.2</ReleaseVersion>
+    <ReleaseVersion>1.1</ReleaseVersion>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -31,7 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -51,9 +52,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TagDataTranslation-netstandard\TagDataTranslation-netstandard.csproj">
-      <Project>{C6BE1460-6A71-4C3A-AD7F-4496F3353EB0}</Project>
-      <Name>TagDataTranslation-netstandard</Name>
+    <ProjectReference Include="..\TagDataTranslation\TagDataTranslation.csproj">
+      <Project>{CED01C97-1324-44FA-9B0A-7DBA8E4C5729}</Project>
+      <Name>TagDataTranslation</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

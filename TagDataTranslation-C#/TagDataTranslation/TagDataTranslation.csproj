@@ -1,0 +1,120 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageId>TagDataTranslation</PackageId>
+    <Authors>Danny Haak</Authors>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/dannyhaak/TagDataTranslation/master/LICENSE</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Owners>Danny Haak</Owners>
+    <PackageProjectUrl>https://github.com/dannyhaak/TagDataTranslation</PackageProjectUrl>
+    <Summary>Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.11 specification</Summary>
+    <PackageTags>rfid gs1 epc tdt rain sgtin sgln sscc pure-identity tag-uri hex binary translate</PackageTags>
+    <Title>TagDataTranslation</Title>
+    <Description>Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.11 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID. It supports the following translations:
+- SGTIN (GTIN, serial)
+- SSCC
+- SGLN (GLN, extension)
+- GRAI with serial
+- GIAI
+- GSRN
+- GSRN-P
+- GDTI with serial
+- GCN with serial
+- ITIP with piece and total, serial
+- GID
+- USDoD
+- ADI</Description>
+    <PackageVersion>1.1</PackageVersion>
+    <ReleaseVersion>1.1</ReleaseVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Schemes\ADI-var.xml" />
+    <None Remove="Schemes\CPI-96.xml" />
+    <None Remove="Schemes\CPI-var.xml" />
+    <None Remove="Schemes\GDTI-174.xml" />
+    <None Remove="Schemes\GDTI-96.xml" />
+    <None Remove="Schemes\GIAI-202.xml" />
+    <None Remove="Schemes\GIAI-96.xml" />
+    <None Remove="Schemes\GID-96.xml" />
+    <None Remove="Schemes\GRAI-170.xml" />
+    <None Remove="Schemes\GRAI-96.xml" />
+    <None Remove="Schemes\GSRN-96.xml" />
+    <None Remove="Schemes\GSRNP-96.xml" />
+    <None Remove="Schemes\ITIP-110.xml" />
+    <None Remove="Schemes\ITIP-212.xml" />
+    <None Remove="Schemes\SGCN-96.xml" />
+    <None Remove="Schemes\SGLN-195.xml" />
+    <None Remove="Schemes\SGLN-96.xml" />
+    <None Remove="Schemes\SGTIN-198.xml" />
+    <None Remove="Schemes\SGTIN-96.xml" />
+    <None Remove="Schemes\SSCC-96.xml" />
+    <None Remove="Schemes\USDOD-96.xml" />
+    <None Remove="FilterValueTables\filter-ADI.csv" />
+    <None Remove="FilterValueTables\filter-CPI.csv" />
+    <None Remove="FilterValueTables\filter-GDTI.csv" />
+    <None Remove="FilterValueTables\filter-GIAI.csv" />
+    <None Remove="FilterValueTables\filter-GID.csv" />
+    <None Remove="FilterValueTables\filter-GRAI.csv" />
+    <None Remove="FilterValueTables\filter-GSRN.csv" />
+    <None Remove="FilterValueTables\filter-GSRNP.csv" />
+    <None Remove="FilterValueTables\filter-ITIP.csv" />
+    <None Remove="FilterValueTables\filter-SGCN.csv" />
+    <None Remove="FilterValueTables\filter-SGLN.csv" />
+    <None Remove="FilterValueTables\filter-SGTIN.csv" />
+    <None Remove="FilterValueTables\filter-SSCC.csv" />
+    <None Remove="FilterValueTables\filter-USDOD.csv" />
+    <None Remove="GCPPrefixFormatList\gcpprefixformatlist.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Schemes\ADI-var.xml" />
+    <EmbeddedResource Include="Schemes\CPI-96.xml" />
+    <EmbeddedResource Include="Schemes\CPI-var.xml" />
+    <EmbeddedResource Include="Schemes\GDTI-174.xml" />
+    <EmbeddedResource Include="Schemes\GDTI-96.xml" />
+    <EmbeddedResource Include="Schemes\GIAI-202.xml" />
+    <EmbeddedResource Include="Schemes\GIAI-96.xml" />
+    <EmbeddedResource Include="Schemes\GID-96.xml" />
+    <EmbeddedResource Include="Schemes\GRAI-170.xml" />
+    <EmbeddedResource Include="Schemes\GRAI-96.xml" />
+    <EmbeddedResource Include="Schemes\GSRN-96.xml" />
+    <EmbeddedResource Include="Schemes\GSRNP-96.xml" />
+    <EmbeddedResource Include="Schemes\ITIP-110.xml" />
+    <EmbeddedResource Include="Schemes\ITIP-212.xml" />
+    <EmbeddedResource Include="Schemes\SGCN-96.xml" />
+    <EmbeddedResource Include="Schemes\SGLN-195.xml" />
+    <EmbeddedResource Include="Schemes\SGLN-96.xml" />
+    <EmbeddedResource Include="Schemes\SGTIN-198.xml" />
+    <EmbeddedResource Include="Schemes\SGTIN-96.xml" />
+    <EmbeddedResource Include="Schemes\SSCC-96.xml" />
+    <EmbeddedResource Include="Schemes\USDOD-96.xml" />
+    <EmbeddedResource Include="FilterValueTables\filter-ADI.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-CPI.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-GDTI.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-GIAI.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-GID.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-GRAI.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-GSRN.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-GSRNP.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-ITIP.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-SGCN.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-SGLN.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-SGTIN.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-SSCC.csv" />
+    <EmbeddedResource Include="FilterValueTables\filter-USDOD.csv" />
+    <EmbeddedResource Include="GCPPrefixFormatList\gcpprefixformatlist.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove=":Users:danny.haak:Development Personal:EpcisCloudCore:EpcisCloudCore:Models:Epcis:Json:EpcisDocumentJson.cs" />
+  </ItemGroup>
+</Project>

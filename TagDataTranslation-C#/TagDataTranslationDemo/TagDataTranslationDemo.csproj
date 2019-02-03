@@ -7,8 +7,8 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>TagDataTranslationTest</RootNamespace>
     <AssemblyName>TagDataTranslationTest</AssemblyName>
-    <ReleaseVersion>1.0.2</ReleaseVersion>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <ReleaseVersion>1.1</ReleaseVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,9 +36,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TagDataTranslation-netstandard\TagDataTranslation-netstandard.csproj">
-      <Project>{C6BE1460-6A71-4C3A-AD7F-4496F3353EB0}</Project>
-      <Name>TagDataTranslation-netstandard</Name>
+    <ProjectReference Include="..\TagDataTranslation\TagDataTranslation.csproj">
+      <Project>{CED01C97-1324-44FA-9B0A-7DBA8E4C5729}</Project>
+      <Name>TagDataTranslation</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

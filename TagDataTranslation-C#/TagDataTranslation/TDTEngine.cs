@@ -24,15 +24,9 @@ namespace TagDataTranslation
 
             var serializer = new XmlSerializer(typeof(EpcTagDataTranslation));
 
-#if NETSTANDARD1_4
             var assembly = typeof(TagDataTranslation.TDTEngine).GetTypeInfo().Assembly;
-            var schemeFilenameStart = "TagDataTranslation-netstandard.Schemes.";
-            var filterFilenameStart = "TagDataTranslation-netstandard.FilterValueTables.";
-#else
-            var assembly = Assembly.GetExecutingAssembly ();
-            var schemeFilenameStart = "TagDataTranslationnet.Schemes.";
-            var filterFilenameStart = "TagDataTranslationnet.FilterValueTables.";
-#endif
+            var schemeFilenameStart = "TagDataTranslation.Schemes.";
+            var filterFilenameStart = "TagDataTranslation.FilterValueTables.";
 
             foreach (string filename in assembly.GetManifestResourceNames())
             {
@@ -101,7 +95,7 @@ namespace TagDataTranslation
             return translateResult;
         }
 
-        Dictionary<string, string> ProcessInput(string epcIdentifier, string parameterList)
+        public Dictionary<string, string> ProcessInput(string epcIdentifier, string parameterList)
         {
             // Translation process according to the TDT standard.
 
@@ -1101,7 +1095,8 @@ namespace TagDataTranslation
 
             scheme = scheme.ToUpper();
 
-            if (filterValueTables.ContainsKey(scheme)) {
+            if (filterValueTables.ContainsKey(scheme))
+            {
                 filterValueTable = filterValueTables[scheme];
             }
 
