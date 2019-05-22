@@ -20,7 +20,7 @@ namespace TagDataTranslation
 
         public TDTEngine()
         {
-            Console.WriteLine("[TagDataTranslation] This library is free for non-commercial use only. Please contact tdt@mimasu.nl for licensing information.");
+            //Console.WriteLine("[TagDataTranslation] This library is free for non-commercial use only. Please contact tdt@mimasu.nl for licensing information.");
 
             var serializer = new XmlSerializer(typeof(EpcTagDataTranslation));
 
@@ -382,7 +382,7 @@ namespace TagDataTranslation
                         }
 
                         // convert byte list to string
-                        variableElement = Encoding.ASCII.GetString(byteList.ToArray());
+                        variableElement = Encoding.UTF8.GetString(byteList.ToArray(), 0, byteList.Count);
 
                         // strip null characters at the end of the string
                         variableElement = variableElement.TrimEnd('\0');
@@ -726,7 +726,8 @@ namespace TagDataTranslation
                             StringBuilder bits = new StringBuilder();
 
                             // For each character of the string, starting at the left, perform compaction of the corresponding ASCII byte,
-                            byte[] bytes = Encoding.ASCII.GetBytes(variableElement);
+                            //byte[] bytes = Encoding.ASCII.GetBytes(variableElement);
+                            byte[] bytes = Encoding.UTF8.GetBytes(variableElement);
 
                             int compactionBits = 0;
                             switch (binaryField.compaction)
