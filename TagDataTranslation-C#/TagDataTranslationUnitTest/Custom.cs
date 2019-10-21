@@ -8,11 +8,11 @@ using TagDataTranslation;
 
 namespace TagDataTranslationUnitTest
 {
-    [TestFixture ()]
+    [TestFixture()]
     public class Custom
     {
-        [Test ()]
-        public void TestSSCC96 ()
+        [Test()]
+        public void TestSSCC96()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -38,8 +38,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestSGLN96 ()
+        [Test()]
+        public void TestSGLN96()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -65,8 +65,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestSGLN195 ()
+        [Test()]
+        public void TestSGLN195()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -92,8 +92,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestGRAI96 ()
+        [Test()]
+        public void TestGRAI96()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -119,8 +119,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestGRAI170 ()
+        [Test()]
+        public void TestGRAI170()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -146,8 +146,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestGIAI96 ()
+        [Test()]
+        public void TestGIAI96()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -173,8 +173,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestGIAI202 ()
+        [Test()]
+        public void TestGIAI202()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -200,8 +200,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestGSRN96 ()
+        [Test()]
+        public void TestGSRN96()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -227,8 +227,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestGDTI96 ()
+        [Test()]
+        public void TestGDTI96()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -254,8 +254,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestGDTI174 ()
+        [Test()]
+        public void TestGDTI174()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -281,8 +281,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestGID96 ()
+        [Test()]
+        public void TestGID96()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -308,8 +308,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestDOD96 ()
+        [Test()]
+        public void TestDOD96()
         {
             TDTEngine engine = new TDTEngine();
             string epcIdentifier = @"cageordodaac=99ABH;serial=123";
@@ -334,8 +334,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestADIvar ()
+        [Test()]
+        public void TestADIvar()
         {
             TDTEngine engine = new TDTEngine();
             string epcIdentifier = @"ADI CAG 99AH2/PNO 123/SEQ 145";
@@ -361,8 +361,8 @@ namespace TagDataTranslationUnitTest
         }
 
 
-        [Test ()]
-        public void TestSGTIN96 ()
+        [Test()]
+        public void TestSGTIN96()
         {
             TDTEngine engine = new TDTEngine();
 
@@ -388,8 +388,8 @@ namespace TagDataTranslationUnitTest
             Assert.AreEqual(epcIdentifier, result5);
         }
 
-        [Test ()]
-        public void TestSGTIN198 ()
+        [Test()]
+        public void TestSGTIN198()
         {
             TDTEngine engine = new TDTEngine();
 

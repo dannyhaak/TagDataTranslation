@@ -144,10 +144,9 @@ namespace TagDataTranslation
                         // element specifies a taglength attribute, then if the value of this attribute does not
                         // match the value of the taglength key in the associative array, then this scheme and
                         // level should no longer be considered as a candidate for the inbound representation.
-                        if (s.tagLength != null)
+                        if (s.tagLength != null && s.tagLength != "var")
                         {
-                            string taglength;
-                            if (parameterDictionary.TryGetValue("taglength", out taglength))
+                            if (parameterDictionary.TryGetValue("taglength", out string taglength))
                             {
                                 if (!taglength.Equals(s.tagLength))
                                 {
@@ -175,8 +174,8 @@ namespace TagDataTranslation
             Option inputOption = null;
             foreach (KeyValuePair<Level, Scheme> kvp in inputLevelsSchemes)
             {
-                Level l = (Level)kvp.Key;
-                Scheme s = (Scheme)kvp.Value;
+                Level l = kvp.Key;
+                Scheme s = kvp.Value;
 
                 // For each of these schemes, if the optionKey attribute is
                 // specified within the scheme element in terms of the name of a supplied parameter (e.g.
@@ -302,7 +301,7 @@ namespace TagDataTranslation
             Field[] fields = inputOption.field;
             Field[] fieldsSorted = fields.OrderBy(c => c.seq).ToArray();
 
-            for (int i = 1; i < m.Groups.Count; i++)
+            for (int i = 1; i <= fieldsSorted.Length; i++)
             {
                 Field inputField = fieldsSorted[i - 1];
                 string name = inputField.name;
@@ -329,7 +328,7 @@ namespace TagDataTranslation
                     // Figure 9b.
                     if (inputField.compactionSpecified)
                     {
-                        //TODO: implement check for bitPadChar; somehow not used in TDS1.6.
+                        //TODO: implement check for bitPadChar; somehow not used in TDS1.12.
 
                         // Convert sequence of bit into characters, 
                         // considering that each byte may have been compacted,
@@ -386,6 +385,7 @@ namespace TagDataTranslation
 
                         // strip null characters at the end of the string
                         variableElement = variableElement.TrimEnd('\0');
+                        variableElement = variableElement.TrimEnd('@');
                     }
                     else
                     {
