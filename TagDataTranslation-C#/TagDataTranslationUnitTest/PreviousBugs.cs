@@ -90,6 +90,19 @@ namespace TagDataTranslationUnitTest
         }
 
         [Test()]
+        public void BitPaddingInNonDivisibleByFourLengthEpcs()
+        {
+            TDTEngine engine = new TDTEngine();
+
+            string epcIdentifier = engine.HexToBinary(@"4074F4E4E40C0E40820000000F6C");
+            string parameterList = @"";
+
+            string result = engine.Translate(epcIdentifier, parameterList, @"TAG_ENCODING");
+            string expect = @"urn:epc:tag:itip-110:3.4012345.012345.01.02.987";
+            Assert.AreEqual(expect, result);
+        }
+
+        [Test()]
         public void AdiVarBrendan()
         {
             TDTEngine engine = new TDTEngine();
