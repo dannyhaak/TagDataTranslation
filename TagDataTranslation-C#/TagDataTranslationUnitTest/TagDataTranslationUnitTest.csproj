@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TagDataTranslationUnitTest</RootNamespace>
     <AssemblyName>TagDataTranslationUnitTest</AssemblyName>
-    <ReleaseVersion>1.1.2</ReleaseVersion>
+    <ReleaseVersion>1.1.3</ReleaseVersion>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -39,7 +39,6 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="TDTStandard.cs" />
     <Compile Include="Custom.cs" />
-    <Compile Include="Timing.cs" />
     <Compile Include="PreviousBugs.cs" />
     <Compile Include="TDSStandard.cs" />
     <Compile Include="TDSStandardCPLengthVariation.cs" />
@@ -50,6 +49,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Timing.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TagDataTranslation\TagDataTranslation.csproj">

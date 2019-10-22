@@ -172,6 +172,10 @@ namespace TagDataTranslation
             Level inputLevel = null;
             Scheme inputScheme = null;
             Option inputOption = null;
+
+            // Sort by longest prefix matches such that it finds a solution for multiple matches.
+            inputLevelsSchemes = inputLevelsSchemes.OrderByDescending(i => i.Key.prefixMatch.Length).ToDictionary(x => x.Key, y => y.Value);
+
             foreach (KeyValuePair<Level, Scheme> kvp in inputLevelsSchemes)
             {
                 Level l = kvp.Key;
@@ -233,7 +237,7 @@ namespace TagDataTranslation
                         epcIdentifierUnescaped = epcIdentifier;
                     }
 
-                    Regex regex = new Regex("^" + o.pattern + "$");
+                    Regex regex = new Regex("^" + o.pattern);
                     if (regex.IsMatch(epcIdentifierUnescaped))
                     {
                         inputScheme = s;
@@ -289,7 +293,8 @@ namespace TagDataTranslation
             // as backreferences, from the start of the input value, e.g. the value from the first
             // backreference should be considered as the value of the field element with seq="1",
             // the value of the second backreference is the value of the field element with seq="2".
-            Regex r = new Regex("^" + inputOption.pattern + "$");
+            Regex r = new Regex("^" + inputOption.pattern);
+
             Match m = r.Match(epcIdentifier);
 
             if (!m.Success)
