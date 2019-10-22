@@ -27,8 +27,8 @@
 - GID
 - USDoD
 - ADI</Description>
-        <PackageVersion>1.1.2-beta</PackageVersion>
-        <ReleaseVersion>1.1.2-beta</ReleaseVersion>
+        <PackageVersion>1.1.2</PackageVersion>
+        <ReleaseVersion>1.1.2</ReleaseVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />

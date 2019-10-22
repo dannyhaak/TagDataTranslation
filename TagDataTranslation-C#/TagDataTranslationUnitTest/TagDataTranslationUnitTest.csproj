@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TagDataTranslationUnitTest</RootNamespace>
     <AssemblyName>TagDataTranslationUnitTest</AssemblyName>
-    <ReleaseVersion>1.1.2-beta</ReleaseVersion>
+    <ReleaseVersion>1.1.2</ReleaseVersion>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
