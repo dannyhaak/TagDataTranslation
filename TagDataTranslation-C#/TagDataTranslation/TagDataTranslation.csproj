@@ -27,8 +27,9 @@
 - GID
 - USDoD
 - ADI</Description>
-        <PackageVersion>1.1.3</PackageVersion>
-        <ReleaseVersion>1.1.3</ReleaseVersion>
+        <PackageVersion>1.1.4</PackageVersion>
+        <ReleaseVersion>1.1.4</ReleaseVersion>
+        <PackageReleaseNotes>Updated GS1 Company Prefix XML file and updates to ITIP encoding. Now really.</PackageReleaseNotes>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
