@@ -2,7 +2,7 @@
 <tdt:epcTagDataTranslation version="1.11" date="2017-08-01T09:41:00Z" epcTDSVersion="1.11" xmlns:tdt="urn:epcglobal:tdt:xsd:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:epcglobal:tdt:xsd:1 EpcTagDataTranslation.xsd">
     <scheme name="ITIP-110" optionKey="gs1companyprefixlength" tagLength="110">
    		<level type="BINARY" prefixMatch="01000000" requiredFormattingParameters="filter,taglength">
-            <option optionKey="12" pattern="01000000([01]{3})000([01]{40})([01]{4})([01]{7})([01]{7})([01]{38})(?:[01]{0,2})" grammar="'01000000' filter '000' gs1companyprefix itemref piece total serial">
+            <option optionKey="12" pattern="01000000([01]{3})000([01]{40})([01]{4})([01]{7})([01]{7})([01]{38})" grammar="'01000000' filter '000' gs1companyprefix itemref piece total serial">
                 <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
                 <field seq="2" decimalMinimum="0" decimalMaximum="999999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="40" name="gs1companyprefix"/>
                 <field seq="3" decimalMinimum="0" decimalMaximum="9" characterSet="[01]*" bitPadDir="LEFT" bitLength="4" name="itemref"/>
@@ -10,7 +10,7 @@
                 <field seq="5" decimalMinimum="1" decimalMaximum="99" characterSet="[01]*" bitPadDir="LEFT" bitLength="7" name="total"/>
                 <field seq="6" decimalMinimum="0" decimalMaximum="274877906943" characterSet="[01]*" bitPadDir="LEFT" bitLength="38" name="serial"/>
             </option>
-            <option optionKey="11" pattern="01000000([01]{3})001([01]{37})([01]{7})([01]{7})([01]{7})([01]{38})(?:[01]{0,2})" grammar="'01000000' filter '001' gs1companyprefix itemref piece total serial">
+            <option optionKey="11" pattern="01000000([01]{3})001([01]{37})([01]{7})([01]{7})([01]{7})([01]{38})" grammar="'01000000' filter '001' gs1companyprefix itemref piece total serial">
                 <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
                 <field seq="2" decimalMinimum="0" decimalMaximum="99999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="37" name="gs1companyprefix"/>
                 <field seq="3" decimalMinimum="0" decimalMaximum="99" characterSet="[01]*" bitPadDir="LEFT" bitLength="7" name="itemref"/>
@@ -18,7 +18,7 @@
                 <field seq="5" decimalMinimum="1" decimalMaximum="99" characterSet="[01]*" bitPadDir="LEFT" bitLength="7" name="total"/>
                 <field seq="6" decimalMinimum="0" decimalMaximum="274877906943" characterSet="[01]*" bitPadDir="LEFT" bitLength="38" name="serial"/>
             </option>
-            <option optionKey="10" pattern="01000000([01]{3})010([01]{34})([01]{10})([01]{7})([01]{7})([01]{38})(?:[01]{0,2})" grammar="'01000000' filter '010' gs1companyprefix itemref piece total serial">
+            <option optionKey="10" pattern="01000000([01]{3})010([01]{34})([01]{10})([01]{7})([01]{7})([01]{38})" grammar="'01000000' filter '010' gs1companyprefix itemref piece total serial">
                 <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
                 <field seq="2" decimalMinimum="0" decimalMaximum="9999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="34" name="gs1companyprefix"/>
                 <field seq="3" decimalMinimum="0" decimalMaximum="999" characterSet="[01]*" bitPadDir="LEFT" bitLength="10" name="itemref"/>
@@ -26,7 +26,7 @@
                 <field seq="5" decimalMinimum="1" decimalMaximum="99" characterSet="[01]*" bitPadDir="LEFT" bitLength="7" name="total"/>
                 <field seq="6" decimalMinimum="0" decimalMaximum="274877906943" characterSet="[01]*" bitPadDir="LEFT" bitLength="38" name="serial"/>
             </option>
-            <option optionKey="9" pattern="01000000([01]{3})011([01]{30})([01]{14})([01]{7})([01]{7})([01]{38})(?:[01]{0,2})" grammar="'01000000' filter '011' gs1companyprefix itemref piece total serial">
+            <option optionKey="9" pattern="01000000([01]{3})011([01]{30})([01]{14})([01]{7})([01]{7})([01]{38})" grammar="'01000000' filter '011' gs1companyprefix itemref piece total serial">
                 <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
                 <field seq="2" decimalMinimum="0" decimalMaximum="999999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="30" name="gs1companyprefix"/>
                 <field seq="3" decimalMinimum="0" decimalMaximum="9999" characterSet="[01]*" bitPadDir="LEFT" bitLength="14" name="itemref"/>
@@ -34,7 +34,7 @@
                 <field seq="5" decimalMinimum="1" decimalMaximum="99" characterSet="[01]*" bitPadDir="LEFT" bitLength="7" name="total"/>
                 <field seq="6" decimalMinimum="0" decimalMaximum="274877906943" characterSet="[01]*" bitPadDir="LEFT" bitLength="38" name="serial"/>
             </option>
-            <option optionKey="8" pattern="01000000([01]{3})100([01]{27})([01]{17})([01]{7})([01]{7})([01]{38})(?:[01]{0,2})" grammar="'01000000' filter '100' gs1companyprefix itemref piece total serial">
+            <option optionKey="8" pattern="01000000([01]{3})100([01]{27})([01]{17})([01]{7})([01]{7})([01]{38})" grammar="'01000000' filter '100' gs1companyprefix itemref piece total serial">
                 <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
                 <field seq="2" decimalMinimum="0" decimalMaximum="99999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="27" name="gs1companyprefix"/>
                 <field seq="3" decimalMinimum="0" decimalMaximum="99999" characterSet="[01]*" bitPadDir="LEFT" bitLength="17" name="itemref"/>
@@ -42,7 +42,7 @@
                 <field seq="5" decimalMinimum="1" decimalMaximum="99" characterSet="[01]*" bitPadDir="LEFT" bitLength="7" name="total"/>
                 <field seq="6" decimalMinimum="0" decimalMaximum="274877906943" characterSet="[01]*" bitPadDir="LEFT" bitLength="38" name="serial"/>
             </option>
-			<option optionKey="7" pattern="01000000([01]{3})101([01]{24})([01]{20})([01]{7})([01]{7})([01]{38})(?:[01]{0,2})" grammar="'01000000' filter '101' gs1companyprefix itemref piece total serial">
+			<option optionKey="7" pattern="01000000([01]{3})101([01]{24})([01]{20})([01]{7})([01]{7})([01]{38})" grammar="'01000000' filter '101' gs1companyprefix itemref piece total serial">
 				<field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
 				<field seq="2" decimalMinimum="0" decimalMaximum="9999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="24" name="gs1companyprefix"/>
 				<field seq="3" decimalMinimum="0" decimalMaximum="999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="20" name="itemref"/>
@@ -50,7 +50,7 @@
 				<field seq="5" decimalMinimum="1" decimalMaximum="99" characterSet="[01]*" bitPadDir="LEFT" bitLength="7" name="total"/>
 				<field seq="6" decimalMinimum="0" decimalMaximum="274877906943" characterSet="[01]*" bitPadDir="LEFT" bitLength="38" name="serial"/>
 			</option>
-            <option optionKey="6" pattern="01000000([01]{3})110([01]{20})([01]{24})([01]{7})([01]{7})([01]{38})(?:[01]{0,2})" grammar="'01000000' filter '110' gs1companyprefix itemref piece total serial">
+            <option optionKey="6" pattern="01000000([01]{3})110([01]{20})([01]{24})([01]{7})([01]{7})([01]{38})" grammar="'01000000' filter '110' gs1companyprefix itemref piece total serial">
                 <field seq="1" decimalMinimum="0" decimalMaximum="7" characterSet="[01]*" bitPadDir="LEFT" bitLength="3" name="filter"/>
                 <field seq="2" decimalMinimum="0" decimalMaximum="999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="20" name="gs1companyprefix"/>
                 <field seq="3" decimalMinimum="0" decimalMaximum="9999999" characterSet="[01]*" bitPadDir="LEFT" bitLength="24" name="itemref"/>
