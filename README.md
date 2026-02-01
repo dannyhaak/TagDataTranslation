@@ -54,7 +54,7 @@ dotnet build
 
 ## Requirements
 
-- .NET 10.0 or later
+- .NET 8.0 or later (supports .NET 8.0, 9.0, and 10.0)
 
 ## Quick Start
 
