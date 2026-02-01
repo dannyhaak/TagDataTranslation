@@ -545,4 +545,106 @@ public class TDT22Tests
     }
 
     #endregion
+
+    #region TryTranslate API (Exception-Free)
+
+    [Fact]
+    public void TryTranslate_ValidInput_ReturnsTrue()
+    {
+        var pureIdentity = "urn:epc:id:sgtin:0614141.812345.6789";
+        var paramList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+
+        var success = _engine.TryTranslate(pureIdentity, paramList, "BINARY", out var result, out var errorCode);
+
+        Assert.True(success);
+        Assert.NotNull(result);
+        Assert.Null(errorCode);
+        Assert.Equal(96, result!.Length);
+    }
+
+    [Fact]
+    public void TryTranslate_InvalidScheme_ReturnsFalse()
+    {
+        var invalid = "urn:epc:id:invalid:123.456.789";
+
+        var success = _engine.TryTranslate(invalid, "tagLength=96", "BINARY", out var result, out var errorCode);
+
+        Assert.False(success);
+        Assert.Null(result);
+        Assert.NotNull(errorCode);
+        Assert.Equal("TDTSchemeNotFound", errorCode);
+    }
+
+    [Fact]
+    public void TryTranslate_InvalidOutputFormat_ReturnsFalse()
+    {
+        var pureIdentity = "urn:epc:id:sgtin:0614141.812345.6789";
+        var paramList = "filter=3;tagLength=96";
+
+        var success = _engine.TryTranslate(pureIdentity, paramList, "INVALID_FORMAT", out var result, out var errorCode);
+
+        Assert.False(success);
+        Assert.Null(result);
+        Assert.NotNull(errorCode);
+        Assert.Equal("TDTOutputFormatUnknownException", errorCode);
+    }
+
+    [Fact]
+    public void TryTranslateDetails_ValidInput_ReturnsTrue()
+    {
+        var hex = "30340242201d8840009efdf7";
+        var binary = _engine.HexToBinary(hex);
+
+        var success = _engine.TryTranslateDetails(binary, "tagLength=96", "PURE_IDENTITY", out var result, out var errorCode);
+
+        Assert.True(success);
+        Assert.NotNull(result);
+        Assert.Null(errorCode);
+        Assert.NotNull(result!.Output);
+        Assert.NotNull(result.ParameterDictionary);
+    }
+
+    [Fact]
+    public void TryTranslateDetails_InvalidInput_ReturnsFalse()
+    {
+        var invalid = "urn:epc:id:invalid:123.456.789";
+
+        var success = _engine.TryTranslateDetails(invalid, "tagLength=96", "BINARY", out var result, out var errorCode);
+
+        Assert.False(success);
+        Assert.Null(result);
+        Assert.NotNull(errorCode);
+    }
+
+    [Fact]
+    public void TryTranslate_Performance_NoExceptionOverhead()
+    {
+        // verify multiple calls don't throw exceptions when invalid
+        var invalid = "urn:epc:id:invalid:123.456.789";
+
+        for (int i = 0; i < 100; i++)
+        {
+            var success = _engine.TryTranslate(invalid, "tagLength=96", "BINARY", out _, out _);
+            Assert.False(success);
+        }
+    }
+
+    [Fact]
+    public void TryTranslate_RoundTrip()
+    {
+        var pureIdentity = "urn:epc:id:sgtin:0614141.812345.6789";
+        var paramList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+
+        // Encode
+        var encodeSuccess = _engine.TryTranslate(pureIdentity, paramList, "BINARY", out var binary, out var encodeError);
+        Assert.True(encodeSuccess);
+        Assert.NotNull(binary);
+
+        // Decode
+        var decodeSuccess = _engine.TryTranslate(binary!, "tagLength=96", "PURE_IDENTITY", out var decoded, out var decodeError);
+        Assert.True(decodeSuccess);
+        Assert.Equal(pureIdentity, decoded);
+    }
+
+    #endregion
 }

@@ -159,6 +159,33 @@ public TranslateResult TranslateDetails(string epcIdentifier, string parameterLi
 
 Same as `Translate`, but returns a `TranslateResult` object containing all extracted fields.
 
+#### TryTranslate (Exception-Free)
+
+```csharp
+public bool TryTranslate(string epcIdentifier, string parameterList, string outputFormat, out string? result, out string? errorCode)
+```
+
+Translates an EPC identifier without throwing exceptions. Ideal for high-throughput scenarios.
+
+```csharp
+if (engine.TryTranslate(epcIdentifier, parameterList, "BINARY", out var result, out var errorCode))
+{
+    Console.WriteLine($"Success: {result}");
+}
+else
+{
+    Console.WriteLine($"Failed: {errorCode}");
+}
+```
+
+#### TryTranslateDetails (Exception-Free)
+
+```csharp
+public bool TryTranslateDetails(string epcIdentifier, string parameterList, string outputFormat, out TranslateResult? result, out string? errorCode)
+```
+
+Same as `TryTranslate`, but returns a `TranslateResult` object on success.
+
 #### GetPrefixLength
 
 ```csharp
@@ -225,6 +252,8 @@ dotnet nuget push bin/Release/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY 
 
 | Version | Changes |
 |---------|---------|
+| 2.1.0 | Added TryTranslate/TryTranslateDetails for exception-free high-throughput translation |
+| 2.0.1 | Multi-targeting support for .NET 8.0, 9.0, and 10.0 |
 | 2.0.0 | TDT 2.2 with JSON schemes, Digital Link support, new schemes (DSGTIN+, GDTI-113, etc.) |
 | 1.1.5 | Updated GCP prefix file, ITIP encoding fixes |
 | 1.0.0 | Initial release with TDT 1.6/1.11 support |

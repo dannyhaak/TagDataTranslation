@@ -7,7 +7,7 @@
 
         <!-- NuGet Package Properties -->
         <PackageId>TagDataTranslation</PackageId>
-        <Version>2.0.1</Version>
+        <Version>2.1.0</Version>
         <Authors>Danny Haak</Authors>
         <Company>Danny Haak</Company>
         <Product>TagDataTranslation</Product>
@@ -24,6 +24,10 @@
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 
         <PackageReleaseNotes>
+Version 2.1.0:
+- Added TryTranslate and TryTranslateDetails methods for exception-free translation
+- Ideal for high-throughput scenarios where exception overhead is a concern
+
 Version 2.0.1:
 - Added multi-targeting support for .NET 8.0, 9.0, and 10.0
 

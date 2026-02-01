@@ -190,6 +190,63 @@ namespace TagDataTranslation
         }
 
         /// <summary>
+        /// Attempts to translate an EPC identifier without throwing exceptions.
+        /// </summary>
+        /// <param name="epcIdentifier">The input EPC identifier.</param>
+        /// <param name="parameterList">Semicolon-separated list of key=value parameters.</param>
+        /// <param name="outputFormat">The desired output format (e.g., "BINARY", "PURE_IDENTITY", "GS1_DIGITAL_LINK").</param>
+        /// <param name="result">When successful, contains the translated EPC identifier string; otherwise null.</param>
+        /// <param name="errorCode">When translation fails, contains the error code; otherwise null.</param>
+        /// <returns>True if translation succeeded; false otherwise.</returns>
+        public bool TryTranslate(string epcIdentifier, string parameterList, string outputFormat, out string? result, out string? errorCode)
+        {
+            if (TryTranslateDetails(epcIdentifier, parameterList, outputFormat, out var translateResult, out errorCode))
+            {
+                result = translateResult?.Output;
+                return result != null;
+            }
+
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to translate an EPC identifier and returns detailed results without throwing exceptions.
+        /// </summary>
+        /// <param name="epcIdentifier">The input EPC identifier.</param>
+        /// <param name="parameterList">Semicolon-separated list of key=value parameters.</param>
+        /// <param name="outputFormat">The desired output format.</param>
+        /// <param name="result">When successful, contains the translation result; otherwise null.</param>
+        /// <param name="errorCode">When translation fails, contains the error code; otherwise null.</param>
+        /// <returns>True if translation succeeded; false otherwise.</returns>
+        public bool TryTranslateDetails(string epcIdentifier, string parameterList, string outputFormat, out TranslateResult? result, out string? errorCode)
+        {
+            try
+            {
+                result = TranslateDetails(epcIdentifier, parameterList, outputFormat);
+                if (result == null)
+                {
+                    errorCode = "TDTSchemeNotFound";
+                    return false;
+                }
+                errorCode = null;
+                return true;
+            }
+            catch (TDTTranslationException ex)
+            {
+                result = null;
+                errorCode = ex.Message;
+                return false;
+            }
+            catch (Exception)
+            {
+                result = null;
+                errorCode = "TDTUnknownError";
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Processes the input EPC identifier and extracts field values.
         /// </summary>
         public Dictionary<string, string> ProcessInput(string epcIdentifier, string parameterList)
