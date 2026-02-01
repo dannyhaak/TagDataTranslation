@@ -1,0 +1,894 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.2",
+    "date": "2024-11-18T16:30:00Z",
+    "epcTDSVersion": "2.2",
+    "scheme": {
+      "name": "ADI-var",
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "00111011",
+          "requiredFormattingParameters": "filter",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^00111011([01]{6})100000((?:(?:(?!000000)(?!001001)(?!001111)0(?:00|01|10)[01]{3}|01100[01]|011010)|(?:11[01]{4})|(?:111--[01])){5})000000((?:(?!000000)(?!100011)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000",
+              "grammar": "'00111011' filter '100000' cage '000000' serial '000000'",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 6,
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "length": 5,
+                  "bitLength": 30,
+                  "name": "cage"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^00111011([01]{6})100000((?:(?:(?!000000)(?!001001)(?!001111)0(?:00|01|10)[01]{3}|01100[01]|011010)|(?:11[01]{4})|(?:111--[01])){5})((?:(?!000000)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000((?:(?!000000)(?!100011)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000",
+              "grammar": "'00111011' filter '100000' cage originalPartNumber '000000' serial '000000'",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 6,
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "length": 5,
+                  "bitLength": 30,
+                  "name": "cage"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "originalPartNumber"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^00111011([01]{6})100000((?:(?:(?!000000)(?!001001)(?!001111)0(?:00|01|10)[01]{3}|01100[01]|011010)|(?:11[01]{4})|(?:111--[01])){5})000000(100011(?:(?!000000)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000",
+              "grammar": "'00111011' filter '100000' cage '000000' serial '000000'",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 6,
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "length": 5,
+                  "bitLength": 30,
+                  "name": "cage"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^00111011([01]{6})100000((?:(?:(?!000000)(?!001001)(?!001111)0(?:00|01|10)[01]{3}|01100[01]|011010)|(?:11[01]{4})|(?:111--[01])){5})((?:(?!000000)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000(100011(?:(?!000000)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000",
+              "grammar": "'00111011' filter '100000' cage originalPartNumber '000000' serial '000000'",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 6,
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "length": 5,
+                  "bitLength": 30,
+                  "name": "cage"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "originalPartNumber"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^00111011([01]{6})((?:(?:(?!000000)(?!001001)(?!001111)0(?:00|01|10)[01]{3}|01100[01]|011010)|(?:11[01]{4})|(?:111--[01])){6})000000((?:(?!000000)(?!100011)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000",
+              "grammar": "'00111011' filter dodaac '000000' serial '000000'",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 6,
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "length": 6,
+                  "bitLength": 36,
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^00111011([01]{6})((?:(?:(?!000000)(?!001001)(?!001111)0(?:00|01|10)[01]{3}|01100[01]|011010)|(?:11[01]{4})|(?:111--[01])){6})((?:(?!000000)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000((?:(?!000000)(?!100011)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000",
+              "grammar": "'00111011' filter dodaac originalPartNumber '000000' serial '000000'",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 6,
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "length": 6,
+                  "bitLength": 36,
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "originalPartNumber"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "7",
+              "pattern": "^00111011([01]{6})((?:(?:(?!000000)(?!001001)(?!001111)0(?:00|01|10)[01]{3}|01100[01]|011010)|(?:11[01]{4})|(?:111--[01])){6})000000(100011(?:(?!000000)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000",
+              "grammar": "'00111011' filter dodaac '000000' serial '000000'",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 6,
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "length": 6,
+                  "bitLength": 36,
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "8",
+              "pattern": "^00111011([01]{6})((?:(?:(?!000000)(?!001001)(?!001111)0(?:00|01|10)[01]{3}|01100[01]|011010)|(?:11[01]{4})|(?:111--[01])){6})((?:(?!000000)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000(100011(?:(?!000000)(?:0(?:00|01|10)[01]{3})|(?:01100[01])|011010|(?:110[01]{3})|(?:11100[01])|(?:1011[01]1))+)000000",
+              "grammar": "'00111011' filter dodaac originalPartNumber '000000' serial '000000'",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 6,
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "length": 6,
+                  "bitLength": 36,
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "originalPartNumber"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[01]*",
+                  "compaction": "6-bit",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TAG_ENCODING",
+          "prefixMatch": "urn:epc:tag:adi-var",
+          "requiredFormattingParameters": "filter",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^urn:epc:tag:adi-var:([0-9]+)\\.([0-9A-HJ-NP-Z]{5})\\.\\.((?:[0-9A-Z-]|%2F){1,30})$",
+              "grammar": "'urn:epc:tag:adi-var:' filter '.' cage '.'  '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[0-9]*",
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^urn:epc:tag:adi-var:([0-9]+)\\.([0-9A-HJ-NP-Z]{5})\\.((?:[0-9A-Z-]|%2F){1,32})\\.((?:[0-9A-Z-]|%2F){1,30})$",
+              "grammar": "'urn:epc:tag:adi-var:' filter '.' cage '.' urnEncodedOriginalPartNumber '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[0-9]*",
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedOriginalPartNumber"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^urn:epc:tag:adi-var:([0-9]+)\\.([0-9A-HJ-NP-Z]{5})\\.\\.(%23(?:[0-9A-Z-]|%2F){1,29})$",
+              "grammar": "'urn:epc:tag:adi-var:' filter '.' cage '.'  '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[0-9]*",
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "#[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^urn:epc:tag:adi-var:([0-9]+)\\.([0-9A-HJ-NP-Z]{5})\\.((?:[0-9A-Z-]|%2F){1,32})\\.(%23(?:[0-9A-Z-]|%2F){1,29})$",
+              "grammar": "'urn:epc:tag:adi-var:' filter '.' cage '.' urnEncodedOriginalPartNumber '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[0-9]*",
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedOriginalPartNumber"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^urn:epc:tag:adi-var:([0-9]+)\\.([0-9A-HJ-NP-Z]{6})\\.\\.((?:[0-9A-Z-]|%2F){1,30})$",
+              "grammar": "'urn:epc:tag:adi-var:' filter '.' dodaac '.'  '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[0-9]*",
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^urn:epc:tag:adi-var:([0-9]+)\\.([0-9A-HJ-NP-Z]{6})\\.((?:[0-9A-Z-]|%2F){1,32})\\.((?:[0-9A-Z-]|%2F){1,30})$",
+              "grammar": "'urn:epc:tag:adi-var:' filter '.' dodaac '.' urnEncodedOriginalPartNumber '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[0-9]*",
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedOriginalPartNumber"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "7",
+              "pattern": "^urn:epc:tag:adi-var:([0-9]+)\\.([0-9A-HJ-NP-Z]{6})\\.\\.(%23(?:[0-9A-Z-]|%2F){1,29})$",
+              "grammar": "'urn:epc:tag:adi-var:' filter '.' dodaac '.'  '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[0-9]*",
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "#[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "8",
+              "pattern": "^urn:epc:tag:adi-var:([0-9]+)\\.([0-9A-HJ-NP-Z]{6})\\.((?:[0-9A-Z-]|%2F){1,32})\\.(%23(?:[0-9A-Z-]|%2F){1,29})$",
+              "grammar": "'urn:epc:tag:adi-var:' filter '.' dodaac '.' urnEncodedOriginalPartNumber '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "63",
+                  "characterSet": "[0-9]*",
+                  "name": "filter"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedOriginalPartNumber"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "originalPartNumber",
+              "characterSet": "[A-Z0-9/#-]*",
+              "function": "URNDECODE(urnEncodedOriginalPartNumber)"
+            },
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 2,
+              "newFieldName": "serial",
+              "characterSet": "[A-Z0-9/#-]*",
+              "function": "URNDECODE(urnEncodedSerial)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urnEncodedOriginalPartNumber",
+              "characterSet": "(?:[A-Z0-9-]|%2F|%23)*",
+              "function": "URNENCODE(originalPartNumber)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 2,
+              "newFieldName": "urnEncodedSerial",
+              "characterSet": "(?:[A-Z0-9-]|%2F|%23)*",
+              "function": "URNENCODE(serial)"
+            }
+          ]
+        },
+        {
+          "type": "PURE_IDENTITY",
+          "prefixMatch": "urn:epc:id:adi",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^urn:epc:id:adi:([0-9A-HJ-NP-Z]{5})\\.\\.((?:[0-9A-Z-]|%2F){1,30})$",
+              "grammar": "'urn:epc:id:adi:' cage '.' '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^urn:epc:id:adi:([0-9A-HJ-NP-Z]{5})\\.((?:[0-9A-Z-]|%2F){1,32})\\.((?:[0-9A-Z-]|%2F){1,30})$",
+              "grammar": "'urn:epc:id:adi:' cage '.' urnEncodedOriginalPartNumber '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedOriginalPartNumber"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^urn:epc:id:adi:([0-9A-HJ-NP-Z]{5})\\.\\.(%23(?:[0-9A-Z-]|%2F){1,29})$",
+              "grammar": "'urn:epc:id:adi:' cage '.' '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^urn:epc:id:adi:([0-9A-HJ-NP-Z]{5})\\.((?:[0-9A-Z-]|%2F){1,32})\\.(%23(?:[0-9A-Z-]|%2F){1,29})$",
+              "grammar": "'urn:epc:id:adi:' cage '.' urnEncodedOriginalPartNumber '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedOriginalPartNumber"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^urn:epc:id:adi:([0-9A-HJ-NP-Z]{6})\\.\\.((?:[0-9A-Z-]|%2F){1,30})$",
+              "grammar": "'urn:epc:id:adi:' dodaac '.' '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^urn:epc:id:adi:([0-9A-HJ-NP-Z]{6})\\.((?:[0-9A-Z-]|%2F){1,32})\\.((?:[0-9A-Z-]|%2F){1,30})$",
+              "grammar": "'urn:epc:id:adi:' dodaac '.' urnEncodedOriginalPartNumber '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedOriginalPartNumber"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "7",
+              "pattern": "^urn:epc:id:adi:([0-9A-HJ-NP-Z]{6})\\.\\.(%23(?:[0-9A-Z-]|%2F){1,29})$",
+              "grammar": "'urn:epc:id:adi:' dodaac '.' '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "#[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            },
+            {
+              "optionKey": "8",
+              "pattern": "^urn:epc:id:adi:([0-9A-HJ-NP-Z]{6})\\.((?:[0-9A-Z-]|%2F){1,32})\\.(%23(?:[0-9A-Z-]|%2F){1,29})$",
+              "grammar": "'urn:epc:id:adi:' dodaac '.' urnEncodedOriginalPartNumber '.' urnEncodedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedOriginalPartNumber"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "urnEncodedSerial"
+                }
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "originalPartNumber",
+              "characterSet": "[A-Z0-9/#-]*",
+              "function": "URNDECODE(urnEncodedOriginalPartNumber)"
+            },
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 2,
+              "newFieldName": "serial",
+              "characterSet": "[A-Z0-9/#-]]*",
+              "function": "URNDECODE(urnEncodedSerial)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urnEncodedOriginalPartNumber",
+              "characterSet": "(?:[A-Z0-9-]|%2F|%23)*",
+              "function": "URNENCODE(originalPartNumber)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 2,
+              "newFieldName": "urnEncodedSerial",
+              "characterSet": "(?:[A-Z0-9-]|%2F|%23)*",
+              "function": "URNENCODE(serial)"
+            }
+          ]
+        },
+        {
+          "type": "TEI",
+          "prefixMatch": "ADI ",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^ADI CAG ([0-9A-HJ-NP-Z]{5})/SER ([0-9A-Z/-]{1,30})$",
+              "grammar": "'ADI CAG ' cage '/SER ' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^ADI CAG ([0-9A-HJ-NP-Z]{5})/PNO ([0-9A-Z/-]{1,32})/SEQ ([0-9A-Z/-]{1,30})$",
+              "grammar": "'ADI CAG ' cage '/PNO ' originalPartNumber '/SEQ ' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "originalPartNumber"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^ADI CAG ([0-9A-HJ-NP-Z]{5})/SER ([#][0-9A-Z/-]{1,29})$",
+              "grammar": "'ADI CAG ' cage '/SER ' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "#[0-9A-Z/-]+",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^ADI CAG ([0-9A-HJ-NP-Z]{5})/PNO ([0-9A-Z/-]{1,32})/SEQ ([#][0-9A-Z/-]{1,29})$",
+              "grammar": "'ADI CAG ' cage '/PNO ' originalPartNumber '/SEQ ' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "cage"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "originalPartNumber"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "#[0-9A-Z/-]+",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^ADI DAC ([0-9A-HJ-NP-Z]{6})/SER ([0-9A-Z/-]{1,30})$",
+              "grammar": "'ADI DAC ' dodaac '/SER ' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^ADI DAC ([0-9A-HJ-NP-Z]{6})/PNO ([0-9A-Z/-]{1,32})/SEQ ([0-9A-Z/-]{1,30})$",
+              "grammar": "'ADI DAC ' dodaac '/PNO ' originalPartNumber '/SEQ ' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "originalPartNumber"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "7",
+              "pattern": "^ADI DAC ([0-9A-HJ-NP-Z]{6})/SER ([#][0-9A-Z/-]{1,29})$",
+              "grammar": "'ADI DAC ' dodaac '/SER=' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "#[0-9A-Z/-]+",
+                  "name": "serial"
+                }
+              ]
+            },
+            {
+              "optionKey": "8",
+              "pattern": "^ADI DAC ([0-9A-HJ-NP-Z]{6})/PNO ([0-9A-Z/-]{1,32})/SEQ ([#][0-9A-Z/-]{1,29})$",
+              "grammar": "'ADI DAC ' dodaac '/PNO ' originalPartNumber '/SEQ ' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9A-HJ-NP-Z]+",
+                  "name": "dodaac"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9A-Z/-]+",
+                  "name": "originalPartNumber"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "#[0-9A-Z/-]+",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+"tableID":"E",
+"date": "2023-06-18T21:11:00Z",
+"description":"Details of new encoding schemes supported in TDS 2.0",
+"columns": [
+	{"id":"a", "name":"Encoding indicator", "description":"Encoding indicator value (decimal integer)"},
+	{"id":"b", "name":"3-bit Encoding indicator", "description":"Encoding indicator value (3 bits)"},
+	{"id":"c", "name":"Encoding name", "description":"Name of encoding method"},
+	{"id":"d", "name":"Supported characters", "description":"Characters supported in this encoding"},
+	{"id":"e", "name":"Efficiency", "description":"Efficiency of encoding (bits per character)"},
+	{"id":"f", "name":"Regex", "description":"Regular expression for supported characters"},
+	{"id":"g", "name":"Spec Section","description":"Section of the TDS 2.0 standard explaining this encoding"}
+],
+"rows": [
+	{"a":"0", "b":"000", "c":"Variable-length integer", "d":"0-9", "e": "approximately 3.32 bits per digit, rounded up to next integer", "f":"[0-9]", "g":"14.5.6.1"},
+	{"a":"1", "b":"001", "c":"Variable-length upper case hexadecimal", "d":"0-9 A-F", "e":"4 bits per digit or hex character", "f":"[0-9A-F]", "g":"14.5.6.2"},
+	{"a":"2", "b":"010", "c":"Variable-length lower case hexadecimal", "d":"0-9 a-f", "e":"4 bits per digit or hex character", "f":"[0-9a-f]", "g":"14.5.6.3"},
+	{"a":"3", "b":"011", "c":"Variable-length filesafe URI-safe base 64 (see RFC 4648 section 5)", "d":"0-9 A-Z a-z hyphen (-) and underscore (_)", "e":"6 bits per character", "f":"[0-9A-Za-z_-]", "g":"14.5.6.4"},
+	{"a":"4", "b":"100", "c":"Variable-length 7-bit ASCII", "d":"See Gen Specs Fig 7.11-1 or Gen Specs Fig 7.11-2", "e":"7 bits per character", "f":"[\\x21-\\x22\\x25-\\x2F\\x30-\\x39\\x3A-\\x3F\\x41-\\x5A\\x5F\\x61-\\x7A]", "g":"14.5.6.6"},
+	{"a":"5", "b":"101", "c":"Variable-length URN Code 40", "d":"0-9 A-Z hyphen (-) full stop (.) and colon (:)", "e":"≈ 5.33 bits per character (16 bits per 3 characters)", "f":"[0-9A-Z\\.:-]", "g":"14.5.6.5"}
+]
+}

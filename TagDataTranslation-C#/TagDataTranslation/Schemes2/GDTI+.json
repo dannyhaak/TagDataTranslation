@@ -1,0 +1,132 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.2",
+    "date": "2024-11-18T16:30:00Z",
+    "epcTDSVersion": "2.2",
+    "scheme": {
+      "name": "GDTI+",
+      "optionKey": "1",
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11110110",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11110110([01])([01]{3})",
+              "grammar": "'11110110' dataToggle filter encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "253",
+                  "name": "gdti",
+                  "seq": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "gdti=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^gdti=([0-9]{13}[!%-?A-Z_a-z\\x22]{1,17})$",
+              "grammar": "'gdti=' gdti ",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "gdti"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"253\"\\s*:\\s*\"([0-9]{13}(?:[!%-?A-Z_a-z]|\\\\\"){1,17})\"",
+              "grammar": "'{\"253\":\"' gdti '\"}'",
+              "aiSequence": [
+                "253"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "gdti"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "http",
+          "requiredFormattingParameters": "uriStem",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "\\/253\\/([0-9]{13}(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,17})(?:\\?|$)",
+              "grammar": "uriStem '/253/' urlEscapedGdti ",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedGdti"
+                }
+              ],
+              "aiSequence": [
+                "253"
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "gdti",
+              "characterSet": "[!%-?A-Z_a-z\\x22]*",
+              "function": "URLDECODE(urlEscapedGdti)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urlEscapedGdti",
+              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "function": "URLENCODE(gdti)"
+            }
+          ],
+          "gs1DigitalLinkKeyQualifiers": []
+        }
+      ]
+    }
+  }
+}

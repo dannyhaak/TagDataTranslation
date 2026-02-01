@@ -1,0 +1,132 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.2",
+    "date": "2024-11-18T16:30:00Z",
+    "epcTDSVersion": "2.2",
+    "scheme": {
+      "name": "GIAI+",
+      "optionKey": "1",
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11111010",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11111010([01])([01]{3})",
+              "grammar": "'11111010' dataToggle filter encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "8004",
+                  "name": "giai",
+                  "seq": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "giai=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^giai=([0-9]{4}[!%-?A-Z_a-z\\x22]{1,26})$",
+              "grammar": "'giai=' giai ",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "giai"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"8004\"\\s*:\\s*\"([0-9]{4}(?:[!%-?A-Z_a-z]|\\\\\"){1,26})\"",
+              "grammar": "'{\"8004\":\"' giai '\"}'",
+              "aiSequence": [
+                "8004"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "giai"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "http",
+          "requiredFormattingParameters": "uriStem",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "\\/8004\\/([0-9]{4}(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,26})(?:\\?|$)",
+              "grammar": "uriStem '/8004/' urlEscapedGiai ",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedGiai"
+                }
+              ],
+              "aiSequence": [
+                "8004"
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "giai",
+              "characterSet": "[!%-?A-Z_a-z\\x22]*",
+              "function": "URLDECODE(urlEscapedGiai)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urlEscapedGiai",
+              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "function": "URLENCODE(giai)"
+            }
+          ],
+          "gs1DigitalLinkKeyQualifiers": []
+        }
+      ]
+    }
+  }
+}

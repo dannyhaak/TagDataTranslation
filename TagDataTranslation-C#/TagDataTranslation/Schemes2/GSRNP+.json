@@ -1,0 +1,129 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.2",
+    "date": "2024-11-18T16:30:00Z",
+    "epcTDSVersion": "2.2",
+    "scheme": {
+      "name": "GSRNP+",
+      "optionKey": "1",
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11110101",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11110101([01])([01]{3})",
+              "grammar": "'11110101' dataToggle filter encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "8017",
+                  "name": "gsrnp",
+                  "seq": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "gsrnp=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^gsrnp=([0-9]{18})$",
+              "grammar": "'gsrnp=' gsrnp ",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "999999999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 18,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gsrnp"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"8017\"\\s*:\\s*\"([0-9]{18})\"",
+              "grammar": "'{\"8017\":\"' gsrnp '\"}'",
+              "aiSequence": [
+                "8017"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "999999999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 18,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gsrnp"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "http",
+          "requiredFormattingParameters": "uriStem",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "\\/8017\\/([0-9]{18})(?:\\?|$)",
+              "grammar": "uriStem '/8017/' gsrnp ",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "999999999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 18,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gsrnp"
+                }
+              ],
+              "aiSequence": [
+                "8017"
+              ]
+            }
+          ],
+          "gs1DigitalLinkKeyQualifiers": [ "8019" ]
+        }
+      ]
+    }
+  }
+}

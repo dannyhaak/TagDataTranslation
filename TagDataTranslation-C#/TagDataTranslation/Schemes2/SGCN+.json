@@ -1,0 +1,114 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.2",
+    "date": "2024-11-18T16:30:00Z",
+    "epcTDSVersion": "2.2",
+    "scheme": {
+      "name": "SGCN+",
+      "optionKey": "1",
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11111000",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11111000([01])([01]{3})",
+              "grammar": "'11111000' dataToggle filter encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "255",
+                  "name": "gcn",
+                  "seq": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "gcn=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^gcn=([0-9]{14,25})$",
+              "grammar": "'gcn=' gcn ",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9]*",
+                  "name": "gcn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"255\"\\s*:\\s*\"([0-9]{14,25})\"",
+              "grammar": "'{\"255\":\"' gcn '\"}'",
+              "aiSequence": [
+                "255"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9]*",
+                  "name": "gcn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "http",
+          "requiredFormattingParameters": "uriStem",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "\\/255\\/([0-9]{14,25})(?:\\?|$)",
+              "grammar": "uriStem '/255/' gcn ",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[0-9]*",
+                  "name": "gcn"
+                }
+              ],
+              "aiSequence": [
+                "255"
+              ]
+            }
+          ],
+          "gs1DigitalLinkKeyQualifiers": []
+        }
+      ]
+    }
+  }
+}

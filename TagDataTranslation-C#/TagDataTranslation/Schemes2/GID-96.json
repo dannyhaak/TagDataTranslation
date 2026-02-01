@@ -1,0 +1,156 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.2",
+    "date": "2024-11-18T16:30:00Z",
+    "epcTDSVersion": "2.2",
+    "scheme": {
+      "name": "GID-96",
+      "optionKey": "1",
+      "tagLength": 96,
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "00110101",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^00110101([01]{28})([01]{24})([01]{36})",
+              "grammar": "'00110101' generalmanager objectclass serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "268435455",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 28,
+                  "name": "generalmanager"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "16777215",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 24,
+                  "name": "objectclass"
+                },
+                {
+                  "seq": 3,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "68719476735",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 36,
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TAG_ENCODING",
+          "prefixMatch": "urn:epc:tag:gid-96",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^urn:epc:tag:gid-96:([0-9]{1,9})\\.([0-9]{1,8})\\.([0-9]{1,11})$",
+              "grammar": "'urn:epc:tag:gid-96:' generalmanager '.' objectclass '.' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "268435455",
+                  "characterSet": "[0-9]*",
+                  "name": "generalmanager"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "16777215",
+                  "characterSet": "[0-9]*",
+                  "name": "objectclass"
+                },
+                {
+                  "seq": 3,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "68719476735",
+                  "characterSet": "[0-9]*",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "PURE_IDENTITY",
+          "prefixMatch": "urn:epc:id:gid",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^urn:epc:id:gid:([0-9]{1,9})\\.([0-9]{1,8})\\.([0-9]{1,11})$",
+              "grammar": "'urn:epc:id:gid:' generalmanager '.' objectclass '.' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "268435455",
+                  "characterSet": "[0-9]*",
+                  "name": "generalmanager"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "16777215",
+                  "characterSet": "[0-9]*",
+                  "name": "objectclass"
+                },
+                {
+                  "seq": 3,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "68719476735",
+                  "characterSet": "[0-9]*",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "generalmanager=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^generalmanager=([0-9]{1,9});objectclass=([0-9]{1,8});serial=([0-9]{1,11})$",
+              "grammar": "'generalmanager=' generalmanager ';objectclass=' objectclass ';serial=' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "268435455",
+                  "characterSet": "[0-9]*",
+                  "name": "generalmanager"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "16777215",
+                  "characterSet": "[0-9]*",
+                  "name": "objectclass"
+                },
+                {
+                  "seq": 3,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "68719476735",
+                  "characterSet": "[0-9]*",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

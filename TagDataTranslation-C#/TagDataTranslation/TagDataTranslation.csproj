@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netstandard1.2</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <PackOnBuild>true</PackOnBuild>
         <PackageId>TagDataTranslation</PackageId>
         <Authors>Danny Haak</Authors>
@@ -28,37 +28,9 @@
 - USDoD
 - ADI</Description>
         <PackageVersion>1.1.5</PackageVersion>
-        <ReleaseVersion>1.1.5</ReleaseVersion>
         <PackageReleaseNotes>Updated GS1 Company Prefix XML file and updates to ITIP encoding. Now really. Really.</PackageReleaseNotes>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
-        <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
-        <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
-        <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Remove="Schemes\ADI-var.xml" />
-        <None Remove="Schemes\CPI-96.xml" />
-        <None Remove="Schemes\CPI-var.xml" />
-        <None Remove="Schemes\GDTI-174.xml" />
-        <None Remove="Schemes\GDTI-96.xml" />
-        <None Remove="Schemes\GIAI-202.xml" />
-        <None Remove="Schemes\GIAI-96.xml" />
-        <None Remove="Schemes\GID-96.xml" />
-        <None Remove="Schemes\GRAI-170.xml" />
-        <None Remove="Schemes\GRAI-96.xml" />
-        <None Remove="Schemes\GSRN-96.xml" />
-        <None Remove="Schemes\GSRNP-96.xml" />
-        <None Remove="Schemes\ITIP-110.xml" />
-        <None Remove="Schemes\ITIP-212.xml" />
-        <None Remove="Schemes\SGCN-96.xml" />
-        <None Remove="Schemes\SGLN-195.xml" />
-        <None Remove="Schemes\SGLN-96.xml" />
-        <None Remove="Schemes\SGTIN-198.xml" />
-        <None Remove="Schemes\SGTIN-96.xml" />
-        <None Remove="Schemes\SSCC-96.xml" />
-        <None Remove="Schemes\USDOD-96.xml" />
         <None Remove="FilterValueTables\filter-ADI.csv" />
         <None Remove="FilterValueTables\filter-CPI.csv" />
         <None Remove="FilterValueTables\filter-GDTI.csv" />
@@ -76,27 +48,6 @@
         <None Remove="GCPPrefixFormatList\gcpprefixformatlist.xml" />
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Schemes\ADI-var.xml" />
-        <EmbeddedResource Include="Schemes\CPI-96.xml" />
-        <EmbeddedResource Include="Schemes\CPI-var.xml" />
-        <EmbeddedResource Include="Schemes\GDTI-174.xml" />
-        <EmbeddedResource Include="Schemes\GDTI-96.xml" />
-        <EmbeddedResource Include="Schemes\GIAI-202.xml" />
-        <EmbeddedResource Include="Schemes\GIAI-96.xml" />
-        <EmbeddedResource Include="Schemes\GID-96.xml" />
-        <EmbeddedResource Include="Schemes\GRAI-170.xml" />
-        <EmbeddedResource Include="Schemes\GRAI-96.xml" />
-        <EmbeddedResource Include="Schemes\GSRN-96.xml" />
-        <EmbeddedResource Include="Schemes\GSRNP-96.xml" />
-        <EmbeddedResource Include="Schemes\ITIP-110.xml" />
-        <EmbeddedResource Include="Schemes\ITIP-212.xml" />
-        <EmbeddedResource Include="Schemes\SGCN-96.xml" />
-        <EmbeddedResource Include="Schemes\SGLN-195.xml" />
-        <EmbeddedResource Include="Schemes\SGLN-96.xml" />
-        <EmbeddedResource Include="Schemes\SGTIN-198.xml" />
-        <EmbeddedResource Include="Schemes\SGTIN-96.xml" />
-        <EmbeddedResource Include="Schemes\SSCC-96.xml" />
-        <EmbeddedResource Include="Schemes\USDOD-96.xml" />
         <EmbeddedResource Include="FilterValueTables\filter-ADI.csv" />
         <EmbeddedResource Include="FilterValueTables\filter-CPI.csv" />
         <EmbeddedResource Include="FilterValueTables\filter-GDTI.csv" />
@@ -112,6 +63,8 @@
         <EmbeddedResource Include="FilterValueTables\filter-SSCC.csv" />
         <EmbeddedResource Include="FilterValueTables\filter-USDOD.csv" />
         <EmbeddedResource Include="GCPPrefixFormatList\gcpprefixformatlist.xml" />
+        <EmbeddedResource Include="Schemes2\*.json" />
+        <EmbeddedResource Include="Tables\*.json" />
     </ItemGroup>
     <ItemGroup>
         <Compile Remove=":Users:danny.haak:Development Personal:EpcisCloudCore:EpcisCloudCore:Models:Epcis:Json:EpcisDocumentJson.cs" />

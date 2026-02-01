@@ -1,0 +1,1042 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.2",
+    "date": "2024-11-18T16:30:00Z",
+    "epcTDSVersion": "2.2",
+    "scheme": {
+      "name": "DSGTIN+",
+      "optionKey": "dateType",
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11111011",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "0",
+              "pattern": "^11111011([01])([01]{3})0000([01]{16})",
+              "grammar": "'11111011' dataToggle filter '0000' prodDate encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "prodDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "01",
+                  "name": "gtin",
+                  "seq": 4
+                },
+                {
+                  "ai": "21",
+                  "name": "serial",
+                  "seq": 5
+                }
+              ]
+            },
+            {
+              "optionKey": "1",
+              "pattern": "^11111011([01])([01]{3})0001([01]{16})",
+              "grammar": "'11111011' dataToggle filter '0001' packDate encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "packDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "01",
+                  "name": "gtin",
+                  "seq": 4
+                },
+                {
+                  "ai": "21",
+                  "name": "serial",
+                  "seq": 5
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^11111011([01])([01]{3})0010([01]{16})",
+              "grammar": "'11111011' dataToggle filter '0010' bestBeforeDate encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "bestBeforeDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "01",
+                  "name": "gtin",
+                  "seq": 4
+                },
+                {
+                  "ai": "21",
+                  "name": "serial",
+                  "seq": 5
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^11111011([01])([01]{3})0011([01]{16})",
+              "grammar": "'11111011' dataToggle filter '0011' sellByDate encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "sellByDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "01",
+                  "name": "gtin",
+                  "seq": 4
+                },
+                {
+                  "ai": "21",
+                  "name": "serial",
+                  "seq": 5
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^11111011([01])([01]{3})0100([01]{16})",
+              "grammar": "'11111011' dataToggle filter '0100' expDate encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "expDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "01",
+                  "name": "gtin",
+                  "seq": 4
+                },
+                {
+                  "ai": "21",
+                  "name": "serial",
+                  "seq": 5
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^11111011([01])([01]{3})0101([01]{16})",
+              "grammar": "'11111011' dataToggle filter '0101' firstFreezeDate encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "firstFreezeDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "01",
+                  "name": "gtin",
+                  "seq": 4
+                },
+                {
+                  "ai": "21",
+                  "name": "serial",
+                  "seq": 5
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^11111011([01])([01]{3})0110([01]{16})",
+              "grammar": "'11111011' dataToggle filter '0110' harvestDate encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "harvestDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "01",
+                  "name": "gtin",
+                  "seq": 4
+                },
+                {
+                  "ai": "21",
+                  "name": "serial",
+                  "seq": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "gtin=",
+          "option": [
+            {
+              "optionKey": "0",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});prodDate=([0-9]{6})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';prodDate=' prodDate",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "prodDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "1",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});packDate=([0-9]{6})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';packDate=' packDate",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "packDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});bestBeforeDate=([0-9]{6})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';bestBeforeDate=' bestBeforeDate",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "bestBeforeDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});sellByDate=([0-9]{6})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';sellByDate=' sellByDate",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "sellByDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});expDate=([0-9]{6})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';expDate=' expDate",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "expDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});firstFreezeDate=([0-9]{6})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';firstFreezeDate=' firstFreezeDate",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "firstFreezeDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});harvestDate=([0-9]{6})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';harvestDate=' harvestDate",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "harvestDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "0",
+              "pattern": "^\\{\\s*\"01\"\\s*:\\s*\"([0-9]{14})\"\\s*,\\s*\"21\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"\\s*,\\s*\"11\"\\s*:\\s*\"([0-9]{6})\"",
+              "grammar": "'{\"01\":\"' gtin '\",\"21\":\"' serial '\",\"11\":\"' prodDate '\"}'",
+              "aiSequence": [
+                "01",
+                "21",
+                "11"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "prodDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"01\"\\s*:\\s*\"([0-9]{14})\"\\s*,\\s*\"21\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"\\s*,\\s*\"13\"\\s*:\\s*\"([0-9]{6})\"",
+              "grammar": "'{\"01\":\"' gtin '\",\"21\":\"' serial '\",\"13\":\"' packDate '\"}'",
+              "aiSequence": [
+                "01",
+                "21",
+                "13"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "packDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^\\{\\s*\"01\"\\s*:\\s*\"([0-9]{14})\"\\s*,\\s*\"21\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"\\s*,\\s*\"15\"\\s*:\\s*\"([0-9]{6})\"",
+              "grammar": "'{\"01\":\"' gtin '\",\"21\":\"' serial '\",\"15\":\"' bestBeforeDate '\"}'",
+              "aiSequence": [
+                "01",
+                "21",
+                "15"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "bestBeforeDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^\\{\\s*\"01\"\\s*:\\s*\"([0-9]{14})\"\\s*,\\s*\"21\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"\\s*,\\s*\"16\"\\s*:\\s*\"([0-9]{6})\"",
+              "grammar": "'{\"01\":\"' gtin '\",\"21\":\"' serial '\",\"16\":\"' sellByDate '\"}'",
+              "aiSequence": [
+                "01",
+                "21",
+                "16"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "sellByDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^\\{\\s*\"01\"\\s*:\\s*\"([0-9]{14})\"\\s*,\\s*\"21\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"\\s*,\\s*\"17\"\\s*:\\s*\"([0-9]{6})\"",
+              "grammar": "'{\"01\":\"' gtin '\",\"21\":\"' serial '\",\"17\":\"' expDate '\"}'",
+              "aiSequence": [
+                "01",
+                "21",
+                "17"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "expDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^\\{\\s*\"01\"\\s*:\\s*\"([0-9]{14})\"\\s*,\\s*\"21\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"\\s*,\\s*\"7006\"\\s*:\\s*\"([0-9]{6})\"",
+              "grammar": "'{\"01\":\"' gtin '\",\"21\":\"' serial '\",\"7006\":\"' firstFreezeDate '\"}'",
+              "aiSequence": [
+                "01",
+                "21",
+                "7006"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "firstFreezeDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^\\{\\s*\"01\"\\s*:\\s*\"([0-9]{14})\"\\s*,\\s*\"21\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"\\s*,\\s*\"7007\"\\s*:\\s*\"([0-9]{6})\"",
+              "grammar": "'{\"01\":\"' gtin '\",\"21\":\"' serial '\",\"7007\":\"' harvestDate '\"}'",
+              "aiSequence": [
+                "01",
+                "21",
+                "7007"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "harvestDate",
+                  "encoding": "dateYYMMDD"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "http",
+          "requiredFormattingParameters": "uriStem",
+          "gs1DigitalLinkKeyQualifiers": [
+            "22",
+            "10",
+            "21"
+          ],
+          "option": [
+            {
+              "optionKey": "0",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?11=([0-9]{6})(?:\\&|$)",
+              "grammar": "uriStem '/01/' gtin '/21/' urlEscapedSerial '?11=' prodDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "11"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "prodDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "1",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?13=([0-9]{6})(?:\\&|$)",
+              "grammar": "uriStem '/01/' gtin '/21/' urlEscapedSerial '?13=' packDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "13"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "packDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?15=([0-9]{6})(?:\\&|$)",
+              "grammar": "uriStem '/01/' gtin '/21/' urlEscapedSerial '?15=' bestBeforeDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "15"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "bestBeforeDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?16=([0-9]{6})(?:\\&|$)",
+              "grammar": "uriStem '/01/' gtin '/21/' urlEscapedSerial '?16=' sellByDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "16"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "sellByDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?17=([0-9]{6})(?:\\&|$)",
+              "grammar": "uriStem '/01/' gtin '/21/' urlEscapedSerial '?17=' expDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "17"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "expDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?7006=([0-9]{6})(?:\\&|$)",
+              "grammar": "uriStem '/01/' gtin '/21/' urlEscapedSerial '?7006=' firstFreezeDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "7006"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "firstFreezeDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?7007=([0-9]{6})(?:\\&|$)",
+              "grammar": "uriStem '/01/' gtin '/21/' urlEscapedSerial '?7007=' harvestDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "7007"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "harvestDate"
+                }
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "serial",
+              "characterSet": "[!%-?A-Z_a-z\\x22]*",
+              "function": "URLDECODE(urlEscapedSerial)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urlEscapedSerial",
+              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "function": "URLENCODE(serial)"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

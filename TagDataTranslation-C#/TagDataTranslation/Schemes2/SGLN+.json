@@ -1,0 +1,171 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.2",
+    "date": "2024-11-18T16:30:00Z",
+    "epcTDSVersion": "2.2",
+    "scheme": {
+      "name": "SGLN+",
+      "optionKey": "1",
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11110010",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11110010([01])([01]{3})",
+              "grammar": "'11110010' dataToggle filter encodedAI",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                }
+              ],
+              "encodedAI": [
+                {
+                  "ai": "414",
+                  "name": "gln",
+                  "seq": 3
+                },
+                {
+                  "ai": "254",
+                  "name": "serial",
+                  "seq": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "gln=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
+              "grammar": "'gln=' gln ';serial=' serial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gln"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
+              "grammar": "'{\"414\":\"' gln '\",\"254\":\"' serial '\"}'",
+              "aiSequence": [
+                "414",
+                "254"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gln"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "http",
+          "requiredFormattingParameters": "uriStem",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gln '/254/' urlEscapedSerial",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gln"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                }
+              ],
+              "aiSequence": [
+                "414",
+                "254"
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "serial",
+              "characterSet": "[!%-?A-Z_a-z\\x22]*",
+              "function": "URLDECODE(urlEscapedSerial)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urlEscapedSerial",
+              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "function": "URLENCODE(serial)"
+            }
+          ],
+          "gs1DigitalLinkKeyQualifiers": [
+            "254"
+          ]
+        }
+      ]
+    }
+  }
+}
