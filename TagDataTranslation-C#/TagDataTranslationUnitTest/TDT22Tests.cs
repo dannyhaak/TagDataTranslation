@@ -258,6 +258,272 @@ public class TDT22Tests
 
     #endregion
 
+    #region TDT 2.2 Plus (+) Encodings
+
+    // Binary prefixes for each + scheme:
+    // SGTIN+:  11110111
+    // SSCC+:   11111001
+    // SGLN+:   11110010
+    // GRAI+:   11110001
+    // GIAI+:   11111010
+    // GSRN+:   11110100
+    // GSRNP+:  11110101
+    // GDTI+:   11110110
+    // SGCN+:   11111000
+    // CPI+:    11110000
+    // ITIP+:   11110011
+    // DSGTIN+: 11111011
+
+    /// <summary>
+    /// SGTIN+ uses variable-length encoding and supports alphanumeric serials.
+    /// Binary prefix: 11110111
+    /// </summary>
+    [Fact]
+    public void SgtinPlus_BareIdentifier_ToBinary()
+    {
+        var bareIdentifier = "gtin=80614141123458;serial=ABC123";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11110111", binary);
+    }
+
+    [Fact]
+    public void SgtinPlus_Binary_ToBareIdentifier()
+    {
+        // first encode to binary
+        var bareIdentifier = "gtin=80614141123458;serial=ABC123";
+        var paramList = "filter=3;dataToggle=0";
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+
+        // then decode back
+        var result = _engine.Translate(binary, "", "BARE_IDENTIFIER");
+        Assert.NotNull(result);
+        Assert.Contains("gtin=", result);
+        Assert.Contains("serial=", result);
+    }
+
+    [Fact]
+    public void SgtinPlus_ToDigitalLink()
+    {
+        var bareIdentifier = "gtin=80614141123458;serial=ABC123";
+        var paramList = "filter=3;dataToggle=0;uristem=https://id.gs1.org";
+
+        var digitalLink = _engine.Translate(bareIdentifier, paramList, "GS1_DIGITAL_LINK");
+
+        Assert.NotNull(digitalLink);
+        Assert.StartsWith("https://id.gs1.org/", digitalLink);
+        Assert.Contains("/01/", digitalLink);
+        Assert.Contains("/21/", digitalLink);
+    }
+
+    [Fact]
+    public void SgtinPlus_RoundTrip()
+    {
+        var bareIdentifier = "gtin=80614141123458;serial=ABC123";
+        var paramList = "filter=3;dataToggle=0";
+
+        // Encode to binary
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+        Assert.NotNull(binary);
+        Assert.StartsWith("11110111", binary);
+
+        // Decode back
+        var result = _engine.Translate(binary, "", "BARE_IDENTIFIER");
+        Assert.NotNull(result);
+        Assert.Contains("gtin=80614141123458", result);
+        Assert.Contains("serial=ABC123", result);
+    }
+
+    /// <summary>
+    /// SSCC+ for Serial Shipping Container Codes
+    /// Binary prefix: 11111001
+    /// </summary>
+    [Fact]
+    public void SsccPlus_BareIdentifier_ToBinary()
+    {
+        var bareIdentifier = "sscc=106141412345678908";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11111001", binary);
+    }
+
+    [Fact]
+    public void SsccPlus_RoundTrip()
+    {
+        var bareIdentifier = "sscc=106141412345678908";
+        var paramList = "filter=3;dataToggle=0";
+
+        // Encode to binary
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+        Assert.NotNull(binary);
+        Assert.StartsWith("11111001", binary);
+
+        // Decode back
+        var result = _engine.Translate(binary, "", "BARE_IDENTIFIER");
+        Assert.NotNull(result);
+        Assert.Contains("sscc=", result);
+    }
+
+    /// <summary>
+    /// GRAI+ for Global Returnable Asset Identifier
+    /// Binary prefix: 11110001
+    /// Pattern: grai=0[0-9]{13}[alphanumeric]{1,16}
+    /// </summary>
+    [Fact]
+    public void GraiPlus_BareIdentifier_ToBinary()
+    {
+        // GRAI+ requires 0 + 13 digits + 1-16 alphanumeric chars
+        var bareIdentifier = "grai=00614141123452ABC";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11110001", binary);
+    }
+
+    /// <summary>
+    /// GIAI+ for Global Individual Asset Identifier
+    /// Binary prefix: 11111010
+    /// </summary>
+    [Fact]
+    public void GiaiPlus_BareIdentifier_ToBinary()
+    {
+        var bareIdentifier = "giai=0614141ABC123";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11111010", binary);
+    }
+
+    /// <summary>
+    /// GSRN+ for Global Service Relation Number
+    /// Binary prefix: 11110100
+    /// </summary>
+    [Fact]
+    public void GsrnPlus_BareIdentifier_ToBinary()
+    {
+        var bareIdentifier = "gsrn=061414112345678902";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11110100", binary);
+    }
+
+    /// <summary>
+    /// GDTI+ for Global Document Type Identifier
+    /// Binary prefix: 11110110
+    /// </summary>
+    [Fact]
+    public void GdtiPlus_BareIdentifier_ToBinary()
+    {
+        var bareIdentifier = "gdti=0614141123452ABC";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11110110", binary);
+    }
+
+    /// <summary>
+    /// CPI+ for Component/Part Identifier
+    /// Binary prefix: 11110000
+    /// Pattern: cpi=[0-9]{4}[alphanumeric]{1,26};serial=[0-9]{1,12}
+    /// </summary>
+    [Fact]
+    public void CpiPlus_BareIdentifier_ToBinary()
+    {
+        // CPI+ requires 4 digits + 1-26 alphanumeric chars + serial (1-12 digits)
+        var bareIdentifier = "cpi=0614ABC123;serial=12345";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11110000", binary);
+    }
+
+    /// <summary>
+    /// SGCN+ for Global Coupon Number
+    /// Binary prefix: 11111000
+    /// </summary>
+    [Fact]
+    public void SgcnPlus_BareIdentifier_ToBinary()
+    {
+        var bareIdentifier = "gcn=4012345678901234";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11111000", binary);
+    }
+
+    /// <summary>
+    /// ITIP+ for Individual Trade Item Piece
+    /// Binary prefix: 11110011
+    /// Pattern: itip=[0-9]{18};serial=[alphanumeric]{1,20}
+    /// </summary>
+    [Fact]
+    public void ItipPlus_BareIdentifier_ToBinary()
+    {
+        // ITIP+ requires exactly 18 digits + serial (1-20 alphanumeric chars)
+        var bareIdentifier = "itip=040123451234560102;serial=ABC";
+        var paramList = "filter=3;dataToggle=0";
+
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith("11110011", binary);
+    }
+
+    /// <summary>
+    /// Test that all '+' schemes have binary prefix starting with 1111
+    /// </summary>
+    [Theory]
+    [InlineData("gtin=80614141123458;serial=ABC123", "11110111")]  // SGTIN+
+    [InlineData("sscc=106141412345678908", "11111001")]            // SSCC+
+    public void PlusSchemes_HaveCorrectBinaryPrefix(string bareIdentifier, string expectedPrefix)
+    {
+        var paramList = "filter=3;dataToggle=0";
+        var binary = _engine.Translate(bareIdentifier, paramList, "BINARY");
+
+        Assert.NotNull(binary);
+        Assert.StartsWith(expectedPrefix, binary);
+    }
+
+    /// <summary>
+    /// Test Digital Link output format for '+' schemes
+    /// </summary>
+    [Fact]
+    public void SgtinPlus_ToDigitalLink_CorrectFormat()
+    {
+        var bareIdentifier = "gtin=80614141123458;serial=TEST1";
+        var paramList = "filter=3;dataToggle=0;uristem=https://example.com";
+
+        var digitalLink = _engine.Translate(bareIdentifier, paramList, "GS1_DIGITAL_LINK");
+
+        Assert.NotNull(digitalLink);
+        Assert.StartsWith("https://example.com", digitalLink);
+        Assert.Contains("/01/80614141123458", digitalLink);
+        Assert.Contains("/21/TEST1", digitalLink);
+    }
+
+    #endregion
+
     #region Edge Cases
 
     [Fact]
