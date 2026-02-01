@@ -1,134 +1,244 @@
-## Synopsis
+# TagDataTranslation
 
-Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.6 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID, and updated for Tag Data Standard 1.11. Comes with unit tests and a demonstration application. Online accessible at https://www.mimasu.nl/tdt.
+Tag Data Translation implemented according to the **GS1 EPC Tag Data Translation 2.2** specification for RAIN RFID.
 
-An online demo is available at https://www.mimasu.nl.
+**Online demo**: https://www.mimasu.nl/tdt
 
-The following schemes are supported:
-- ADI-var
-- CPI-96, CPI-var
-- GTDI-96, GDTI-174
-- GIAI-96, GIAI-202
-- GID-96
-- GRAI-96, GRAI-170
-- GSRN-96
-- GSRNP-96
-- ITIP-110, ITIP-212
-- SGCN-96
-- SGLN-96, SGLN-195
-- SGTIN-96, SGTIN-198
-- SSCC-96
-- USDOD-96
+## Features
 
-The following programming languages are supported:
-- C# .NET Framework 4.0  (Microsoft and Xamarin Mono runtime)
-- C# .NET Standard 1.4
+- Full TDT 2.2 support with JSON-based scheme definitions
+- Digital Link URI generation and parsing
+- GS1 Company Prefix lookup
+- Filter Value tables
 
-## Example
+## Supported Schemes
 
-The following code is an example on how to use the library, to go from a GTIN and serial to hexadecimal.
+| Scheme | Formats |
+|--------|---------|
+| SGTIN | SGTIN-96, SGTIN-198, SGTIN+ (Digital Link) |
+| SSCC | SSCC-96, SSCC+ |
+| SGLN | SGLN-96, SGLN-195, SGLN+ |
+| GRAI | GRAI-96, GRAI-170, GRAI+ |
+| GIAI | GIAI-96, GIAI-202, GIAI+ |
+| GSRN | GSRN-96, GSRN+ |
+| GSRNP | GSRNP-96, GSRNP+ |
+| GDTI | GDTI-96, GDTI-113, GDTI-174, GDTI+ |
+| SGCN | SGCN-96, SGCN+ |
+| ITIP | ITIP-110, ITIP-212, ITIP+ |
+| GID | GID-96 |
+| CPI | CPI-96, CPI-var, CPI+ |
+| ADI | ADI-var |
+| USDOD | USDOD-96 |
+| DSGTIN | DSGTIN+ (Digital Link only) |
 
-```
-TDTEngine engine = new TDTEngine ();
-string epcIdentifier = @"gtin=00037000302414;serial=10419703"
-string parameterList = @"filter=3;gs1companyprefixlength=7;tagLength=96";
-string binary = engine.Translate(epcIdentifier, parameterList, @"BINARY");
-string binaryHex = engine.BinaryToHex(binary);
-```
+## Installation
 
-Or the other way around.
+### NuGet
 
-```
-TDTEngine engine = new TDTEngine ();
-string epcIdentifier = engine.HexToBinary(@"30340242201d8840009efdf7");
-string parameterList = @"tagLength=96";
-string legacy = engine.Translate(epcIdentifier, parameterList, @"LEGACY");
+```bash
+dotnet add package TagDataTranslation
 ```
 
-## API
-
-The library follows the client API as defined in the standard and there are some additional helper functions.
-
-### Translate
-
+Or via Package Manager:
 ```
-public String translate(String epcIdentifier, String parameterList, String outputFormat)
+Install-Package TagDataTranslation
 ```
 
-Translates epcIdentifier from one representation into another within the same coding scheme.
+### From Source
 
-#### Parameters
-
-| Parameter     | Description |
-| ------------- | ----------- |
-| epcIdentifier | The epcIdentifier to be converted. This should be expressed as a string, in accordance with one of the grammars or patterns in the TDT markup files, i.e. a binary string consisting of characters '0' and '1', a URI (either tag-encoding or pure-identity formats), or a serialized identifier expressed as in Table 3. |
-| parameterList | This is a parameter string containing key value pairs, using the semicolon [';'] as delimiter between key=value pairs. For example, to convert a GTIN code the parameter string would look like the following: `filter=3;companyprefixlength=7;tagLength=96` |
-| outputFormat  | The output format into which the epcIdentifier SHALL be converted. The following are the formats supported: `BINARY`, `LEGACY`, `LEGACY_AI`, `TAG_ENCODING`,  `PURE_IDENTITY` |
-
-#### Returns
-
-The converted value into one of the above formats as String.
-
-#### Throws
-
-**TDTTranslationException** – Throws exceptions due to the following reason:
-
-1. `TDTFileNotFound` Reports if the engine could not locate the configured definition file to compile.
-2. `TDTFieldBelowMinimum` Reports a (numeric) Field that fell below the decimalMinimum value allowed by the TDT markup
-3. `TDTFieldAboveMaximum` Reports a (numeric) Field that exceeded the decimalMaximum value allowed by the TDT markup
-4. `TDTFieldOutsideCharacterSet` Reports a Field containing characters outside the characterSet range allowed by the TDT markup
-5. `TDTUndefinedField` Reports a Field required for the output or an intermediate rule, whose value is undefined
-6. `TDTSchemeNotFound` Reported if no matching Scheme can be found via prefixMatch
-7. `TDTLevelNotFound` Reported if no matching Level can be found via prefixMatch
-8. `TDTOptionNotFound` Reported if no matching Option can be found via the optionKey or via matching the pattern
-9. `TDTLookupFailed` Reported if lookup in an external table failed to provide a value – reports table URI and path expression.
-10. `TDTNumericOverflow` Reported when a numeric overflow occurs when handling numeric values such as serial number.
-
-### GetPrefixLength
-
+```bash
+git clone https://github.com/dannyhaak/TagDataTranslation.git
+cd TagDataTranslation/TagDataTranslation-C#/TagDataTranslation
+dotnet build
 ```
+
+## Requirements
+
+- .NET 10.0 or later
+
+## Quick Start
+
+### Encode GTIN to Hex
+
+```csharp
+using TagDataTranslation;
+
+var engine = new TDTEngine();
+string epcIdentifier = "gtin=00037000302414;serial=10419703";
+string parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+string binary = engine.Translate(epcIdentifier, parameterList, "BINARY");
+string hex = engine.BinaryToHex(binary);
+// hex = "30340242201d8840009efdf7"
+```
+
+### Decode Hex to GTIN
+
+```csharp
+var engine = new TDTEngine();
+string binary = engine.HexToBinary("30340242201d8840009efdf7");
+string parameterList = "tagLength=96";
+string legacy = engine.Translate(binary, parameterList, "LEGACY");
+// legacy = "gtin=00037000302414;serial=10419703"
+```
+
+### Get All Representations
+
+```csharp
+var engine = new TDTEngine();
+var result = engine.TranslateDetails("30340242201d8840009efdf7", "tagLength=96", "TAG_ENCODING");
+
+Console.WriteLine($"Pure Identity: {result.Fields["pureIdentityURI"]}");
+Console.WriteLine($"Tag URI: {result.Fields["tagURI"]}");
+Console.WriteLine($"GTIN: {result.Fields["gtin"]}");
+Console.WriteLine($"Serial: {result.Fields["serial"]}");
+```
+
+### Digital Link Generation
+
+```csharp
+using TagDataTranslation.DigitalLink;
+
+var components = new DigitalLinkComponents
+{
+    Domain = "id.gs1.org",
+    PrimaryKey = ("01", "00037000302414"),  // AI 01 = GTIN
+    KeyQualifiers = new List<(string, string)>
+    {
+        ("21", "10419703")  // AI 21 = Serial
+    }
+};
+
+string digitalLink = DigitalLinkGenerator.Generate(components);
+// https://id.gs1.org/01/00037000302414/21/10419703
+```
+
+### Digital Link Parsing
+
+```csharp
+if (DigitalLinkParser.TryParse("https://id.gs1.org/01/00037000302414/21/10419703", out var components))
+{
+    Console.WriteLine($"GTIN: {components.PrimaryKey.Value}");
+    // GTIN: 00037000302414
+}
+```
+
+### GS1 Company Prefix Lookup
+
+```csharp
+var engine = new TDTEngine();
+var result = engine.GetPrefixLength("0037000302414");
+Console.WriteLine($"Prefix: {result.Prefix}, Length: {result.Length}");
+// Prefix: 0037000, Length: 7
+```
+
+## API Reference
+
+### TDTEngine
+
+#### Translate
+
+```csharp
+public string Translate(string epcIdentifier, string parameterList, string outputFormat)
+```
+
+Translates an EPC identifier from one representation to another.
+
+| Parameter | Description |
+|-----------|-------------|
+| `epcIdentifier` | The EPC to convert (binary string, hex, URI, or legacy format) |
+| `parameterList` | Semicolon-delimited key=value pairs (e.g., `filter=3;gs1companyprefixlength=7;tagLength=96`) |
+| `outputFormat` | Target format: `BINARY`, `LEGACY`, `LEGACY_AI`, `TAG_ENCODING`, `PURE_IDENTITY` |
+
+**Returns**: The converted EPC as a string.
+
+#### TranslateDetails
+
+```csharp
+public TranslateResult TranslateDetails(string epcIdentifier, string parameterList, string outputFormat)
+```
+
+Same as `Translate`, but returns a `TranslateResult` object containing all extracted fields.
+
+#### GetPrefixLength
+
+```csharp
 public PrefixLengthResult GetPrefixLength(string input)
 ```
 
-Gets the GS1 Prefix Length for the given identifier. Based on the gcpprefixformatlist.xml file from GS1 (GCP Length Table, https://www.gs1.org/standards/bc-epc-interop).
+Looks up the GS1 Company Prefix length for a given identifier.
 
-#### Parameters
+#### GetFilterValueTable
 
-| Parameter     | Description |
-| ------------- | ----------- |
-| input | Identifier for which to find the GS1 Prefix Length. Input as string. |
-
-#### Returns
-
-An object with the following properties.
-
-| Property     | Description |
-| ------------- | ----------- |
-| Prefix | The full GS1 Prefix as a string. |
-| Length | The length of the GS1 Prefix as integer. |
-
-### GetFilterValueTable
-
-```
+```csharp
 public Dictionary<int, string> GetFilterValueTable(string scheme)
 ```
 
-Gets the Filter Value table for the provided scheme. 
+Returns the filter value descriptions for a scheme (e.g., "SGTIN" returns `{0: "All Others", 1: "POS Item", ...}`).
 
-#### Parameters
+#### Helper Methods
 
-| Parameter     | Description |
-| ------------- | ----------- |
-| scheme | The GS1 EPC scheme for which to retrieve the Filter Value Table. Input as string. |
+```csharp
+public string HexToBinary(string hex)      // Convert hex to binary string
+public string BinaryToHex(string binary)   // Convert binary string to hex
+```
 
-#### Returns
+### Exceptions
 
-A dictionary with an integer as key (Filter Value) and a string as value (description).
+`TDTTranslationException` is thrown with one of these codes:
+
+| Code | Description |
+|------|-------------|
+| `TDTFileNotFound` | Scheme definition file not found |
+| `TDTFieldBelowMinimum` | Numeric field below minimum value |
+| `TDTFieldAboveMaximum` | Numeric field above maximum value |
+| `TDTFieldOutsideCharacterSet` | Field contains invalid characters |
+| `TDTUndefinedField` | Required field is missing |
+| `TDTSchemeNotFound` | No matching scheme found |
+| `TDTLevelNotFound` | No matching level found |
+| `TDTOptionNotFound` | No matching option found |
+| `TDTLookupFailed` | External table lookup failed |
+| `TDTNumericOverflow` | Numeric overflow occurred |
+
+## Building
+
+```bash
+cd TagDataTranslation-C#/TagDataTranslation
+dotnet build
+dotnet test ../TagDataTranslationUnitTest
+```
+
+## Creating a NuGet Package
+
+```bash
+cd TagDataTranslation-C#/TagDataTranslation
+dotnet pack -c Release
+```
+
+The package will be created in `bin/Release/`.
+
+To publish to NuGet.org:
+```bash
+dotnet nuget push bin/Release/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY --source https://api.nuget.org/v3/index.json
+```
+
+## Version History
+
+| Version | Changes |
+|---------|---------|
+| 2.0.0 | TDT 2.2 with JSON schemes, Digital Link support, new schemes (DSGTIN+, GDTI-113, etc.) |
+| 1.1.5 | Updated GCP prefix file, ITIP encoding fixes |
+| 1.0.0 | Initial release with TDT 1.6/1.11 support |
 
 ## License
 
 This library is dual-licensed:
-- GNU Affero General Public License version 3
-- Commercial license, contact tdt@dannyhaak.nl for more details
+- **GNU Affero General Public License version 3** (AGPL-3.0)
+- **Commercial license** - contact tdt@dannyhaak.nl for details
 
-The included XML and XSD artifacts are (c) by GS1 (https://www.gs1.org/epc/tag-data-translation-standard).
+The included JSON and XSD artifacts are (c) GS1 (https://www.gs1.org/standards/epc-rfid/tdt).
+
+## Resources
+
+- [GS1 TDT Standard](https://www.gs1.org/standards/epc-rfid/tdt)
+- [GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link)
+- [Online Demo](https://www.mimasu.nl/tdt)

@@ -2,76 +2,65 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
-        <PackOnBuild>true</PackOnBuild>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+
+        <!-- NuGet Package Properties -->
         <PackageId>TagDataTranslation</PackageId>
+        <Version>2.0.0</Version>
         <Authors>Danny Haak</Authors>
-        <DevelopmentDependency>true</DevelopmentDependency>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/dannyhaak/TagDataTranslation/master/LICENSE</PackageLicenseUrl>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <Owners>Danny Haak</Owners>
-        <PackageProjectUrl>https://github.com/dannyhaak/TagDataTranslation</PackageProjectUrl>
-        <Summary>Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.11 specification</Summary>
-        <PackageTags>rfid gs1 epc tdt rain sgtin sgln sscc pure-identity tag-uri hex binary translate</PackageTags>
+        <Company>Danny Haak</Company>
+        <Product>TagDataTranslation</Product>
         <Title>TagDataTranslation</Title>
-        <Description>Tag Data Translation implemented according to the GS1 EPC Tag Data Translation 1.11 specification (http://www.gs1.org/epc/tag-data-translation-standard) for RAIN RFID. It supports the following translations:
-- SGTIN (GTIN, serial)
-- SSCC
-- SGLN (GLN, extension)
-- GRAI with serial
-- GIAI
-- GSRN
-- GSRN-P
-- GDTI with serial
-- GCN with serial
-- ITIP with piece and total, serial
-- GID
-- USDoD
-- ADI</Description>
-        <PackageVersion>1.1.5</PackageVersion>
-        <PackageReleaseNotes>Updated GS1 Company Prefix XML file and updates to ITIP encoding. Now really. Really.</PackageReleaseNotes>
+        <Description>GS1 EPC Tag Data Translation 2.2 library for RAIN RFID. Supports encoding/decoding of SGTIN, SSCC, SGLN, GRAI, GIAI, GSRN, GDTI, SGCN, ITIP, GID, CPI, ADI, USDOD and Digital Link URIs. Converts between binary, hex, tag URI, pure identity URI, and legacy formats.</Description>
+        <Summary>Tag Data Translation 2.2 for RAIN RFID - encode/decode EPC tags</Summary>
+        <PackageTags>rfid;gs1;epc;tdt;rain;sgtin;sscc;sgln;grai;giai;gdti;digital-link;pure-identity;tag-uri;hex;binary;encode;decode</PackageTags>
+
+        <PackageProjectUrl>https://github.com/dannyhaak/TagDataTranslation</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/dannyhaak/TagDataTranslation.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+        <PackageReleaseNotes>
+Version 2.0.0:
+- Upgraded to TDT 2.2 specification
+- Replaced XML schemes with JSON schemes
+- Added Digital Link URI generation and parsing
+- Added new schemes: DSGTIN+, GDTI-113, and all + variants
+- Added TDT Tables (B, E, F, K) support
+- Updated GS1 Company Prefix list
+        </PackageReleaseNotes>
+
+        <!-- Build settings -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
+
     <ItemGroup>
-        <None Remove="FilterValueTables\filter-ADI.csv" />
-        <None Remove="FilterValueTables\filter-CPI.csv" />
-        <None Remove="FilterValueTables\filter-GDTI.csv" />
-        <None Remove="FilterValueTables\filter-GIAI.csv" />
-        <None Remove="FilterValueTables\filter-GID.csv" />
-        <None Remove="FilterValueTables\filter-GRAI.csv" />
-        <None Remove="FilterValueTables\filter-GSRN.csv" />
-        <None Remove="FilterValueTables\filter-GSRNP.csv" />
-        <None Remove="FilterValueTables\filter-ITIP.csv" />
-        <None Remove="FilterValueTables\filter-SGCN.csv" />
-        <None Remove="FilterValueTables\filter-SGLN.csv" />
-        <None Remove="FilterValueTables\filter-SGTIN.csv" />
-        <None Remove="FilterValueTables\filter-SSCC.csv" />
-        <None Remove="FilterValueTables\filter-USDOD.csv" />
-        <None Remove="GCPPrefixFormatList\gcpprefixformatlist.xml" />
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
+
     <ItemGroup>
-        <EmbeddedResource Include="FilterValueTables\filter-ADI.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-CPI.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-GDTI.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-GIAI.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-GID.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-GRAI.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-GSRN.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-GSRNP.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-ITIP.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-SGCN.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-SGLN.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-SGTIN.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-SSCC.csv" />
-        <EmbeddedResource Include="FilterValueTables\filter-USDOD.csv" />
-        <EmbeddedResource Include="GCPPrefixFormatList\gcpprefixformatlist.xml" />
+        <None Remove="FilterValueTables\*.csv" />
+        <None Remove="GCPPrefixFormatList\*.xml" />
+        <None Remove="Schemes2\*.json" />
+        <None Remove="Tables\*.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="FilterValueTables\*.csv" />
+        <EmbeddedResource Include="GCPPrefixFormatList\*.xml" />
         <EmbeddedResource Include="Schemes2\*.json" />
         <EmbeddedResource Include="Tables\*.json" />
     </ItemGroup>
-    <ItemGroup>
-        <Compile Remove=":Users:danny.haak:Development Personal:EpcisCloudCore:EpcisCloudCore:Models:Epcis:Json:EpcisDocumentJson.cs" />
-    </ItemGroup>
+
     <ItemGroup>
         <Folder Include="Licenses\" />
     </ItemGroup>
+
     <ItemGroup>
         <None Update="Licenses\LICENSE.md">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
