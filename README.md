@@ -1,35 +1,39 @@
 # TagDataTranslation
 
-Tag Data Translation implemented according to the **GS1 EPC Tag Data Translation 2.2** specification for RAIN RFID.
+Tag Data Translation implemented according to the **GS1 EPC Tag Data Standard (TDS) 2.3** specification for RAIN RFID.
 
 **Online demo**: https://www.mimasu.nl/tdt
 
 ## Features
 
-- Full TDT 2.2 support with JSON-based scheme definitions
+- Full TDS 2.3 / TDT 2.2 support with JSON-based scheme definitions
+- **NEW in 2.3**: 12 '++' schemes with custom hostname encoding for branded Digital Link URIs
 - Digital Link URI generation and parsing
 - GS1 Company Prefix lookup
 - Filter Value tables
+- Exception-free `TryTranslate` API for high-throughput scenarios
 
 ## Supported Schemes
 
 | Scheme | Formats |
 |--------|---------|
-| SGTIN | SGTIN-96, SGTIN-198, SGTIN+ (Digital Link) |
-| SSCC | SSCC-96, SSCC+ |
-| SGLN | SGLN-96, SGLN-195, SGLN+ |
-| GRAI | GRAI-96, GRAI-170, GRAI+ |
-| GIAI | GIAI-96, GIAI-202, GIAI+ |
-| GSRN | GSRN-96, GSRN+ |
-| GSRNP | GSRNP-96, GSRNP+ |
-| GDTI | GDTI-96, GDTI-113, GDTI-174, GDTI+ |
-| SGCN | SGCN-96, SGCN+ |
-| ITIP | ITIP-110, ITIP-212, ITIP+ |
+| SGTIN | SGTIN-96, SGTIN-198, SGTIN+, **SGTIN++** |
+| SSCC | SSCC-96, SSCC+, **SSCC++** |
+| SGLN | SGLN-96, SGLN-195, SGLN+, **SGLN++** |
+| GRAI | GRAI-96, GRAI-170, GRAI+, **GRAI++** |
+| GIAI | GIAI-96, GIAI-202, GIAI+, **GIAI++** |
+| GSRN | GSRN-96, GSRN+, **GSRN++** |
+| GSRNP | GSRNP-96, GSRNP+, **GSRNP++** |
+| GDTI | GDTI-96, GDTI-113, GDTI-174, GDTI+, **GDTI++** |
+| SGCN | SGCN-96, SGCN+, **SGCN++** |
+| ITIP | ITIP-110, ITIP-212, ITIP+, **ITIP++** |
 | GID | GID-96 |
-| CPI | CPI-96, CPI-var, CPI+ |
+| CPI | CPI-96, CPI-var, CPI+, **CPI++** |
 | ADI | ADI-var |
 | USDOD | USDOD-96 |
-| DSGTIN | DSGTIN+ (Digital Link only) |
+| DSGTIN | DSGTIN+, **DSGTIN++** |
+
+**'++' schemes** (TDS 2.3) support lossless encoding of custom hostnames in EPC binary, enabling round-trip translation with branded Digital Link URIs like `https://coca-cola.com/01/...` instead of `https://id.gs1.org/01/...`.
 
 ## Installation
 
@@ -252,6 +256,7 @@ dotnet nuget push bin/Release/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY 
 
 | Version | Changes |
 |---------|---------|
+| 2.3.0 | TDS 2.3 support with 12 new '++' schemes for custom hostname encoding in Digital Link URIs |
 | 2.1.0 | Added TryTranslate/TryTranslateDetails for exception-free high-throughput translation |
 | 2.0.1 | Multi-targeting support for .NET 8.0, 9.0, and 10.0 |
 | 2.0.0 | TDT 2.2 with JSON schemes, Digital Link support, new schemes (DSGTIN+, GDTI-113, etc.) |
