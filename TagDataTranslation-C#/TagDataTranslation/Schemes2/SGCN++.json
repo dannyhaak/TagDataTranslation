@@ -1,0 +1,142 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.3",
+    "date": "2025-10-01T00:00:00Z",
+    "epcTDSVersion": "2.3",
+    "scheme": {
+      "name": "SGCN++",
+      "optionKey": "1",
+      "supportsHostname": true,
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11101100",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11101100([01])([01]{3})([01]{52})([01]*)",
+              "grammar": "'11101100' dataToggle filter gcn serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 52,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 13,
+                  "name": "gcn"
+                }
+              ],
+              "variableLengthNumericField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_NUMERIC",
+                "lengthIndicatorBits": 4,
+                "maxBits": 40,
+                "maxChars": 12
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "sgcn=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^sgcn=([0-9]{13});couponRef=([0-9]{0,12});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'sgcn=' gcn ';couponRef=' serial ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gcn"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "https://",
+          "requiredFormattingParameters": "hostname",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/255\\/([0-9]{13})([0-9]{0,12})(?:\\?|$)",
+              "grammar": "'https://' hostname '/255/' gcn serial",
+              "aiSequence": [
+                "255"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gcn"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

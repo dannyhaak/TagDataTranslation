@@ -463,6 +463,36 @@ namespace TagDataTranslation
                         variableElement = DecompactBinaryToString(variableElement, compactionBits);
                         variableElement = variableElement.TrimEnd('\0').TrimEnd('@');
                     }
+                    else if (inputField.BitLength.HasValue && inputField.BitLength.Value % 4 == 0 &&
+                             inputField.DecimalMaximum != null &&
+                             BigInteger.TryParse(inputField.DecimalMaximum, out var maxVal))
+                    {
+                        // Check if field should use BCD decoding:
+                        // BCD uses 4 bits per digit, so if bitLength/4 matches expected digit count, use BCD
+                        int expectedDigits = inputField.BitLength.Value / 4;
+                        int maxDigits = inputField.DecimalMaximum.Length;
+
+                        if (expectedDigits == maxDigits)
+                        {
+                            // BCD decoding: each 4-bit nibble is a decimal digit
+                            var bcdResult = new StringBuilder();
+                            for (int j = 0; j < variableElement.Length; j += 4)
+                            {
+                                if (j + 4 <= variableElement.Length)
+                                {
+                                    int digit = Convert.ToInt32(variableElement.Substring(j, 4), 2);
+                                    bcdResult.Append(digit);
+                                }
+                            }
+                            variableElement = bcdResult.ToString();
+                        }
+                        else
+                        {
+                            // Regular binary to decimal
+                            Int64 integer = Convert.ToInt64(variableElement, 2);
+                            variableElement = Convert.ToString(integer);
+                        }
+                    }
                     else
                     {
                         Int64 integer = Convert.ToInt64(variableElement, 2);
@@ -524,11 +554,77 @@ namespace TagDataTranslation
                 }
             }
 
+            // 4c. DECODE VARIABLE-LENGTH FIELDS (for "++" schemes with BINARY input, TDS 2.3)
+            // Order matches the grammar: delimited numeric → variable-length alphanumeric/numeric → hostname
+            if (inputLevelType == LevelType.BINARY)
+            {
+                int fixedBitsLength = CalculateFixedBitsLength(inputOption);
+                int bitPosition = fixedBitsLength;
+
+                // Decode delimited numeric field first (e.g., giai, cpi) - comes before other variable fields
+                if (inputOption.DelimitedNumericField != null && epcIdentifier.Length > bitPosition)
+                {
+                    string remainingBinary = epcIdentifier.Substring(bitPosition);
+                    var (value, bitsConsumed) = DecodeDelimitedNumericField(remainingBinary, inputOption.DelimitedNumericField);
+                    if (value != null)
+                    {
+                        parameterDictionary[inputOption.DelimitedNumericField.Name ?? "value"] = value;
+                        bitPosition += bitsConsumed;
+                    }
+                }
+
+                // Decode variable-length alphanumeric field (e.g., serial)
+                if (inputOption.VariableLengthField != null && epcIdentifier.Length > bitPosition)
+                {
+                    string remainingBinary = epcIdentifier.Substring(bitPosition);
+                    var (value, bitsConsumed) = DecodeVariableLengthField(remainingBinary, inputOption.VariableLengthField);
+                    if (value != null)
+                    {
+                        parameterDictionary[inputOption.VariableLengthField.Name ?? "serial"] = value;
+                        bitPosition += bitsConsumed;
+                    }
+                }
+
+                // Decode variable-length numeric field (e.g., serial for CPI++/SGCN++)
+                if (inputOption.VariableLengthNumericField != null && epcIdentifier.Length > bitPosition)
+                {
+                    string remainingBinary = epcIdentifier.Substring(bitPosition);
+                    var (value, bitsConsumed) = DecodeVariableLengthNumericField(remainingBinary, inputOption.VariableLengthNumericField);
+                    if (value != null)
+                    {
+                        parameterDictionary[inputOption.VariableLengthNumericField.Name ?? "serialNumber"] = value;
+                        bitPosition += bitsConsumed;
+                    }
+                }
+
+                // Decode hostname field (for ++ schemes) - always last
+                if (inputOption.HostnameField != null && epcIdentifier.Length > bitPosition)
+                {
+                    string remainingBinary = epcIdentifier.Substring(bitPosition);
+                    var hostname = DecodeHostnameField(remainingBinary);
+                    if (hostname != null)
+                    {
+                        parameterDictionary[inputOption.HostnameField.Name ?? "hostname"] = hostname;
+                    }
+                }
+            }
+
             // 5. PERFORM EXTRACT RULES
             if (inputLevel.Rule != null)
             {
                 var extractRules = inputLevel.Rule.Where(r2 => r2.Type == "EXTRACT").OrderBy(c => c.Seq).ToList();
                 ExecuteRules(extractRules, parameterDictionary);
+            }
+
+            // 5.5. Handle scheme-specific field conversions for '++' schemes
+            var schemeName = parameterDictionary.GetValueOrDefault("schemeName", "");
+            if (schemeName == "DSGTIN++")
+            {
+                ExtractDateFromDateBinary(parameterDictionary);
+            }
+            else if (schemeName == "ITIP++")
+            {
+                ExtractItipFieldsFromItipBinary(parameterDictionary);
             }
 
             return parameterDictionary;
@@ -609,6 +705,16 @@ namespace TagDataTranslation
                 ExecuteRules(formatRules, parameterDictionary);
             }
 
+            // 7.5. Handle DSGTIN++/ITIP++ date binary conversion
+            if (outputScheme?.Name == "DSGTIN++" && outputFormatType == LevelType.BINARY)
+            {
+                ComputeDsgtinPlusPlusDateBinary(parameterDictionary);
+            }
+            else if (outputScheme?.Name == "ITIP++" && outputFormatType == LevelType.BINARY)
+            {
+                ComputeItipPlusPlusItipBinary(parameterDictionary);
+            }
+
             // 8. BUILD OUTPUT VALUE FROM GRAMMAR STRING
             string grammarstring = outputOption.Grammar ?? "";
 
@@ -634,6 +740,116 @@ namespace TagDataTranslation
                     {
                         var encodedAIBits = ProcessEncodedAI(outputOption.EncodedAI, parameterDictionary);
                         outputString.Append(encodedAIBits);
+                        continue;
+                    }
+
+                    // Handle serialEncoded token for "++" schemes (TDS 2.3)
+                    if (s.Equals("serialEncoded", StringComparison.OrdinalIgnoreCase) && outputOption.VariableLengthField != null)
+                    {
+                        if (parameterDictionary.TryGetValue(outputOption.VariableLengthField.Name ?? "serial", out var serialValue))
+                        {
+                            var serialBits = EncodeVariableLengthField(serialValue, outputOption.VariableLengthField);
+                            outputString.Append(serialBits);
+                        }
+                        continue;
+                    }
+
+                    // Handle serialNumericEncoded token for "++" schemes with numeric serial (SGCN++, CPI++)
+                    if (s.Equals("serialNumericEncoded", StringComparison.OrdinalIgnoreCase) && outputOption.VariableLengthNumericField != null)
+                    {
+                        if (parameterDictionary.TryGetValue(outputOption.VariableLengthNumericField.Name ?? "serialNumber", out var serialValue))
+                        {
+                            var serialBits = EncodeVariableLengthNumericField(serialValue, outputOption.VariableLengthNumericField);
+                            outputString.Append(serialBits);
+                        }
+                        continue;
+                    }
+
+                    // Handle extensionEncoded, glnExtensionEncoded, etc. tokens (suffix "Encoded")
+                    if (s.EndsWith("Encoded", StringComparison.OrdinalIgnoreCase) && !s.Equals("hostnameEncoded", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Find the field name by removing "Encoded" suffix (7 chars)
+                        var fieldName = s.Substring(0, s.Length - 7);
+
+                        // Try to find the corresponding variable-length field definition
+                        if (outputOption.VariableLengthField != null &&
+                            outputOption.VariableLengthField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            {
+                                var bits = EncodeVariableLengthField(fieldValue, outputOption.VariableLengthField);
+                                outputString.Append(bits);
+                            }
+                            continue;
+                        }
+                        else if (outputOption.VariableLengthNumericField != null &&
+                                 outputOption.VariableLengthNumericField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            {
+                                var bits = EncodeVariableLengthNumericField(fieldValue, outputOption.VariableLengthNumericField);
+                                outputString.Append(bits);
+                            }
+                            continue;
+                        }
+                        else if (outputOption.DelimitedNumericField != null &&
+                                 outputOption.DelimitedNumericField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            {
+                                var bits = EncodeDelimitedNumericField(fieldValue, outputOption.DelimitedNumericField);
+                                outputString.Append(bits);
+                            }
+                            continue;
+                        }
+                    }
+
+                    // Handle giaiBinary, cpiBinary, etc. tokens (suffix "Binary" - 6 chars)
+                    if (s.EndsWith("Binary", StringComparison.OrdinalIgnoreCase) && s.Length > 6)
+                    {
+                        // Find the field name by removing "Binary" suffix (6 chars)
+                        var fieldName = s.Substring(0, s.Length - 6);
+
+                        // Try to find the corresponding delimited numeric field definition
+                        if (outputOption.DelimitedNumericField != null &&
+                            outputOption.DelimitedNumericField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            {
+                                var bits = EncodeDelimitedNumericField(fieldValue, outputOption.DelimitedNumericField);
+                                outputString.Append(bits);
+                            }
+                            continue;
+                        }
+                    }
+
+                    // Handle serialNumeric, etc. tokens (suffix "Numeric" - 7 chars)
+                    if (s.EndsWith("Numeric", StringComparison.OrdinalIgnoreCase) && s.Length > 7)
+                    {
+                        // Find the field name by removing "Numeric" suffix (7 chars)
+                        var fieldName = s.Substring(0, s.Length - 7);
+
+                        // Try to find the corresponding variable-length numeric field definition
+                        if (outputOption.VariableLengthNumericField != null &&
+                            outputOption.VariableLengthNumericField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            {
+                                var bits = EncodeVariableLengthNumericField(fieldValue, outputOption.VariableLengthNumericField);
+                                outputString.Append(bits);
+                            }
+                            continue;
+                        }
+                    }
+
+                    // Handle hostnameEncoded token for "++" schemes (TDS 2.3)
+                    if (s.Equals("hostnameEncoded", StringComparison.OrdinalIgnoreCase) && outputOption.HostnameField != null)
+                    {
+                        if (parameterDictionary.TryGetValue(outputOption.HostnameField.Name ?? "hostname", out var hostnameValue))
+                        {
+                            var hostnameBits = HostnameEncoder.Encode(hostnameValue);
+                            outputString.Append(hostnameBits);
+                        }
                         continue;
                     }
 
@@ -683,6 +899,47 @@ namespace TagDataTranslation
                             int compactionBits = GetCompactionBits(binaryField.Compaction);
                             variableElement = CompactStringToBinary(variableElement, compactionBits);
                         }
+                        else if (binaryField != null && binaryField.BitLength.HasValue &&
+                                 binaryField.BitLength.Value % 4 == 0 &&
+                                 binaryField.DecimalMaximum != null)
+                        {
+                            // Check if field should use BCD encoding:
+                            // BCD uses 4 bits per digit, so if bitLength/4 matches expected digit count, use BCD
+                            int expectedDigits = binaryField.BitLength.Value / 4;
+                            int maxDigits = binaryField.DecimalMaximum.Length;
+
+                            if (expectedDigits == maxDigits)
+                            {
+                                // BCD encoding: each decimal digit is 4 bits
+                                var bcdBits = new StringBuilder();
+                                var paddedValue = variableElement.PadLeft(expectedDigits, '0');
+                                foreach (char ch in paddedValue)
+                                {
+                                    if (char.IsDigit(ch))
+                                    {
+                                        int digit = ch - '0';
+                                        bcdBits.Append(Convert.ToString(digit, 2).PadLeft(4, '0'));
+                                    }
+                                    else
+                                    {
+                                        bcdBits.Append("0000");
+                                    }
+                                }
+                                variableElement = bcdBits.ToString();
+                            }
+                            else
+                            {
+                                // Regular binary encoding
+                                if (Int64.TryParse(variableElement, out var result))
+                                {
+                                    variableElement = Convert.ToString(result, 2).PadLeft(binaryField.BitLength.Value, '0');
+                                }
+                                else
+                                {
+                                    variableElement = new string('0', binaryField.BitLength.Value);
+                                }
+                            }
+                        }
                         else
                         {
                             Int64 result;
@@ -693,8 +950,9 @@ namespace TagDataTranslation
                             variableElement = Convert.ToString(result, 2);
                         }
 
-                        // Handle bit padding
-                        if (binaryField?.BitPadDir != null && binaryField.BitLength.HasValue)
+                        // Handle bit padding for non-BCD fields
+                        if (binaryField?.BitPadDir != null && binaryField.BitLength.HasValue &&
+                            variableElement.Length < binaryField.BitLength.Value)
                         {
                             if (binaryField.BitPadDir.Equals("LEFT", StringComparison.OrdinalIgnoreCase))
                             {
@@ -708,13 +966,27 @@ namespace TagDataTranslation
                     }
                     else
                     {
-                        // Validate field for non-binary output
+                        // Validate and format field for non-binary output
                         var field = outputOption.Field?.FirstOrDefault(f => f.Name == s);
                         if (field?.CharacterSet != null)
                         {
                             if (!ValidateCharacterset(variableElement, field.CharacterSet))
                             {
                                 return null;
+                            }
+                        }
+
+                        // Apply padding if specified in output field definition
+                        if (field != null && field.Length.HasValue && !string.IsNullOrEmpty(field.PadChar))
+                        {
+                            char padChar = field.PadChar[0];
+                            if (field.PadDir?.Equals("LEFT", StringComparison.OrdinalIgnoreCase) == true)
+                            {
+                                variableElement = variableElement.PadLeft(field.Length.Value, padChar);
+                            }
+                            else
+                            {
+                                variableElement = variableElement.PadRight(field.Length.Value, padChar);
                             }
                         }
                     }
@@ -738,6 +1010,186 @@ namespace TagDataTranslation
             }
 
             return outputString.ToString();
+        }
+
+        /// <summary>
+        /// Computes dateBinary for DSGTIN++ from date fields.
+        /// Format: 4-bit date type indicator + 16-bit packed date (YY*512 + MM*32 + DD)
+        /// Date types: 0=prodDate(11), 1=packDate(13), 2=bestBeforeDate(15), 3=sellByDate(16),
+        ///             4=expDate(17), 5=firstFreezeDate(7006), 6=harvestDate(7007)
+        /// </summary>
+        private void ComputeDsgtinPlusPlusDateBinary(Dictionary<string, string> parameterDictionary)
+        {
+            // Map of date field names to their type indicators
+            var dateFields = new Dictionary<string, int>
+            {
+                { "prodDate", 0 },       // AI 11
+                { "packDate", 1 },       // AI 13
+                { "bestBeforeDate", 2 }, // AI 15
+                { "sellByDate", 3 },     // AI 16
+                { "expDate", 4 },        // AI 17
+                { "firstFreezeDate", 5 }, // AI 7006
+                { "harvestDate", 6 }     // AI 7007
+            };
+
+            foreach (var df in dateFields)
+            {
+                if (parameterDictionary.TryGetValue(df.Key, out var dateValue) && dateValue.Length == 6)
+                {
+                    // Parse YYMMDD
+                    if (int.TryParse(dateValue.Substring(0, 2), out int year) &&
+                        int.TryParse(dateValue.Substring(2, 2), out int month) &&
+                        int.TryParse(dateValue.Substring(4, 2), out int day))
+                    {
+                        // Pack date: YY*512 + MM*32 + DD
+                        int packedDate = (year * 512) + (month * 32) + day;
+                        // Combine type indicator (4 bits) + packed date (16 bits)
+                        int dateBinary = (df.Value << 16) | packedDate;
+                        // Store as decimal string (will be converted to binary by output processing)
+                        parameterDictionary["dateBinary"] = dateBinary.ToString();
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Computes itipBinary for ITIP++ from gtin, piece, and total fields.
+        /// itipBinary (72 bits) = gtin (14 digits) + piece (2 digits) + total (2 digits) as a combined 18-digit integer.
+        /// </summary>
+        private void ComputeItipPlusPlusItipBinary(Dictionary<string, string> parameterDictionary)
+        {
+            if (!parameterDictionary.TryGetValue("gtin", out var gtin) ||
+                !parameterDictionary.TryGetValue("piece", out var piece) ||
+                !parameterDictionary.TryGetValue("total", out var total))
+            {
+                return;
+            }
+
+            // combine gtin (14 digits) + piece (2 digits) + total (2 digits) = 18 digit string
+            var combined = gtin.PadLeft(14, '0') + piece.PadLeft(2, '0') + total.PadLeft(2, '0');
+
+            // parse as decimal and convert to binary string for 72-bit field
+            if (BigInteger.TryParse(combined, out var value))
+            {
+                // store as decimal string - the field will convert to binary
+                parameterDictionary["itipBinary"] = value.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Extracts gtin, piece, total fields from itipBinary for ITIP++.
+        /// Reverse of ComputeItipPlusPlusItipBinary.
+        /// </summary>
+        private void ExtractItipFieldsFromItipBinary(Dictionary<string, string> parameterDictionary)
+        {
+            if (!parameterDictionary.TryGetValue("itipBinary", out var itipBinaryStr))
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(itipBinaryStr))
+            {
+                return;
+            }
+
+            // parse itipBinary to get the 18-digit combined value
+            BigInteger itipValue;
+            try
+            {
+                // check if it's a binary string (only 0s and 1s)
+                if (itipBinaryStr.All(c => c == '0' || c == '1') && itipBinaryStr.Length > 10)
+                {
+                    itipValue = 0;
+                    foreach (char c in itipBinaryStr)
+                    {
+                        itipValue = itipValue * 2 + (c - '0');
+                    }
+                }
+                else
+                {
+                    itipValue = BigInteger.Parse(itipBinaryStr);
+                }
+            }
+            catch
+            {
+                return;
+            }
+
+            // convert to 18-digit string padded with leading zeros
+            string combined = itipValue.ToString().PadLeft(18, '0');
+
+            // extract fields: gtin (14 digits) + piece (2 digits) + total (2 digits)
+            if (combined.Length >= 18)
+            {
+                parameterDictionary["gtin"] = combined.Substring(0, 14);
+                parameterDictionary["piece"] = combined.Substring(14, 2);
+                parameterDictionary["total"] = combined.Substring(16, 2);
+            }
+        }
+
+        /// <summary>
+        /// Extracts date field from dateBinary for DSGTIN++/ITIP++.
+        /// Reverse of ComputeDsgtinPlusPlusDateBinary.
+        /// </summary>
+        private void ExtractDateFromDateBinary(Dictionary<string, string> parameterDictionary)
+        {
+            if (!parameterDictionary.TryGetValue("dateBinary", out var dateBinaryStr))
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(dateBinaryStr))
+            {
+                return;
+            }
+
+            // Parse the dateBinary value - could be binary string or decimal
+            int dateBinary;
+            try
+            {
+                // Check if it's a binary string (only 0s and 1s)
+                if (dateBinaryStr.All(c => c == '0' || c == '1') && dateBinaryStr.Length > 10)
+                {
+                    dateBinary = Convert.ToInt32(dateBinaryStr, 2);
+                }
+                else
+                {
+                    // It's a decimal value
+                    dateBinary = int.Parse(dateBinaryStr);
+                }
+            }
+            catch
+            {
+                return;
+            }
+            int typeIndicator = (dateBinary >> 16) & 0x0F;  // Top 4 bits
+            int packedDate = dateBinary & 0xFFFF;          // Bottom 16 bits
+
+            // Unpack date: year = value / 512, month = (value % 512) / 32, day = value % 32
+            int year = packedDate / 512;
+            int remainder = packedDate % 512;
+            int month = remainder / 32;
+            int day = remainder % 32;
+            string dateValue = $"{year:D2}{month:D2}{day:D2}";
+
+            // Map type indicator to field name
+            string? fieldName = typeIndicator switch
+            {
+                0 => "prodDate",       // AI 11
+                1 => "packDate",       // AI 13
+                2 => "bestBeforeDate", // AI 15
+                3 => "sellByDate",     // AI 16
+                4 => "expDate",        // AI 17
+                5 => "firstFreezeDate", // AI 7006
+                6 => "harvestDate",    // AI 7007
+                _ => null
+            };
+
+            if (fieldName != null)
+            {
+                parameterDictionary[fieldName] = dateValue;
+            }
         }
 
         #region Rule Execution
@@ -1186,20 +1638,13 @@ namespace TagDataTranslation
                 int month = int.Parse(yymmdd.Substring(2, 2));
                 int day = int.Parse(yymmdd.Substring(4, 2));
 
-                // Convert 2-digit year to 4-digit (2000-2099)
-                year += 2000;
-
-                // Handle special case: month=00 or day=00 means unspecified
-                if (month == 0) month = 1;
-                if (day == 0) day = 1;
-
-                // Calculate days since epoch (January 1, 2000)
-                var epoch = new DateTime(2000, 1, 1);
-                var date = new DateTime(year, month, day);
-                var daysSinceEpoch = (date - epoch).Days;
+                // TDS 2.3 packed date encoding formula: YY * 512 + MM * 32 + DD
+                // This uses 9 bits for year (0-511), 5 bits for month (0-31), 5 bits for day (0-31)
+                // Total = 16 bits (bit 15-7 for year, 6-2 for month, 1-0 and upper bits of next for day)
+                int packedDate = (year * 512) + (month * 32) + day;
 
                 // Convert to binary and pad
-                string binary = Convert.ToString(daysSinceEpoch, 2);
+                string binary = Convert.ToString(packedDate, 2);
                 return binary.PadLeft(bitLength, '0');
             }
             catch
@@ -1210,7 +1655,7 @@ namespace TagDataTranslation
 
         /// <summary>
         /// Decodes a binary date representation back to YYMMDD format.
-        /// Uses GS1 packed objects date encoding: days since January 1, 2000.
+        /// Uses TDS 2.3 packed date encoding: YY * 512 + MM * 32 + DD.
         /// </summary>
         /// <param name="binary">Binary string representation of the date.</param>
         /// <returns>Date in YYMMDD format (e.g., "261231" for Dec 31, 2026).</returns>
@@ -1223,15 +1668,17 @@ namespace TagDataTranslation
 
             try
             {
-                // Convert binary to days since epoch
-                int daysSinceEpoch = Convert.ToInt32(binary, 2);
+                // Convert binary to packed date value
+                int packedDate = Convert.ToInt32(binary, 2);
 
-                // Calculate date from epoch (January 1, 2000)
-                var epoch = new DateTime(2000, 1, 1);
-                var date = epoch.AddDays(daysSinceEpoch);
+                // TDS 2.3 packed date encoding: YY * 512 + MM * 32 + DD
+                int year = packedDate / 512;
+                int remainder = packedDate % 512;
+                int month = remainder / 32;
+                int day = remainder % 32;
 
                 // Format as YYMMDD
-                return date.ToString("yyMMdd");
+                return $"{year:D2}{month:D2}{day:D2}";
             }
             catch
             {
@@ -1376,18 +1823,31 @@ namespace TagDataTranslation
                     throw new TDTTranslationException($"Unknown AI '{ai.Ai}' in Table F");
                 }
 
-                // Encode the value according to Table F format
-                bits.Append(EncodeAIValue(value, format, false));
-
-                // If this AI has a second component, encode it as well
-                if (format.HasSecondComponent && ai.Name.Contains("comp2", StringComparison.OrdinalIgnoreCase))
+                // Handle AIs with two components (like 8003 GRAI where value is GRAI base + serial)
+                if (format.HasSecondComponent && format.Comp1FixedLengthChars.HasValue)
                 {
-                    // Get second component value if it exists
-                    var comp2Name = ai.Name + "_comp2";
-                    if (parameters.TryGetValue(comp2Name, out var comp2Value))
+                    // Split the value into component 1 (fixed-length) and component 2 (variable-length)
+                    int comp1Length = format.Comp1FixedLengthChars.Value;
+                    if (value.Length > comp1Length)
                     {
+                        string comp1Value = value.Substring(0, comp1Length);
+                        string comp2Value = value.Substring(comp1Length);
+
+                        // Encode component 1 (fixed-length)
+                        bits.Append(EncodeAIValue(comp1Value, format, false));
+                        // Encode component 2 (variable-length)
                         bits.Append(EncodeAIValue(comp2Value, format, true));
                     }
+                    else
+                    {
+                        // Value is only component 1 (no serial/extension)
+                        bits.Append(EncodeAIValue(value, format, false));
+                    }
+                }
+                else
+                {
+                    // Single component AI - encode normally
+                    bits.Append(EncodeAIValue(value, format, false));
                 }
             }
 
@@ -1452,11 +1912,32 @@ namespace TagDataTranslation
         /// <returns>Binary string representation padded to the specified bit length.</returns>
         private string EncodeFixedLength(string value, int bitLength, string formatType)
         {
-            if (formatType.Contains("numeric", StringComparison.OrdinalIgnoreCase) ||
-                formatType.Contains("date", StringComparison.OrdinalIgnoreCase) ||
+            if (formatType.Contains("Fixed-length numeric", StringComparison.OrdinalIgnoreCase))
+            {
+                // BCD encoding: each decimal digit is 4 bits (TDS 2.3 section 14.5.4)
+                var sb = new StringBuilder();
+                int expectedDigits = bitLength / 4;
+                // Pad value to expected length
+                var paddedValue = value.PadLeft(expectedDigits, '0');
+                foreach (char c in paddedValue)
+                {
+                    if (char.IsDigit(c))
+                    {
+                        int digit = c - '0';
+                        sb.Append(Convert.ToString(digit, 2).PadLeft(4, '0'));
+                    }
+                    else
+                    {
+                        // Non-digit character, encode as 0
+                        sb.Append("0000");
+                    }
+                }
+                return sb.ToString();
+            }
+            else if (formatType.Contains("date", StringComparison.OrdinalIgnoreCase) ||
                 formatType.Contains("Fixed-Bit-Length", StringComparison.OrdinalIgnoreCase))
             {
-                // Numeric encoding: convert to integer then to binary
+                // Date/integer encoding: convert to integer then to binary
                 if (BigInteger.TryParse(value, out var numericValue))
                 {
                     var binary = ToBinaryString(numericValue);
@@ -1518,8 +1999,11 @@ namespace TagDataTranslation
             }
             else if (formatType.Contains("Delimited/terminated numeric", StringComparison.OrdinalIgnoreCase))
             {
-                // Variable-length numeric with delimiter
-                (encodingIndicator, dataBits) = ChooseOptimalEncoding(value);
+                // TDS 2.3 section 14.5.5: Delimited/terminated numeric encoding
+                // - Digits 0-9 are encoded as 4-bit BCD (nibble values 0-9)
+                // - Mode switch nibbles: 11=uppercase, 12=lowercase, 14=7-bit ASCII
+                // - Terminator nibble: 15
+                return EncodeDelimitedTerminatedNumeric(value);
             }
             else
             {
@@ -1756,6 +2240,198 @@ namespace TagDataTranslation
             return bits.ToString();
         }
 
+        /// <summary>
+        /// Encodes a value using TDS 2.3 section 14.5.5 "Delimited/terminated numeric" format.
+        /// Format: BCD digits + mode switch (E=7-bit ASCII) + encoding indicator (3 bits) + length (5 bits) + char data
+        /// </summary>
+        private string EncodeDelimitedTerminatedNumeric(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return "";
+            }
+
+            var bits = new StringBuilder();
+            int i = 0;
+
+            // encode leading digits as 4-bit BCD
+            while (i < value.Length && char.IsDigit(value[i]))
+            {
+                int digit = value[i] - '0';
+                bits.Append(Convert.ToString(digit, 2).PadLeft(4, '0'));
+                i++;
+            }
+
+            // if there are remaining non-digit characters, encode them
+            if (i < value.Length)
+            {
+                string remaining = value.Substring(i);
+
+                // mode switch nibble E (1110) = 7-bit ASCII mode
+                bits.Append("1110");
+
+                // encoding indicator (3 bits): 100 = 7-bit ASCII
+                bits.Append("100");
+
+                // length indicator (5 bits)
+                bits.Append(Convert.ToString(remaining.Length, 2).PadLeft(5, '0'));
+
+                // 7-bit ASCII character data
+                foreach (char c in remaining)
+                {
+                    bits.Append(Convert.ToString((int)c, 2).PadLeft(7, '0'));
+                }
+            }
+
+            return bits.ToString();
+        }
+
+        /// <summary>
+        /// Gets the 6-bit code for uppercase alphanumeric encoding (mode 11).
+        /// Character set: 0-9=0-9, A-Z=10-35, special chars after.
+        /// </summary>
+        private int GetUppercaseAlphanumericCode(char c)
+        {
+            if (c >= '0' && c <= '9') return c - '0';
+            if (c >= 'A' && c <= 'Z') return c - 'A' + 10;
+            // special characters
+            return c switch
+            {
+                '-' => 36,
+                '.' => 37,
+                '/' => 38,
+                ':' => 39,
+                _ => 0
+            };
+        }
+
+        /// <summary>
+        /// Gets the 6-bit code for lowercase alphanumeric encoding (mode 12).
+        /// Character set: 0-9=0-9, a-z=10-35, special chars after.
+        /// </summary>
+        private int GetLowercaseAlphanumericCode(char c)
+        {
+            if (c >= '0' && c <= '9') return c - '0';
+            if (c >= 'a' && c <= 'z') return c - 'a' + 10;
+            // special characters
+            return c switch
+            {
+                '-' => 36,
+                '.' => 37,
+                '/' => 38,
+                ':' => 39,
+                _ => 0
+            };
+        }
+
+        /// <summary>
+        /// Decodes a value encoded using TDS 2.3 section 14.5.5 "Delimited/terminated numeric" format.
+        /// Format: BCD digits + mode switch (E=7-bit ASCII) + encoding indicator (3 bits) + length (5 bits) + char data
+        /// </summary>
+        private (string? value, int bitsConsumed) DecodeDelimitedTerminatedNumeric(string binaryData)
+        {
+            if (string.IsNullOrEmpty(binaryData) || binaryData.Length < 4)
+            {
+                return (null, 0);
+            }
+
+            var result = new StringBuilder();
+            int bitPosition = 0;
+
+            // read 4-bit nibbles for BCD digits
+            while (bitPosition + 4 <= binaryData.Length)
+            {
+                int nibble = Convert.ToInt32(binaryData.Substring(bitPosition, 4), 2);
+
+                if (nibble >= 0 && nibble <= 9)
+                {
+                    // BCD digit
+                    result.Append((char)('0' + nibble));
+                    bitPosition += 4;
+                }
+                else if (nibble == 14)
+                {
+                    // mode switch to 7-bit ASCII with encoding indicator + length
+                    bitPosition += 4;
+
+                    // read encoding indicator (3 bits) - should be 100 (7-bit ASCII)
+                    if (bitPosition + 3 > binaryData.Length) break;
+                    bitPosition += 3;
+
+                    // read length indicator (5 bits)
+                    if (bitPosition + 5 > binaryData.Length) break;
+                    int length = Convert.ToInt32(binaryData.Substring(bitPosition, 5), 2);
+                    bitPosition += 5;
+
+                    // read 7-bit ASCII characters
+                    for (int i = 0; i < length && bitPosition + 7 <= binaryData.Length; i++)
+                    {
+                        int code = Convert.ToInt32(binaryData.Substring(bitPosition, 7), 2);
+                        bitPosition += 7;
+                        result.Append((char)code);
+                    }
+                    break;
+                }
+                else if (nibble == 15)
+                {
+                    // terminator
+                    bitPosition += 4;
+                    break;
+                }
+                else
+                {
+                    // unknown nibble, stop
+                    break;
+                }
+            }
+
+            return (result.ToString(), bitPosition);
+        }
+
+        /// <summary>
+        /// Decodes a 6-bit code to uppercase alphanumeric character (mode 11).
+        /// </summary>
+        private char DecodeUppercaseAlphanumericCode(int code)
+        {
+            if (code >= 0 && code <= 9) return (char)('0' + code);
+            if (code >= 10 && code <= 35) return (char)('A' + code - 10);
+            return code switch
+            {
+                36 => '-',
+                37 => '.',
+                38 => '/',
+                39 => ':',
+                _ => '\0'
+            };
+        }
+
+        /// <summary>
+        /// Decodes a 6-bit code to lowercase alphanumeric character (mode 12).
+        /// </summary>
+        private char DecodeLowercaseAlphanumericCode(int code)
+        {
+            if (code >= 0 && code <= 9) return (char)('0' + code);
+            if (code >= 10 && code <= 35) return (char)('a' + code - 10);
+            return code switch
+            {
+                36 => '-',
+                37 => '.',
+                38 => '/',
+                39 => ':',
+                _ => '\0'
+            };
+        }
+
+        /// <summary>
+        /// Decodes a 6-bit Base64 code to character.
+        /// </summary>
+        private char DecodeBase64Char(int code)
+        {
+            const string base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+            if (code >= 0 && code < base64Chars.Length) return base64Chars[code];
+            return '\0';
+        }
+
         #region Character Set Validation for Encoding
 
         private bool IsNumericOnly(string value) =>
@@ -1811,13 +2487,40 @@ namespace TagDataTranslation
                     continue;
                 }
 
-                // Decode the value according to Table F format
-                var (value, bitsConsumed) = DecodeAIValue(binaryData.Substring(bitPosition), format, false);
-                if (value != null)
+                // Handle AIs with two components (like 8003 GRAI where value is GRAI base + serial)
+                if (format.HasSecondComponent)
                 {
-                    parameters[ai.Name] = value;
+                    // Decode component 1 (fixed-length)
+                    var (comp1Value, comp1Bits) = DecodeAIValue(binaryData.Substring(bitPosition), format, false);
+                    bitPosition += comp1Bits;
+
+                    // Decode component 2 (variable-length) if there's more data
+                    string combinedValue = comp1Value ?? "";
+                    if (bitPosition < binaryData.Length)
+                    {
+                        var (comp2Value, comp2Bits) = DecodeAIValue(binaryData.Substring(bitPosition), format, true);
+                        bitPosition += comp2Bits;
+                        if (comp2Value != null)
+                        {
+                            combinedValue += comp2Value;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(combinedValue))
+                    {
+                        parameters[ai.Name] = combinedValue;
+                    }
                 }
-                bitPosition += bitsConsumed;
+                else
+                {
+                    // Single component AI - decode normally
+                    var (value, bitsConsumed) = DecodeAIValue(binaryData.Substring(bitPosition), format, false);
+                    if (value != null)
+                    {
+                        parameters[ai.Name] = value;
+                    }
+                    bitPosition += bitsConsumed;
+                }
 
                 if (bitPosition >= binaryData.Length)
                 {
@@ -1889,11 +2592,24 @@ namespace TagDataTranslation
 
             string bits = binaryData.Substring(0, bitLength);
 
-            if (formatType.Contains("numeric", StringComparison.OrdinalIgnoreCase) ||
-                formatType.Contains("date", StringComparison.OrdinalIgnoreCase) ||
+            if (formatType.Contains("Fixed-length numeric", StringComparison.OrdinalIgnoreCase))
+            {
+                // BCD decoding: each decimal digit is 4 bits (TDS 2.3 section 14.5.4)
+                var sb = new StringBuilder();
+                for (int i = 0; i < bits.Length; i += 4)
+                {
+                    if (i + 4 <= bits.Length)
+                    {
+                        int digit = Convert.ToInt32(bits.Substring(i, 4), 2);
+                        sb.Append(digit);
+                    }
+                }
+                return (sb.ToString(), bitLength);
+            }
+            else if (formatType.Contains("date", StringComparison.OrdinalIgnoreCase) ||
                 formatType.Contains("Fixed-Bit-Length", StringComparison.OrdinalIgnoreCase))
             {
-                // Numeric decoding: convert from binary to decimal string
+                // Date/integer decoding: convert from binary to decimal
                 var numericValue = BinaryStringToBigInteger(bits);
                 return (numericValue.ToString(), bitLength);
             }
@@ -1915,6 +2631,12 @@ namespace TagDataTranslation
         /// </summary>
         private (string? value, int bitsConsumed) DecodeVariableLength(string binaryData, string formatType, int encodingIndicatorBits, int lengthIndicatorBits)
         {
+            // special handling for "Delimited/terminated numeric" format (TDS 2.3 section 14.5.5)
+            if (formatType.Contains("Delimited/terminated numeric", StringComparison.OrdinalIgnoreCase))
+            {
+                return DecodeDelimitedTerminatedNumeric(binaryData);
+            }
+
             int bitPosition = 0;
             int encodingIndicator = 0;
             int length = 0;
@@ -2178,9 +2900,10 @@ namespace TagDataTranslation
                 else
                 {
                     s = s.Trim();
-                    if (s.Equals("encodedAI", StringComparison.OrdinalIgnoreCase))
+                    if (s.Equals("encodedAI", StringComparison.OrdinalIgnoreCase) ||
+                        s.EndsWith("Encoded", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Stop counting - encodedAI is variable length
+                        // Stop counting - encodedAI, serialEncoded, hostnameEncoded are variable length
                         break;
                     }
 
@@ -2194,6 +2917,267 @@ namespace TagDataTranslation
             }
 
             return totalBits;
+        }
+
+        #endregion
+
+        #region TDS 2.3 Variable-Length Field Encoding/Decoding
+
+        /// <summary>
+        /// Decodes a variable-length alphanumeric field (TDS 2.3).
+        /// Format: encoding indicator (3 bits) + length (5 bits) + data (variable)
+        /// Uses TDS 2.3 Table B.1 encoding indicators:
+        ///   0 = numeric as variable-length integer
+        ///   1 = upper-case hex (4 bits/char)
+        ///   2 = lower-case hex (4 bits/char)
+        ///   3 = Base64URL (6 bits/char)
+        ///   4 = 7-bit ASCII
+        ///   5 = URN Code 40 (16 bits per 3 chars)
+        /// </summary>
+        private (string? value, int bitsConsumed) DecodeVariableLengthField(string binaryData, VariableLengthFieldDefinition fieldDef)
+        {
+            if (string.IsNullOrEmpty(binaryData) || fieldDef == null)
+            {
+                return (null, 0);
+            }
+
+            int encodingIndicatorBits = fieldDef.EncodingIndicatorBits ?? 3;
+            int lengthIndicatorBits = fieldDef.LengthIndicatorBits ?? 5;
+            int headerBits = encodingIndicatorBits + lengthIndicatorBits;
+
+            if (binaryData.Length < headerBits)
+            {
+                return (null, 0);
+            }
+
+            // Read encoding indicator
+            int encodingIndicator = Convert.ToInt32(binaryData.Substring(0, encodingIndicatorBits), 2);
+
+            // Read length (number of characters)
+            int charCount = Convert.ToInt32(binaryData.Substring(encodingIndicatorBits, lengthIndicatorBits), 2);
+
+            // Calculate data bit length based on encoding indicator
+            int dataBitLength = encodingIndicator switch
+            {
+                0 => tableB?.GetBitCount(charCount, 0) ?? (int)Math.Ceiling(charCount * 3.32), // Variable-length integer
+                1 => charCount * 4, // Upper hex
+                2 => charCount * 4, // Lower hex
+                3 => charCount * 6, // Base64
+                4 => charCount * 7, // 7-bit ASCII
+                5 => ((charCount + 2) / 3) * 16, // URN Code 40: 16 bits per 3 chars
+                _ => charCount * 7 // Default to ASCII
+            };
+
+            int totalBits = headerBits + dataBitLength;
+            if (binaryData.Length < totalBits)
+            {
+                // Fall back to available bits
+                dataBitLength = binaryData.Length - headerBits;
+            }
+
+            // Extract data bits
+            string dataBits = binaryData.Substring(headerBits, dataBitLength);
+
+            // Decode using the correct decoder for the encoding indicator
+            string? value = DecodeByEncodingIndicator(dataBits, charCount, encodingIndicator);
+
+            return (value, headerBits + dataBitLength);
+        }
+
+        /// <summary>
+        /// Decodes a variable-length numeric field (TDS 2.3).
+        /// Format: length indicator (bits) + numeric data
+        /// </summary>
+        private (string? value, int bitsConsumed) DecodeVariableLengthNumericField(string binaryData, VariableLengthFieldDefinition fieldDef)
+        {
+            if (string.IsNullOrEmpty(binaryData) || fieldDef == null)
+            {
+                return (null, 0);
+            }
+
+            int lengthIndicatorBits = fieldDef.LengthIndicatorBits ?? 5;
+
+            if (binaryData.Length < lengthIndicatorBits)
+            {
+                return (null, 0);
+            }
+
+            // Read length (number of characters)
+            int length = Convert.ToInt32(binaryData.Substring(0, lengthIndicatorBits), 2);
+            int bitsConsumed = lengthIndicatorBits;
+
+            // Numeric fields use 4 bits per digit (BCD-like)
+            var sb = new StringBuilder();
+            for (int i = 0; i < length && bitsConsumed + 4 <= binaryData.Length; i++)
+            {
+                int digit = Convert.ToInt32(binaryData.Substring(bitsConsumed, 4), 2);
+                sb.Append(digit);
+                bitsConsumed += 4;
+            }
+
+            return (sb.ToString(), bitsConsumed);
+        }
+
+        /// <summary>
+        /// Decodes a delimited numeric field (TDS 2.3 section 14.5.5).
+        /// Format: BCD digits + optional mode switch + alphanumeric + terminator
+        /// Uses DecodeDelimitedTerminatedNumeric for full support of the encoding.
+        /// </summary>
+        private (string? value, int bitsConsumed) DecodeDelimitedNumericField(string binaryData, VariableLengthFieldDefinition fieldDef)
+        {
+            // use the full TDS 2.3 section 14.5.5 decoder for proper mode switching support
+            return DecodeDelimitedTerminatedNumeric(binaryData);
+        }
+
+        /// <summary>
+        /// Decodes a hostname field using HostnameEncoder (TDS 2.3).
+        /// </summary>
+        private string? DecodeHostnameField(string binaryData)
+        {
+            if (string.IsNullOrEmpty(binaryData) || binaryData.Length < 7)
+            {
+                return null;
+            }
+
+            try
+            {
+                return HostnameEncoder.Decode(binaryData);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Encodes a variable-length alphanumeric field (TDS 2.3).
+        /// Format: encoding indicator (3 bits) + length (5 bits) + data (variable)
+        /// Uses TDS 2.3 Table B.1 encoding indicators:
+        ///   0 = numeric as variable-length integer
+        ///   1 = upper-case hex (4 bits/char)
+        ///   2 = lower-case hex (4 bits/char)
+        ///   3 = Base64URL (6 bits/char)
+        ///   4 = 7-bit ASCII
+        ///   5 = URN Code 40 (~5.33 bits/char)
+        /// </summary>
+        private string EncodeVariableLengthField(string value, VariableLengthFieldDefinition fieldDef)
+        {
+            if (string.IsNullOrEmpty(value) || fieldDef == null)
+            {
+                return "";
+            }
+
+            var sb = new StringBuilder();
+            int encodingIndicatorBits = fieldDef.EncodingIndicatorBits ?? 3;
+            int lengthIndicatorBits = fieldDef.LengthIndicatorBits ?? 5;
+
+            // Use ChooseOptimalEncoding which implements TDS 2.3 Table B.1
+            var (encodingIndicator, dataBits) = ChooseOptimalEncoding(value);
+
+            // Write encoding indicator
+            sb.Append(Convert.ToString(encodingIndicator, 2).PadLeft(encodingIndicatorBits, '0'));
+
+            // Write length (number of characters)
+            sb.Append(Convert.ToString(value.Length, 2).PadLeft(lengthIndicatorBits, '0'));
+
+            // Write data bits from ChooseOptimalEncoding
+            sb.Append(dataBits);
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Encodes a variable-length numeric field (TDS 2.3).
+        /// Format: length indicator (bits) + 4-bit BCD digits
+        /// </summary>
+        private string EncodeVariableLengthNumericField(string value, VariableLengthFieldDefinition fieldDef)
+        {
+            if (string.IsNullOrEmpty(value) || fieldDef == null)
+            {
+                return "";
+            }
+
+            var sb = new StringBuilder();
+            int lengthIndicatorBits = fieldDef.LengthIndicatorBits ?? 5;
+
+            // Write length
+            sb.Append(Convert.ToString(value.Length, 2).PadLeft(lengthIndicatorBits, '0'));
+
+            // Write 4-bit BCD digits
+            foreach (char c in value)
+            {
+                if (char.IsDigit(c))
+                {
+                    int digit = c - '0';
+                    sb.Append(Convert.ToString(digit, 2).PadLeft(4, '0'));
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Encodes a delimited numeric field (TDS 2.3 section 14.5.5).
+        /// Format: BCD digits + optional mode switch + alphanumeric
+        /// NOTE: No terminator is added - the next field boundary defines the end.
+        /// Uses EncodeDelimitedTerminatedNumeric for full support of the encoding.
+        /// </summary>
+        private string EncodeDelimitedNumericField(string value, VariableLengthFieldDefinition fieldDef)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return ""; // empty field
+            }
+
+            // use the full TDS 2.3 section 14.5.5 encoder for proper mode switching support
+            // no terminator - the next field (hostname, etc.) defines the boundary
+            return EncodeDelimitedTerminatedNumeric(value);
+        }
+
+        /// <summary>
+        /// Checks if a string can be encoded using 6-bit alphanumeric encoding.
+        /// </summary>
+        private bool CanUse6BitAlphanumeric(string value)
+        {
+            // 6-bit alphanumeric supports: 0-9, A-Z, and some special characters
+            foreach (char c in value)
+            {
+                if (!char.IsDigit(c) && !char.IsUpper(c) &&
+                    c != '-' && c != '.' && c != '/' && c != ' ')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Encodes a single character using 6-bit alphanumeric encoding.
+        /// Character set: space (0), 0-9 (1-10), A-Z (11-36), special chars
+        /// </summary>
+        private int Encode6BitAlphanumeric(char c)
+        {
+            if (c == ' ') return 0;
+            if (c >= '0' && c <= '9') return 1 + (c - '0');
+            if (c >= 'A' && c <= 'Z') return 11 + (c - 'A');
+            if (c == '-') return 37;
+            if (c == '.') return 38;
+            if (c == '/') return 39;
+            return 0; // Default to space
+        }
+
+        /// <summary>
+        /// Decodes a 6-bit alphanumeric value to a character.
+        /// </summary>
+        private char Decode6BitAlphanumeric(int value)
+        {
+            if (value == 0) return ' ';
+            if (value >= 1 && value <= 10) return (char)('0' + value - 1);
+            if (value >= 11 && value <= 36) return (char)('A' + value - 11);
+            if (value == 37) return '-';
+            if (value == 38) return '.';
+            if (value == 39) return '/';
+            return '\0';
         }
 
         #endregion

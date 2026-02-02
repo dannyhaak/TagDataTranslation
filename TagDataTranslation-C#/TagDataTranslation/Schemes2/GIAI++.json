@@ -1,0 +1,126 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.3",
+    "date": "2025-10-01T00:00:00Z",
+    "epcTDSVersion": "2.3",
+    "scheme": {
+      "name": "GIAI++",
+      "optionKey": "1",
+      "supportsHostname": true,
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11101110",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11101110([01])([01]{3})([01]*)",
+              "grammar": "'11101110' dataToggle filter giaiBinary hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                }
+              ],
+              "delimitedNumericField": {
+                "name": "giai",
+                "encodingMethod": "DELIMITED_TERMINATED_NUMERIC",
+                "maxChars": 30
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "giai=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^giai=([0-9]{4}[!%-?A-Z_a-z0-9\\x22]{1,26});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'giai=' giai ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[!%-?A-Z_a-z0-9\\x22]*",
+                  "name": "giai"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "https://",
+          "requiredFormattingParameters": "hostname",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/8004\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,30})(?:\\?|$)",
+              "grammar": "'https://' hostname '/8004/' urlEscapedGiai",
+              "aiSequence": [
+                "8004"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedGiai"
+                }
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "giai",
+              "characterSet": "[!%-?A-Z_a-z0-9\\x22]*",
+              "function": "URLDECODE(urlEscapedGiai)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urlEscapedGiai",
+              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "function": "URLENCODE(giai)"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

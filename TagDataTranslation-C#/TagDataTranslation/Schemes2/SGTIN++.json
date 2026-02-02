@@ -1,0 +1,168 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.3",
+    "date": "2025-10-01T00:00:00Z",
+    "epcTDSVersion": "2.3",
+    "scheme": {
+      "name": "SGTIN++",
+      "optionKey": "1",
+      "supportsHostname": true,
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11111101",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11111101([01])([01]{3})([01]{56})([01]*)",
+              "grammar": "'11111101' dataToggle filter gtin serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 56,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 14,
+                  "name": "gtin"
+                }
+              ],
+              "variableLengthField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_ALPHANUMERIC",
+                "encodingIndicatorBits": 3,
+                "lengthIndicatorBits": 5,
+                "maxBits": 140,
+                "maxChars": 20
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxBits": 240,
+                "maxChars": 63
+              }
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "gtin=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "https://",
+          "requiredFormattingParameters": "hostname",
+          "gs1DigitalLinkKeyQualifiers": [
+            "22",
+            "10",
+            "21"
+          ],
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial",
+              "aiSequence": [
+                "01",
+                "21"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                }
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "serial",
+              "characterSet": "[!%-?A-Z_a-z\\x22]*",
+              "function": "URLDECODE(urlEscapedSerial)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urlEscapedSerial",
+              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "function": "URLENCODE(serial)"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

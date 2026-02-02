@@ -46,6 +46,12 @@ public class Scheme2
     [JsonPropertyName("tagLength")]
     public int? TagLength { get; set; }
 
+    /// <summary>
+    /// TDS 2.3: Indicates this is a '++' scheme that supports custom hostname encoding.
+    /// </summary>
+    [JsonPropertyName("supportsHostname")]
+    public bool SupportsHostname { get; set; }
+
     [JsonPropertyName("level")]
     public List<Level2>? Level { get; set; }
 }
@@ -118,6 +124,75 @@ public class Option2
     /// </summary>
     [JsonPropertyName("encodedAI")]
     public List<EncodedAI>? EncodedAI { get; set; }
+
+    /// <summary>
+    /// TDS 2.3: Variable-length alphanumeric field definition (for serial, extension, etc.).
+    /// </summary>
+    [JsonPropertyName("variableLengthField")]
+    public VariableLengthFieldDefinition? VariableLengthField { get; set; }
+
+    /// <summary>
+    /// TDS 2.3: Variable-length numeric field definition (for CPI serial, SGCN serial, etc.).
+    /// </summary>
+    [JsonPropertyName("variableLengthNumericField")]
+    public VariableLengthFieldDefinition? VariableLengthNumericField { get; set; }
+
+    /// <summary>
+    /// TDS 2.3: Delimited/terminated numeric field definition (for GIAI, CPI, etc.).
+    /// </summary>
+    [JsonPropertyName("delimitedNumericField")]
+    public VariableLengthFieldDefinition? DelimitedNumericField { get; set; }
+
+    /// <summary>
+    /// TDS 2.3: Hostname field definition for '++' schemes.
+    /// </summary>
+    [JsonPropertyName("hostnameField")]
+    public HostnameFieldDefinition? HostnameField { get; set; }
+}
+
+/// <summary>
+/// TDS 2.3: Defines a variable-length field for '++' schemes.
+/// </summary>
+public class VariableLengthFieldDefinition
+{
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("encodingMethod")]
+    public string? EncodingMethod { get; set; }
+
+    [JsonPropertyName("encodingIndicatorBits")]
+    public int? EncodingIndicatorBits { get; set; }
+
+    [JsonPropertyName("lengthIndicatorBits")]
+    public int? LengthIndicatorBits { get; set; }
+
+    [JsonPropertyName("maxBits")]
+    public int? MaxBits { get; set; }
+
+    [JsonPropertyName("maxChars")]
+    public int? MaxChars { get; set; }
+}
+
+/// <summary>
+/// TDS 2.3: Defines a hostname field for '++' schemes.
+/// </summary>
+public class HostnameFieldDefinition
+{
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("encodingMethod")]
+    public string? EncodingMethod { get; set; }
+
+    [JsonPropertyName("encodingIndicatorBits")]
+    public int? EncodingIndicatorBits { get; set; }
+
+    [JsonPropertyName("lengthIndicatorBits")]
+    public int? LengthIndicatorBits { get; set; }
+
+    [JsonPropertyName("maxChars")]
+    public int? MaxChars { get; set; }
 }
 
 /// <summary>

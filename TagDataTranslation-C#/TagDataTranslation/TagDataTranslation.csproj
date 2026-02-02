@@ -7,7 +7,7 @@
 
         <!-- NuGet Package Properties -->
         <PackageId>TagDataTranslation</PackageId>
-        <Version>2.1.0</Version>
+        <Version>2.3.0</Version>
         <Authors>Danny Haak</Authors>
         <Company>Danny Haak</Company>
         <Product>TagDataTranslation</Product>
@@ -24,6 +24,12 @@
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 
         <PackageReleaseNotes>
+Version 2.3.0:
+- Added TDS 2.3 support with 12 new '++' EPC schemes for custom hostname encoding
+- New schemes: SGTIN++, DSGTIN++, SSCC++, SGLN++, GRAI++, GIAI++, GSRN++, GSRNP++, GDTI++, SGCN++, ITIP++, CPI++
+- Hostname encoder with URN Code 40 and 7-bit ASCII with TLD optimizations
+- Lossless encoding of custom domain names in Digital Link URIs
+
 Version 2.1.0:
 - Added TryTranslate and TryTranslateDetails methods for exception-free translation
 - Ideal for high-throughput scenarios where exception overhead is a concern

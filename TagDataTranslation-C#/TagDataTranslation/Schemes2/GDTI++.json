@@ -1,0 +1,161 @@
+{
+  "tdt:epcTagDataTranslation": {
+    "version": "2.3",
+    "date": "2025-10-01T00:00:00Z",
+    "epcTDSVersion": "2.3",
+    "scheme": {
+      "name": "GDTI++",
+      "optionKey": "1",
+      "supportsHostname": true,
+      "level": [
+        {
+          "type": "BINARY",
+          "prefixMatch": "11101010",
+          "requiredFormattingParameters": "filter,dataToggle",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^11101010([01])([01]{3})([01]{52})([01]*)",
+              "grammar": "'11101010' dataToggle filter gdti serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 52,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 13,
+                  "name": "gdti"
+                }
+              ],
+              "variableLengthField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_ALPHANUMERIC",
+                "encodingIndicatorBits": 3,
+                "lengthIndicatorBits": 5,
+                "maxBits": 119,
+                "maxChars": 17
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            }
+          ]
+        },
+        {
+          "type": "BARE_IDENTIFIER",
+          "prefixMatch": "gdti=",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^gdti=([0-9]{13})([!%-?A-Z_a-z\\x22]{0,17});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gdti=' gdti serial ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gdti"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "GS1_DIGITAL_LINK",
+          "prefixMatch": "https://",
+          "requiredFormattingParameters": "hostname",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/253\\/([0-9]{13})((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){0,17})(?:\\?|$)",
+              "grammar": "'https://' hostname '/253/' gdti urlEscapedSerial",
+              "aiSequence": [
+                "253"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gdti"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                }
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "type": "EXTRACT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "serial",
+              "characterSet": "[!%-?A-Z_a-z\\x22]*",
+              "function": "URLDECODE(urlEscapedSerial)"
+            },
+            {
+              "type": "FORMAT",
+              "inputFormat": "STRING",
+              "seq": 1,
+              "newFieldName": "urlEscapedSerial",
+              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "function": "URLENCODE(serial)"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
