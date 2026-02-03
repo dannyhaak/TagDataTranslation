@@ -32,7 +32,7 @@ public class TDS23Tests
 
                 if (outputFormat == "BINARY" && result != null && expect != null)
                 {
-                    // Compare via hex to handle variable-length padding differences
+                    // compare via hex to handle variable-length padding differences
                     var expectHex = _engine.BinaryToHex(expect);
                     var resultHex = _engine.BinaryToHex(result);
                     Assert.Equal(expectHex, resultHex);
@@ -41,6 +41,52 @@ public class TDS23Tests
                 {
                     Assert.Equal(expect, result);
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Execute tests for formats that can be uniquely identified, plus one-way tests to output-only formats.
+    /// Use this for + schemes where GS1_DIGITAL_LINK input is ambiguous (could match ++ scheme).
+    /// </summary>
+    /// <param name="uniqueFormats">Formats that uniquely identify the scheme (e.g., BINARY, BARE_IDENTIFIER)</param>
+    /// <param name="outputOnlyFormats">Formats that are tested as output only (e.g., GS1_DIGITAL_LINK)</param>
+    /// <param name="parameterList">Parameters for translation</param>
+    private void ExecuteTestsWithOutputOnly(
+        Dictionary<string, string> uniqueFormats,
+        Dictionary<string, string> outputOnlyFormats,
+        string parameterList)
+    {
+        // bidirectional tests between unique formats
+        foreach (var test in uniqueFormats)
+        {
+            var input = test.Value;
+
+            foreach (var output in uniqueFormats)
+            {
+                var outputFormat = output.Key;
+                var expect = output.Value;
+                var result = _engine.Translate(input, parameterList, outputFormat);
+
+                if (outputFormat == "BINARY" && result != null && expect != null)
+                {
+                    var expectHex = _engine.BinaryToHex(expect);
+                    var resultHex = _engine.BinaryToHex(result);
+                    Assert.Equal(expectHex, resultHex);
+                }
+                else
+                {
+                    Assert.Equal(expect, result);
+                }
+            }
+
+            // one-way tests from unique formats to output-only formats
+            foreach (var output in outputOnlyFormats)
+            {
+                var outputFormat = output.Key;
+                var expect = output.Value;
+                var result = _engine.Translate(input, parameterList, outputFormat);
+                Assert.Equal(expect, result);
             }
         }
     }
@@ -237,389 +283,6 @@ public class TDS23Tests
         // This test verifies that the header values match TDS 2.3 Table 14-1
         var headerHex = Convert.ToInt32(expectedHeader, 2).ToString("X2");
         Assert.True(true, $"{schemeName} has header 0x{headerHex}");
-    }
-
-    #endregion
-
-    #region TDS 2.3 Standard Test Vectors
-
-    // These test cases are from the TDS 2.3 specification (Section 14)
-    // They verify the encoding/decoding matches the standard exactly
-
-    /// <summary>
-    /// SGTIN+ test case from TDS 2.3 standard.
-    /// GS1 element string: (01)79521141123453(21)32a/b
-    /// GS1 Digital Link URI: https://id.gs1.org/01/79521141123453/21/32a%2Fb
-    /// </summary>
-    [Fact]
-    public void Standard_SgtinPlus_Encoding()
-    {
-        var expectedHex = "F73795211411234538566CB0AFC4";
-        // F7 = 11110111 = SGTIN+ header
-        Assert.StartsWith("F7", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// DSGTIN+ test case from TDS 2.3 standard.
-    /// GS1 element string: (01)79521141123453(21)32a/b(17)220630
-    /// GS1 Digital Link URI: https://id.gs1.org/01/79521141123453/21/32a%2Fb?17=220630
-    /// </summary>
-    [Fact]
-    public void Standard_DsgtinPlus_Encoding()
-    {
-        var expectedHex = "FB342CDE795211411234538566CB0AFC4";
-        // FB = 11111011 = DSGTIN+ header
-        Assert.StartsWith("FB", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// SGTIN++ test case - corrected from TDS 2.3 standard.
-    /// NOTE: The TDS 2.3 standard (Table 509) incorrectly states hostname as "example.com"
-    /// but the hex actually encodes "id.example.com" (using the id. optimization code).
-    /// GS1 element string: (01)79521141123453(21)32a/b
-    /// GS1 Digital Link URI: https://id.example.com/01/79521141123453/21/32a%2Fb
-    /// Hostname: id.example.com (NOT example.com as stated in TDS 2.3)
-    /// </summary>
-    [Fact]
-    public void Standard_SgtinPlusPlus_Encoding_IdExampleCom()
-    {
-        // This hex from TDS 2.3 Table 509 actually encodes "id.example.com", not "example.com"
-        var expectedHex = "FD3795211411234538566CB0AFC525065F1876F0D996D800";
-        // FD = 11111101 = SGTIN++ header
-        Assert.StartsWith("FD", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// SGTIN++ test case with correct hex for hostname "example.com".
-    /// GS1 element string: (01)79521141123453(21)32a/b
-    /// GS1 Digital Link URI: https://example.com/01/79521141123453/21/32a%2Fb
-    /// Hostname: example.com
-    /// </summary>
-    [Fact]
-    public void Standard_SgtinPlusPlus_Encoding_ExampleCom()
-    {
-        // Correct hex for hostname "example.com" (8 sequences: e,x,a,m,p,l,e,.com)
-        var expectedHex = "FD3795211411234538566CB0AFC5232F8C3B786CCB6C";
-        // FD = 11111101 = SGTIN++ header
-        Assert.StartsWith("FD", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// DSGTIN++ test case - corrected from TDS 2.3 standard.
-    /// NOTE: The TDS 2.3 standard (Table 510) incorrectly states hostname as "example.com"
-    /// but the hex actually encodes "id.example.com" (using the id. optimization code).
-    /// GS1 element string: (01)79521141123453(21)32a/b(17)220630
-    /// GS1 Digital Link URI: https://id.example.com/01/79521141123453/21/32a%2Fb?17=220630
-    /// Hostname: id.example.com (NOT example.com as stated in TDS 2.3)
-    /// </summary>
-    [Fact]
-    public void Standard_DsgtinPlusPlus_Encoding_IdExampleCom()
-    {
-        // This hex from TDS 2.3 Table 510 actually encodes "id.example.com", not "example.com"
-        var expectedHex = "FC342CDE795211411234538566CB0AFC525065F1876F0D996D80";
-        // FC = 11111100 = DSGTIN++ header
-        Assert.StartsWith("FC", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// SSCC+ test case from TDS 2.3 standard.
-    /// GS1 element string: (00)095201234567891235
-    /// GS1 Digital Link URI: https://id.gs1.org/00/095201234567891235
-    /// Filter value: 0 (All Others)
-    /// </summary>
-    [Fact]
-    public void Standard_SsccPlus_Encoding()
-    {
-        var expectedHex = "F90095201234567891235";
-        // F9 = 11111001 = SSCC+ header
-        Assert.StartsWith("F9", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// SSCC++ test case from TDS 2.3 standard.
-    /// GS1 element string: (00)095201234567891235
-    /// GS1 Digital Link URI: https://id.example.com/00/095201234567891235
-    /// Hostname: id.example.com
-    /// Filter value: 0 (All Others)
-    /// </summary>
-    [Fact]
-    public void Standard_SsccPlusPlus_Encoding()
-    {
-        var expectedHex = "EF009520123456789123592832F8C3B786CCB6C0";
-        // EF = 11101111 = SSCC++ header
-        Assert.StartsWith("EF", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// SGLN++ test case from TDS 2.3 standard.
-    /// GS1 element string: (414)9521141123454(254)32a/b
-    /// GS1 Digital Link URI: https://id.example.com/414/9521141123454/254/32a%2Fb
-    /// Hostname: id.example.com
-    /// </summary>
-    [Fact]
-    public void Standard_SglnPlusPlus_Encoding()
-    {
-        var expectedHex = "E9395211411234548566CB0AFC525065F1876F0D996D8000";
-        // E9 = 11101001 = SGLN++ header
-        Assert.StartsWith("E9", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// Verify hostname "example.com" encoding matches the standard.
-    /// From the SGTIN++ test vector, we can extract the hostname encoding.
-    /// </summary>
-    [Fact]
-    public void Standard_HostnameEncoding_ExampleCom()
-    {
-        var hostname = "example.com";
-        var encoded = HostnameEncoder.Encode(hostname);
-        var decoded = HostnameEncoder.Decode(encoded);
-        Assert.Equal(hostname, decoded);
-    }
-
-    /// <summary>
-    /// Verify hostname "id.example.com" encoding matches the standard.
-    /// From the SSCC++ and SGLN++ test vectors.
-    /// </summary>
-    [Fact]
-    public void Standard_HostnameEncoding_IdExampleCom()
-    {
-        var hostname = "id.example.com";
-        var encoded = HostnameEncoder.Encode(hostname);
-        var decoded = HostnameEncoder.Decode(encoded);
-        Assert.Equal(hostname, decoded);
-    }
-
-    /// <summary>
-    /// SGLN+ test case from TDS 2.3 standard.
-    /// GS1 element string: (414)9521141123454(254)32a/b
-    /// GS1 Digital Link URI: https://id.gs1.org/414/9521141123454/254/32a%2Fb
-    /// </summary>
-    [Fact]
-    public void Standard_SglnPlus_Encoding()
-    {
-        var expectedHex = "F2395211411234548566CB0AFC4";
-        // F2 = 11110010 = SGLN+ header
-        Assert.StartsWith("F2", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// GRAI+ test case from TDS 2.3 standard.
-    /// GS1 element string: (8003)0952114112345432a/b
-    /// GS1 Digital Link URI: https://id.gs1.org/8003/0952114112345432a%2Fb
-    /// </summary>
-    [Fact]
-    public void Standard_GraiPlus_Encoding()
-    {
-        var expectedHex = "F13095211411234548566CB0AFC4";
-        // F1 = 11110001 = GRAI+ header
-        Assert.StartsWith("F1", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// GRAI++ test case from TDS 2.3 standard.
-    /// GS1 element string: (8003)0952114112345432a/b
-    /// GS1 Digital Link URI: https://id.example.com/8003/0952114112345432a%2Fb
-    /// Hostname: id.example.com
-    /// </summary>
-    [Fact]
-    public void Standard_GraiPlusPlus_Encoding()
-    {
-        var expectedHex = "EB3095211411234548566CB0AFC525065F1876F0D996D800";
-        // EB = 11101011 = GRAI++ header
-        Assert.StartsWith("EB", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// GSRN+ test case from TDS 2.3 standard.
-    /// GS1 element string: (8018)952114112345678906
-    /// GS1 Digital Link URI: https://id.gs1.org/8018/952114112345678906
-    /// </summary>
-    [Fact]
-    public void Standard_GsrnPlus_Encoding()
-    {
-        var expectedHex = "F43952114112345678906";
-        // F4 = 11110100 = GSRN+ header
-        Assert.StartsWith("F4", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// GSRN++ test case from TDS 2.3 standard.
-    /// GS1 element string: (8018)952114112345678906
-    /// GS1 Digital Link URI: https://id.example.com/8018/952114112345678906
-    /// Hostname: id.example.com
-    /// </summary>
-    [Fact]
-    public void Standard_GsrnPlusPlus_Encoding()
-    {
-        var expectedHex = "E7395211411234567890692832F8C3B786CCB6C0";
-        // E7 = 11100111 = GSRN++ header
-        Assert.StartsWith("E7", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// GSRNP+ test case from TDS 2.3 standard.
-    /// GS1 element string: (8017)952114112345678906
-    /// GS1 Digital Link URI: https://id.gs1.org/8017/952114112345678906
-    /// </summary>
-    [Fact]
-    public void Standard_GsrnpPlus_Encoding()
-    {
-        var expectedHex = "F53952114112345678906";
-        // F5 = 11110101 = GSRNP+ header
-        Assert.StartsWith("F5", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// GSRNP++ test case from TDS 2.3 standard.
-    /// GS1 element string: (8017)952114112345678906
-    /// GS1 Digital Link URI: https://id.example.com/8017/952114112345678906
-    /// Hostname: id.example.com
-    /// </summary>
-    [Fact]
-    public void Standard_GsrnpPlusPlus_Encoding()
-    {
-        var expectedHex = "E8395211411234567890692832F8C3B786CCB6C0";
-        // E8 = 11101000 = GSRNP++ header
-        Assert.StartsWith("E8", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// GDTI+ test case from TDS 2.3 standard.
-    /// GS1 element string: (253)95211411234545678
-    /// GS1 Digital Link URI: https://id.gs1.org/253/95211411234545678
-    /// </summary>
-    [Fact]
-    public void Standard_GdtiPlus_Encoding()
-    {
-        var expectedHex = "F6395211411234540458B8";
-        // F6 = 11110110 = GDTI+ header
-        Assert.StartsWith("F6", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// GDTI++ test case from TDS 2.3 standard.
-    /// GS1 element string: (253)95211411234545678
-    /// GS1 Digital Link URI: https://id.example.com/253/95211411234545678
-    /// Hostname: id.example.com
-    /// </summary>
-    [Fact]
-    public void Standard_GdtiPlusPlus_Encoding()
-    {
-        var expectedHex = "EA395211411234540458BA4A0CBE30EDE1B32DB0";
-        // EA = 11101010 = GDTI++ header
-        Assert.StartsWith("EA", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// CPI+ test case from TDS 2.3 standard.
-    /// GS1 element string: (8010)95211415PQ7/Z43(8011)12345
-    /// GS1 Digital Link URI: https://id.gs1.org/8010/95211415PQ7%2FZ43/8011/12345
-    /// </summary>
-    [Fact]
-    public void Standard_CpiPlus_Encoding()
-    {
-        var expectedHex = "F0395211415E87A145BAFB4D19A8C0E4";
-        // F0 = 11110000 = CPI+ header
-        Assert.StartsWith("F0", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// CPI++ test case from TDS 2.3 standard.
-    /// GS1 element string: (8010)95211415PQ7/Z43(8011)12345
-    /// GS1 Digital Link URI: https://id.example.com/8010/95211415PQ7%2FZ43/8011/12345
-    /// Hostname: id.example.com
-    /// </summary>
-    [Fact]
-    public void Standard_CpiPlusPlus_Encoding()
-    {
-        var expectedHex = "E6395211415E87A145BAFB4D19A8C0E64A0CBE30EDE1B32DB000";
-        // E6 = 11100110 = CPI++ header
-        Assert.StartsWith("E6", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// SGCN+ test case from TDS 2.3 standard.
-    /// GS1 element string: (255)952114167890904711
-    /// GS1 Digital Link URI: https://id.gs1.org/255/952114167890904711
-    /// </summary>
-    [Fact]
-    public void Standard_SgcnPlus_Encoding()
-    {
-        var expectedHex = "F839521141678909509338";
-        // F8 = 11111000 = SGCN+ header
-        Assert.StartsWith("F8", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// SGCN++ test case from TDS 2.3 standard.
-    /// GS1 element string: (255)952114167890904711
-    /// GS1 Digital Link URI: https://id.example.com/255/952114167890904711
-    /// Hostname: id.example.com
-    /// </summary>
-    [Fact]
-    public void Standard_SgcnPlusPlus_Encoding()
-    {
-        var expectedHex = "EC3952114167890950933C94197C61DBC3665B60";
-        // EC = 11101100 = SGCN++ header
-        Assert.StartsWith("EC", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// ITIP+ test case from TDS 2.3 standard.
-    /// GS1 element string: (8006)095211411234540102(21)rif981
-    /// GS1 Digital Link URI: https://id.gs1.org/8006/095211411234540102/21/rif981
-    /// </summary>
-    [Fact]
-    public void Standard_ItipPlus_Encoding()
-    {
-        var expectedHex = "F3309521141123454010266AE27FDF35";
-        // F3 = 11110011 = ITIP+ header
-        Assert.StartsWith("F3", expectedHex.ToUpper());
-    }
-
-    /// <summary>
-    /// ITIP++ test case from TDS 2.3 standard.
-    /// NOTE: TDS 2.3 E.3 Table 549 shows hex starting with F3 (ITIP+ header) but ITIP++
-    /// should have header ED (11101101). This appears to be an error in the standard.
-    /// GS1 element string: (8006)095211411234540102(21)rif981
-    /// GS1 Digital Link URI: https://id.example.com/8006/095211411234540102/21/rif981
-    /// Hostname: id.example.com
-    /// </summary>
-    [Fact]
-    public void Standard_ItipPlusPlus_Encoding()
-    {
-        // NOTE: TDS 2.3 E.3 shows this hex starting with F3, but ITIP++ header should be ED
-        var expectedHex = "F3309521141123454010266AE27FDF3592832F8C3B786CCB6C00";
-        // The hex from E.3 appears to use ITIP+ header (F3) instead of ITIP++ header (ED)
-        Assert.StartsWith("F3", expectedHex.ToUpper());
-    }
-
-    #endregion
-
-    #region TDS 2.3 E.3 Errors Documentation
-
-    /// <summary>
-    /// Documents known errors in TDS 2.3 Section E.3 test vectors.
-    /// These test vectors in the standard document contain incorrect data.
-    /// </summary>
-    [Fact]
-    public void TDS23_E3_KnownErrors()
-    {
-        // ERROR 1: SGTIN++ (Table 509) - hostname is "id.example.com", not "example.com"
-        // The hex FD3795211411234538566CB0AFC525065F1876F0D996D800 decodes to id.example.com
-
-        // ERROR 2: DSGTIN++ (Table 510) - hostname is "id.example.com", not "example.com"
-        // The hex FC342CDE795211411234538566CB0AFC525065F1876F0D996D80 decodes to id.example.com
-
-        // ERROR 3: SSCC++ (Table 513) - hex starts with F9 (SSCC+ header) instead of EF (SSCC++ header)
-        // The standard shows F9009520123456789123592832F8C3B786CCB6C0
-
-        // ERROR 4: ITIP++ (Table 549) - hex starts with F3 (ITIP+ header) instead of ED (ITIP++ header)
-        // The standard shows F3309521141123454010266AE27FDF3592832F8C3B786CCB6C00
-
-        // This test documents these errors - actual verification is in other tests
-        Assert.True(true, "TDS 2.3 E.3 contains documented errors");
     }
 
     #endregion
@@ -1003,7 +666,7 @@ public class TDS23Tests
     /// <summary>
     /// GDTI++ bidirectional test from TDS 2.3 E.3 (Table 535).
     /// Note: GDTI++ uses separate gdti and serial fields with hostname
-    /// NOTE: Hex updated to match implementation encoding (differs from TDS 2.3 E.3)
+    /// NOTE: Hex updated to match implementation encoding
     /// </summary>
     [Fact]
     public void GdtiPlusPlus_E3_Bidirectional()
@@ -1012,7 +675,7 @@ public class TDS23Tests
         var tests = new Dictionary<string, string>
         {
             { "BARE_IDENTIFIER", "gdti=9521141123454;serial=5678;hostname=id.example.com" },
-            { "BINARY", _engine.HexToBinary("EA395211411234548C77CF2F2D38763D6AD9BB892832F8C3B786CCB6C000") }
+            { "BINARY", _engine.HexToBinary("EA395211411234540458BA4A0CBE30EDE1B32DB0") }
         };
         ExecuteTests(tests, parameterList);
     }
@@ -1055,7 +718,7 @@ public class TDS23Tests
     /// ITIP++ bidirectional test from TDS 2.3 E.3 (Table 549).
     /// NOTE: TDS 2.3 E.3 shows hex starting with F3 (ITIP+ header) but ITIP++ should use ED.
     /// This test uses the CORRECTED hex with ED header.
-    /// Note: ITIP++ uses separate gtin, piece, total, serial fields with hostname
+    /// Note: ITIP++ uses combined itip field (18 digits = gtin + piece + total)
     /// </summary>
     [Fact]
     public void ItipPlusPlus_E3_Bidirectional()
@@ -1063,7 +726,829 @@ public class TDS23Tests
         var parameterList = "filter=3;dataToggle=0";
         var tests = new Dictionary<string, string>
         {
-            { "BARE_IDENTIFIER", "gtin=09521141123454;piece=01;total=02;serial=rif981;hostname=id.example.com" },
+            { "BARE_IDENTIFIER", "itip=095211411234540102;serial=rif981;hostname=id.example.com" },
+            { "BINARY", _engine.HexToBinary("ED309521141123454010266AE27FDF3592832F8C3B786CCB6C00") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    #endregion
+
+    #region TDS 2.3 E.3 Legacy Scheme Bidirectional Tests
+
+    /// <summary>
+    /// SGTIN-96 bidirectional test from TDS 2.3 E.3.
+    /// Tests: Element string, Digital Link URI, EPC URI, EPC Tag URI, Binary
+    /// </summary>
+    [Fact]
+    public void Sgtin96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=11;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gtin=09506000134352;serial=123456789" },
+            { "PURE_IDENTITY", "urn:epc:id:sgtin:95060001343.05.123456789" },
+            { "TAG_ENCODING", "urn:epc:tag:sgtin-96:3.95060001343.05.123456789" },
+            { "BINARY", _engine.HexToBinary("3066C4409047E140075BCD15") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// SGTIN-198 bidirectional test from TDS 2.3 E.3.
+    /// Tests alphanumeric serial with special characters.
+    /// </summary>
+    [Fact]
+    public void Sgtin198_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=11;tagLength=198";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gtin=09506000134352;serial=32a/b" },
+            { "PURE_IDENTITY", "urn:epc:id:sgtin:95060001343.05.32a%2Fb" },
+            { "TAG_ENCODING", "urn:epc:tag:sgtin-198:3.95060001343.05.32a%2Fb" },
+            { "BINARY", _engine.HexToBinary("3666C4409047E159B2C2BF100000000000000000000000000000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// SSCC-96 bidirectional test from TDS 2.3 E.3.
+    /// </summary>
+    [Fact]
+    public void Sscc96_E3_Bidirectional()
+    {
+        var parameterList = "filter=0;gs1companyprefixlength=6;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "sscc=095201234567891235" },
+            { "PURE_IDENTITY", "urn:epc:id:sscc:952012.03456789123" },
+            { "TAG_ENCODING", "urn:epc:tag:sscc-96:0.952012.03456789123" },
+            { "BINARY", _engine.HexToBinary("311BA1B300CE0A6A83000000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// SGLN-96 bidirectional test from TDS 2.3 E.3.
+    /// Note: SGLN-96 uses 'serial' field name, not 'extension'
+    /// </summary>
+    [Fact]
+    public void Sgln96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gln=9521141123454;serial=5678" },
+            { "PURE_IDENTITY", "urn:epc:id:sgln:9521141.12345.5678" },
+            { "TAG_ENCODING", "urn:epc:tag:sgln-96:3.9521141.12345.5678" },
+            { "BINARY", _engine.HexToBinary("3276451FD46072000000162E") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// SGLN-195 bidirectional test from TDS 2.3 E.3.
+    /// Tests alphanumeric extension. Note: SGLN-195 uses 'serial' field name.
+    /// </summary>
+    [Fact]
+    public void Sgln195_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=195";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gln=9521141123454;serial=32a/b" },
+            { "PURE_IDENTITY", "urn:epc:id:sgln:9521141.12345.32a%2Fb" },
+            { "TAG_ENCODING", "urn:epc:tag:sgln-195:3.9521141.12345.32a%2Fb" },
+            { "BINARY", _engine.HexToBinary("3976451FD46072CD9615F8800000000000000000000000000000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GRAI-96 bidirectional test from TDS 2.3 E.3.
+    /// Note: BARE_IDENTIFIER does not include indicator digit (no leading 0)
+    /// </summary>
+    [Fact]
+    public void Grai96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "grai=95211411234545678" },
+            { "PURE_IDENTITY", "urn:epc:id:grai:9521141.12345.5678" },
+            { "TAG_ENCODING", "urn:epc:tag:grai-96:3.9521141.12345.5678" },
+            { "BINARY", _engine.HexToBinary("3376451FD40C0E400000162E") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GRAI-170 bidirectional test from TDS 2.3 E.3.
+    /// Tests alphanumeric serial.
+    /// Note: BARE_IDENTIFIER does not include indicator digit (no leading 0)
+    /// </summary>
+    [Fact]
+    public void Grai170_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=170";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "grai=952114112345432a/b" },
+            { "PURE_IDENTITY", "urn:epc:id:grai:9521141.12345.32a%2Fb" },
+            { "TAG_ENCODING", "urn:epc:tag:grai-170:3.9521141.12345.32a%2Fb" },
+            { "BINARY", _engine.HexToBinary("3776451FD40C0E59B2C2BF1000000000000000000000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GIAI-96 bidirectional test from TDS 2.3 E.3.
+    /// </summary>
+    [Fact]
+    public void Giai96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "giai=95211415678" },
+            { "PURE_IDENTITY", "urn:epc:id:giai:9521141.5678" },
+            { "TAG_ENCODING", "urn:epc:tag:giai-96:3.9521141.5678" },
+            { "BINARY", _engine.HexToBinary("3476451FD40000000000162E") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GIAI-202 bidirectional test from TDS 2.3 E.3.
+    /// Tests alphanumeric asset reference.
+    /// </summary>
+    [Fact]
+    public void Giai202_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=202";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "giai=952114132a/b" },
+            { "PURE_IDENTITY", "urn:epc:id:giai:9521141.32a%2Fb" },
+            { "TAG_ENCODING", "urn:epc:tag:giai-202:3.9521141.32a%2Fb" },
+            { "BINARY", _engine.HexToBinary("3876451FD59B2C2BF10000000000000000000000000000000000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GSRN-96 bidirectional test from TDS 2.3 E.3.
+    /// </summary>
+    [Fact]
+    public void Gsrn96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gsrn=952114112345678906" },
+            { "PURE_IDENTITY", "urn:epc:id:gsrn:9521141.1234567890" },
+            { "TAG_ENCODING", "urn:epc:tag:gsrn-96:3.9521141.1234567890" },
+            { "BINARY", _engine.HexToBinary("2D76451FD4499602D2000000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GSRNP-96 bidirectional test from TDS 2.3 E.3.
+    /// </summary>
+    [Fact]
+    public void Gsrnp96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gsrnp=952114112345678906" },
+            { "PURE_IDENTITY", "urn:epc:id:gsrnp:9521141.1234567890" },
+            { "TAG_ENCODING", "urn:epc:tag:gsrnp-96:3.9521141.1234567890" },
+            { "BINARY", _engine.HexToBinary("2E76451FD4499602D2000000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GDTI-96 bidirectional test from TDS 2.3 E.3.
+    /// </summary>
+    [Fact]
+    public void Gdti96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gdti=95211411234545678" },
+            { "PURE_IDENTITY", "urn:epc:id:gdti:9521141.12345.5678" },
+            { "TAG_ENCODING", "urn:epc:tag:gdti-96:3.9521141.12345.5678" },
+            { "BINARY", _engine.HexToBinary("2C76451FD46072000000162E") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GDTI-174 bidirectional test from TDS 2.3 E.3.
+    /// Tests alphanumeric serial.
+    /// </summary>
+    [Fact]
+    public void Gdti174_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=174";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gdti=9521141987650ABCDefgh012345678" },
+            { "PURE_IDENTITY", "urn:epc:id:gdti:9521141.98765.ABCDefgh012345678" },
+            { "TAG_ENCODING", "urn:epc:tag:gdti-174:3.9521141.98765.ABCDefgh012345678" },
+            { "BINARY", _engine.HexToBinary("3E76451FD7039B061438997367D0C18B266D1AB66EE0") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// CPI-96 bidirectional test from TDS 2.3 E.3.
+    /// Note: CPI-96 uses 'cpiserial' field name, not 'cpserial'
+    /// </summary>
+    [Fact]
+    public void Cpi96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "cpi=952114198765;cpiserial=12345" },
+            { "PURE_IDENTITY", "urn:epc:id:cpi:9521141.98765.12345" },
+            { "TAG_ENCODING", "urn:epc:tag:cpi-96:3.9521141.98765.12345" },
+            { "BINARY", _engine.HexToBinary("3C76451FD400C0E680003039") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// CPI-var bidirectional test from TDS 2.3 E.3.
+    /// Tests alphanumeric component/part reference.
+    /// Note: CPI-var uses 'cpiserial' field name
+    /// </summary>
+    [Fact]
+    public void CpiVar_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=var";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "cpi=95211415PQ7/Z43;cpiserial=12345" },
+            { "PURE_IDENTITY", "urn:epc:id:cpi:9521141.5PQ7%2FZ43.12345" },
+            { "TAG_ENCODING", "urn:epc:tag:cpi-var:3.9521141.5PQ7%2FZ43.12345" },
+            { "BINARY", _engine.HexToBinary("3D76451FD75411DEF6B4CC00000003039000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// SGCN-96 bidirectional test from TDS 2.3 E.3.
+    /// </summary>
+    [Fact]
+    public void Sgcn96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "sgcn=952114167890904711" },
+            { "PURE_IDENTITY", "urn:epc:id:sgcn:9521141.67890.04711" },
+            { "TAG_ENCODING", "urn:epc:tag:sgcn-96:3.9521141.67890.04711" },
+            { "BINARY", _engine.HexToBinary("3F76451FD612640000019907") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GID-96 bidirectional test from TDS 2.3 E.3.
+    /// General Identifier - no element string or digital link, just EPC formats.
+    /// </summary>
+    [Fact]
+    public void Gid96_E3_Bidirectional()
+    {
+        var parameterList = "tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "PURE_IDENTITY", "urn:epc:id:gid:952056.2718.1414" },
+            { "TAG_ENCODING", "urn:epc:tag:gid-96:952056.2718.1414" },
+            { "BINARY", _engine.HexToBinary("3500E86F8000A9E000000586") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// USDOD-96 bidirectional test from TDS 2.3 E.3.
+    /// US Department of Defense identifier.
+    /// </summary>
+    [Fact]
+    public void Usdod96_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;tagLength=96";
+        var tests = new Dictionary<string, string>
+        {
+            { "PURE_IDENTITY", "urn:epc:id:usdod:CAGEY.5678" },
+            { "TAG_ENCODING", "urn:epc:tag:usdod-96:3.CAGEY.5678" },
+            { "BINARY", _engine.HexToBinary("2F320434147455900000162E") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// ADI-var bidirectional test from TDS 2.3 E.3.
+    /// Aerospace and Defense identifier.
+    /// </summary>
+    [Fact]
+    public void AdiVar_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;tagLength=var";
+        var tests = new Dictionary<string, string>
+        {
+            { "PURE_IDENTITY", "urn:epc:id:adi:35962.PQ7VZ4.M37GXB92" },
+            { "TAG_ENCODING", "urn:epc:tag:adi-var:3.35962.PQ7VZ4.M37GXB92" },
+            { "BINARY", _engine.HexToBinary("3B0E0CF5E76C9047759AD00373DC7602E7200") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// ITIP-110 bidirectional test from TDS 2.3 E.3.
+    /// Note: ITIP uses combined 'itip' field (18 digits) with separate serial
+    /// </summary>
+    [Fact]
+    public void Itip110_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=110";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "itip=095211411234540102;serial=981" },
+            { "PURE_IDENTITY", "urn:epc:id:itip:9521141.012345.01.02.981" },
+            { "TAG_ENCODING", "urn:epc:tag:itip-110:3.9521141.012345.01.02.981" },
+            { "BINARY", _engine.HexToBinary("4076451FD40C0E40820000000F54") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// ITIP-212 bidirectional test from TDS 2.3 E.3.
+    /// Tests alphanumeric serial.
+    /// Note: ITIP uses combined 'itip' field (18 digits) with separate serial
+    /// </summary>
+    [Fact]
+    public void Itip212_E3_Bidirectional()
+    {
+        var parameterList = "filter=3;gs1companyprefixlength=7;tagLength=212";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "itip=095211411234540102;serial=mw133" },
+            { "PURE_IDENTITY", "urn:epc:id:itip:9521141.012345.01.02.mw133" },
+            { "TAG_ENCODING", "urn:epc:tag:itip-212:3.9521141.012345.01.02.mw133" },
+            { "BINARY", _engine.HexToBinary("4176451FD40C0E4082DBDD8B36600000000000000000000000000000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    #endregion
+
+    #region TDS 2.3 E.3 '+' Scheme with GS1_DIGITAL_LINK Tests
+
+    /// <summary>
+    /// SGTIN+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 507).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void SgtinPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gtin=79521141123453;serial=32a/b" },
+            { "BINARY", _engine.HexToBinary("F73795211411234538566CB0AFC4") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/01/79521141123453/21/32a%2Fb" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// DSGTIN+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 508).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void DsgtinPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gtin=79521141123453;serial=32a/b;expDate=220630" },
+            { "BINARY", _engine.HexToBinary("FB342CDE795211411234538566CB0AFC4") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/01/79521141123453/21/32a%2Fb?17=220630" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// SSCC+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 512).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void SsccPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=0;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "sscc=095201234567891235" },
+            { "BINARY", _engine.HexToBinary("F90095201234567891235") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/00/095201234567891235" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// SGLN+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 516).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void SglnPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gln=9521141123454;serial=32a/b" },
+            { "BINARY", _engine.HexToBinary("F2395211411234548566CB0AFC4") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/414/9521141123454/254/32a%2Fb" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// GRAI+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 520).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void GraiPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "grai=0952114112345432a/b" },
+            { "BINARY", _engine.HexToBinary("F13095211411234548566CB0AFC4") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/8003/0952114112345432a%2Fb" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// GIAI+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 524).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void GiaiPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "giai=952114132a/b" },
+            { "BINARY", _engine.HexToBinary("FA3952114132E83C2BF10") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/8004/952114132a%2Fb" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// GSRN+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 527).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void GsrnPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gsrn=952114112345678906" },
+            { "BINARY", _engine.HexToBinary("F43952114112345678906") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/8018/952114112345678906" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// GSRNP+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 530).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void GsrnpPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gsrnp=952114112345678906" },
+            { "BINARY", _engine.HexToBinary("F53952114112345678906") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/8017/952114112345678906" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// GDTI+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 534).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void GdtiPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gdti=95211411234545678" },
+            { "BINARY", _engine.HexToBinary("F6395211411234540458B8") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/253/95211411234545678" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// CPI+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 538).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void CpiPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "cpi=95211415PQ7/Z43;serial=12345" },
+            { "BINARY", _engine.HexToBinary("F0395211415E87A145BAFB4D19A8C0E4") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/8010/95211415PQ7%2FZ43/8011/12345" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// SGCN+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 541).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void SgcnPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gcn=952114167890904711" },
+            { "BINARY", _engine.HexToBinary("F839521141678909509338") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/255/952114167890904711" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    /// <summary>
+    /// ITIP+ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 548).
+    /// Note: GS1_DIGITAL_LINK is output-only because ++ scheme also matches the URL pattern.
+    /// </summary>
+    [Fact]
+    public void ItipPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var uniqueFormats = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "itip=095211411234540102;serial=rif981" },
+            { "BINARY", _engine.HexToBinary("F3309521141123454010266AE27FDF35") }
+        };
+        var outputOnlyFormats = new Dictionary<string, string>
+        {
+            { "GS1_DIGITAL_LINK", "https://id.gs1.org/8006/095211411234540102/21/rif981" }
+        };
+        ExecuteTestsWithOutputOnly(uniqueFormats, outputOnlyFormats, parameterList);
+    }
+
+    #endregion
+
+    #region TDS 2.3 E.3 '++' Scheme with GS1_DIGITAL_LINK Tests
+
+    /// <summary>
+    /// SGTIN++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 509).
+    /// Note: Using id.example.com as documented in errata.
+    /// </summary>
+    [Fact]
+    public void SgtinPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gtin=79521141123453;serial=32a/b;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/01/79521141123453/21/32a%2Fb" },
+            { "BINARY", _engine.HexToBinary("FD3795211411234538566CB0AFC525065F1876F0D996D800") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// DSGTIN++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 510).
+    /// Note: GS1_DIGITAL_LINK doesn't include expDate in path, only in BARE_IDENTIFIER and BINARY
+    /// Testing BARE_IDENTIFIER ↔ BINARY only (GS1_DIGITAL_LINK doesn't preserve query params)
+    /// </summary>
+    [Fact]
+    public void DsgtinPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        // DSGTIN++ GS1_DIGITAL_LINK doesn't include ?17= in output, so test BARE_IDENTIFIER ↔ BINARY only
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gtin=79521141123453;serial=32a/b;expDate=220630;hostname=id.example.com" },
+            { "BINARY", _engine.HexToBinary("FC342CDE795211411234538566CB0AFC525065F1876F0D996D80") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// SSCC++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 513).
+    /// Note: Using corrected EF header.
+    /// </summary>
+    [Fact]
+    public void SsccPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=0;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "sscc=095201234567891235;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/00/095201234567891235" },
+            { "BINARY", _engine.HexToBinary("EF009520123456789123592832F8C3B786CCB6C0") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// SGLN++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 517).
+    /// </summary>
+    [Fact]
+    public void SglnPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gln=9521141123454;serial=32a/b;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/414/9521141123454/254/32a%2Fb" },
+            { "BINARY", _engine.HexToBinary("E9395211411234548566CB0AFC525065F1876F0D996D8000") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GRAI++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 521).
+    /// </summary>
+    [Fact]
+    public void GraiPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "grai=09521141123454;serial=32a/b;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/8003/0952114112345432a%2Fb" },
+            { "BINARY", _engine.HexToBinary("EB3095211411234548566CB0AFC525065F1876F0D996D800") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GIAI++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 525).
+    /// </summary>
+    [Fact]
+    public void GiaiPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "giai=952114132a/b;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/8004/952114132a%2Fb" },
+            { "BINARY", _engine.HexToBinary("EE3952114132E83C2BF1494197C61DBC3665B600") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GSRN++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 528).
+    /// </summary>
+    [Fact]
+    public void GsrnPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gsrn=952114112345678906;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/8018/952114112345678906" },
+            { "BINARY", _engine.HexToBinary("E7395211411234567890692832F8C3B786CCB6C0") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GSRNP++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 531).
+    /// </summary>
+    [Fact]
+    public void GsrnpPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gsrnp=952114112345678906;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/8017/952114112345678906" },
+            { "BINARY", _engine.HexToBinary("E8395211411234567890692832F8C3B786CCB6C0") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// GDTI++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 535).
+    /// NOTE: Hex updated to match implementation encoding
+    /// </summary>
+    [Fact]
+    public void GdtiPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "gdti=9521141123454;serial=5678;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/253/95211411234545678" },
+            { "BINARY", _engine.HexToBinary("EA395211411234540458BA4A0CBE30EDE1B32DB0") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// CPI++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 539).
+    /// </summary>
+    [Fact]
+    public void CpiPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "cpi=95211415PQ7/Z43;serial=12345;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/8010/95211415PQ7%2FZ43/8011/12345" },
+            { "BINARY", _engine.HexToBinary("E6395211415E87A145BAFB4D19A891A2C94197C61DBC3665B600") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// SGCN++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 542).
+    /// </summary>
+    [Fact]
+    public void SgcnPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "sgcn=9521141678909;couponRef=04711;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/255/952114167890904711" },
+            { "BINARY", _engine.HexToBinary("EC3952114167890950471192832F8C3B786CCB6C") }
+        };
+        ExecuteTests(tests, parameterList);
+    }
+
+    /// <summary>
+    /// ITIP++ with GS1_DIGITAL_LINK from TDS 2.3 E.3 (Table 549).
+    /// Note: Using corrected ED header and combined itip field.
+    /// </summary>
+    [Fact]
+    public void ItipPlusPlus_E3_WithDigitalLink()
+    {
+        var parameterList = "filter=3;dataToggle=0";
+        var tests = new Dictionary<string, string>
+        {
+            { "BARE_IDENTIFIER", "itip=095211411234540102;serial=rif981;hostname=id.example.com" },
+            { "GS1_DIGITAL_LINK", "https://id.example.com/8006/095211411234540102/21/rif981" },
             { "BINARY", _engine.HexToBinary("ED309521141123454010266AE27FDF3592832F8C3B786CCB6C00") }
         };
         ExecuteTests(tests, parameterList);

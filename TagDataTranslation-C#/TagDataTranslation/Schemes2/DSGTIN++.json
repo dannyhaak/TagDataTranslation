@@ -5,7 +5,7 @@
     "epcTDSVersion": "2.3",
     "scheme": {
       "name": "DSGTIN++",
-      "optionKey": "1",
+      "optionKey": "dateType",
       "supportsHostname": true,
       "level": [
         {
@@ -14,9 +14,9 @@
           "requiredFormattingParameters": "filter,dataToggle",
           "option": [
             {
-              "optionKey": "1",
-              "pattern": "^11111100([01])([01]{3})([01]{20})([01]{56})([01]*)",
-              "grammar": "'11111100' dataToggle filter dateBinary gtin serialEncoded hostnameEncoded",
+              "optionKey": "0",
+              "pattern": "^11111100([01])([01]{3})0000([01]{16})([01]{56})([01]*)",
+              "grammar": "'11111100' dataToggle filter '0000' prodDate gtin serialEncoded hostnameEncoded",
               "field": [
                 {
                   "seq": 1,
@@ -39,10 +39,363 @@
                 {
                   "seq": 3,
                   "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "prodDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[01]*",
                   "bitPadDir": "LEFT",
-                  "bitLength": 20,
-                  "name": "dateBinary",
-                  "comment": "4-bit date type indicator + 16-bit date value"
+                  "bitLength": 56,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 14,
+                  "name": "gtin"
+                }
+              ],
+              "variableLengthField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_ALPHANUMERIC",
+                "encodingIndicatorBits": 3,
+                "lengthIndicatorBits": 5,
+                "maxBits": 140,
+                "maxChars": 20
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            },
+            {
+              "optionKey": "1",
+              "pattern": "^11111100([01])([01]{3})0001([01]{16})([01]{56})([01]*)",
+              "grammar": "'11111100' dataToggle filter '0001' packDate gtin serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "packDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 56,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 14,
+                  "name": "gtin"
+                }
+              ],
+              "variableLengthField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_ALPHANUMERIC",
+                "encodingIndicatorBits": 3,
+                "lengthIndicatorBits": 5,
+                "maxBits": 140,
+                "maxChars": 20
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^11111100([01])([01]{3})0010([01]{16})([01]{56})([01]*)",
+              "grammar": "'11111100' dataToggle filter '0010' bestBeforeDate gtin serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "bestBeforeDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 56,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 14,
+                  "name": "gtin"
+                }
+              ],
+              "variableLengthField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_ALPHANUMERIC",
+                "encodingIndicatorBits": 3,
+                "lengthIndicatorBits": 5,
+                "maxBits": 140,
+                "maxChars": 20
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^11111100([01])([01]{3})0011([01]{16})([01]{56})([01]*)",
+              "grammar": "'11111100' dataToggle filter '0011' sellByDate gtin serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "sellByDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 56,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 14,
+                  "name": "gtin"
+                }
+              ],
+              "variableLengthField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_ALPHANUMERIC",
+                "encodingIndicatorBits": 3,
+                "lengthIndicatorBits": 5,
+                "maxBits": 140,
+                "maxChars": 20
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^11111100([01])([01]{3})0100([01]{16})([01]{56})([01]*)",
+              "grammar": "'11111100' dataToggle filter '0100' expDate gtin serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "expDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 56,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 14,
+                  "name": "gtin"
+                }
+              ],
+              "variableLengthField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_ALPHANUMERIC",
+                "encodingIndicatorBits": 3,
+                "lengthIndicatorBits": 5,
+                "maxBits": 140,
+                "maxChars": 20
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^11111100([01])([01]{3})0101([01]{16})([01]{56})([01]*)",
+              "grammar": "'11111100' dataToggle filter '0101' firstFreezeDate gtin serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "firstFreezeDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 56,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "length": 14,
+                  "name": "gtin"
+                }
+              ],
+              "variableLengthField": {
+                "name": "serial",
+                "encodingMethod": "VARIABLE_LENGTH_ALPHANUMERIC",
+                "encodingIndicatorBits": 3,
+                "lengthIndicatorBits": 5,
+                "maxBits": 140,
+                "maxChars": 20
+              },
+              "hostnameField": {
+                "name": "hostname",
+                "encodingMethod": "HOSTNAME",
+                "encodingIndicatorBits": 1,
+                "lengthIndicatorBits": 6,
+                "maxChars": 63
+              }
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^11111100([01])([01]{3})0110([01]{16})([01]{56})([01]*)",
+              "grammar": "'11111100' dataToggle filter '0110' harvestDate gtin serialEncoded hostnameEncoded",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "1",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 1,
+                  "name": "dataToggle"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "7",
+                  "characterSet": "[01]*",
+                  "bitPadDir": "LEFT",
+                  "bitLength": 3,
+                  "name": "filter"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[01]*",
+                  "bitLength": 16,
+                  "name": "harvestDate",
+                  "encoding": "dateYYMMDD"
                 },
                 {
                   "seq": 4,
@@ -80,7 +433,143 @@
           "prefixMatch": "gtin=",
           "option": [
             {
+              "optionKey": "0",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});prodDate=([0-9]{6});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';prodDate=' prodDate ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "prodDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            },
+            {
               "optionKey": "1",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});packDate=([0-9]{6});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';packDate=' packDate ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "packDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});bestBeforeDate=([0-9]{6});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';bestBeforeDate=' bestBeforeDate ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "bestBeforeDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});sellByDate=([0-9]{6});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';sellByDate=' sellByDate ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "sellByDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
               "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});expDate=([0-9]{6});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
               "grammar": "'gtin=' gtin ';serial=' serial ';expDate=' expDate ';hostname=' hostname",
               "field": [
@@ -103,7 +592,76 @@
                   "seq": 3,
                   "characterSet": "[0-9]*",
                   "length": 6,
-                  "name": "expDate"
+                  "name": "expDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});firstFreezeDate=([0-9]{6});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';firstFreezeDate=' firstFreezeDate ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "firstFreezeDate",
+                  "encoding": "dateYYMMDD"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^gtin=([0-9]{14});serial=([!%-?A-Z_a-z\\x22]{1,20});harvestDate=([0-9]{6});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gtin=' gtin ';serial=' serial ';harvestDate=' harvestDate ';hostname=' hostname",
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "harvestDate",
+                  "encoding": "dateYYMMDD"
                 },
                 {
                   "seq": 4,
@@ -132,12 +690,13 @@
           ],
           "option": [
             {
-              "optionKey": "1",
-              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|.*(?:11|13|15|16|17|7006|7007)=([0-9]{6}).*$)",
-              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial",
+              "optionKey": "0",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?11=([0-9]{6})(?:\\&|$)",
+              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial '?11=' prodDate",
               "aiSequence": [
                 "01",
-                "21"
+                "21",
+                "11"
               ],
               "field": [
                 {
@@ -157,8 +716,242 @@
                 },
                 {
                   "seq": 3,
-                  "characterSet": "((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "prodDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "1",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?13=([0-9]{6})(?:\\&|$)",
+              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial '?13=' packDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "13"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "packDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "2",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?15=([0-9]{6})(?:\\&|$)",
+              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial '?15=' bestBeforeDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "15"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "bestBeforeDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "3",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?16=([0-9]{6})(?:\\&|$)",
+              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial '?16=' sellByDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "16"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "sellByDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "4",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?17=([0-9]{6})(?:\\&|$)",
+              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial '?17=' expDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "17"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "expDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "5",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?7006=([0-9]{6})(?:\\&|$)",
+              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial '?7006=' firstFreezeDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "7006"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "firstFreezeDate"
+                }
+              ]
+            },
+            {
+              "optionKey": "6",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})\\?7007=([0-9]{6})(?:\\&|$)",
+              "grammar": "'https://' hostname '/01/' gtin '/21/' urlEscapedSerial '?7007=' harvestDate",
+              "aiSequence": [
+                "01",
+                "21",
+                "7007"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[a-zA-Z0-9.-]*",
+                  "name": "hostname"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "99999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 14,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gtin"
+                },
+                {
+                  "seq": 3,
+                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial"
+                },
+                {
+                  "seq": 4,
+                  "characterSet": "[0-9]*",
+                  "length": 6,
+                  "name": "harvestDate"
                 }
               ]
             }

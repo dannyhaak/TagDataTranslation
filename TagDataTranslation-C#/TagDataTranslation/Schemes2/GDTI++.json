@@ -73,8 +73,8 @@
           "option": [
             {
               "optionKey": "1",
-              "pattern": "^gdti=([0-9]{13})([!%-?A-Z_a-z\\x22]{0,17});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
-              "grammar": "'gdti=' gdti serial ';hostname=' hostname",
+              "pattern": "^gdti=([0-9]{13});serial=([!%-?A-Z_a-z\\x22]{0,17});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'gdti=' gdti ';serial=' serial ';hostname=' hostname",
               "field": [
                 {
                   "seq": 1,

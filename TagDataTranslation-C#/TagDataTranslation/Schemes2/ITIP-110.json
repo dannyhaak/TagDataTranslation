@@ -1329,7 +1329,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1354,7 +1354,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1379,7 +1379,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1404,7 +1404,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1429,7 +1429,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1454,7 +1454,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1479,7 +1479,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1612,7 +1612,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1641,7 +1641,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1670,7 +1670,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1699,7 +1699,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1728,7 +1728,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1757,7 +1757,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1786,7 +1786,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1921,7 +1921,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1950,7 +1950,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -1979,7 +1979,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -2008,7 +2008,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -2037,7 +2037,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -2066,7 +2066,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",
@@ -2095,7 +2095,7 @@
                 {
                   "seq": 1,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "99999999999999",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
                   "length": 18,
                   "padChar": "0",

@@ -6,8 +6,8 @@ TagDataTranslation is a C# library implementing GS1's Tag Data Translation (TDT)
 
 ## Supported Standards
 
-- **TDT 2.2** - Full support for all standard EPC schemes
-- **TDS 2.3** - Support for '+' and '++' schemes with hostname encoding
+- **TDT 2.2** - Full support for all standard EPC schemes (see `docs/TDT-2.2-Standard.md`)
+- **TDS 2.3** - Support for '+' and '++' schemes with hostname encoding (see `docs/TDS-2.3-Standard.md`)
 
 ## Tech Stack
 
@@ -42,6 +42,8 @@ Single-plus schemes like SGTIN+, SSCC+, etc. that:
 - Do NOT encode custom hostnames
 
 ### '++' Schemes (Plus-plus schemes)
+**Note:** The '++' scheme JSON files are custom implementations created by Claude, not official GS1 scheme definitions. They are based on the TDS 2.3 specification but the JSON schema files themselves are not from GS1.
+
 Double-plus schemes like SGTIN++, SSCC++, etc. that:
 - Include all features of '+' schemes
 - Additionally encode a custom hostname in binary
@@ -101,8 +103,15 @@ See `docs/TDS-2.3-Errata.md` for documented errors in the TDS 2.3 specification,
 - SGTIN++/DSGTIN++ hostname errors in E.3
 - SSCC++/ITIP++ header errors in E.3
 
-### Pre-existing Test Failures
-Some tests in `TDSStandard.cs` and `Exceptions.cs` fail. These are pre-existing issues unrelated to TDS 2.3 implementation.
+**Note:** Errors in '++' scheme JSON files are not "errata" since the JSON files are custom implementations, not from GS1. Only errors in the official TDS 2.3 specification document should be documented in the errata file.
+
+## Testing Requirements
+
+**All tests must pass.** Tests are never allowed to fail. Before committing any changes, ensure all tests pass by running:
+
+```bash
+dotnet test TagDataTranslationUnitTest/TagDataTranslationUnitTest.csproj
+```
 
 ## Build Commands
 
@@ -128,6 +137,10 @@ dotnet test --filter "FullyQualifiedName~TDT22"
 | `TagDataTranslation/Tables/` | Lookup tables (Table F, K, E, B) |
 | `TagDataTranslationUnitTest/` | Unit tests |
 | `docs/` | Documentation and standards |
+| `docs/TDT-2.2-Standard.md` | GS1 Tag Data Translation 2.2 specification |
+| `docs/TDS-2.3-Standard.md` | GS1 Tag Data Standard 2.3 specification |
+| `docs/TDS-2.3-Errata.md` | Known errors in TDS 2.3 specification |
+| `docs/Scheme-Conversion-Errata.md` | Errors found in XML to JSON conversion |
 
 ## Adding New Schemes
 
@@ -142,7 +155,51 @@ dotnet test --filter "FullyQualifiedName~TDT22"
 - Use `TryTranslateDetails()` for detailed translation information
 - Binary patterns must match exactly - check bit counts
 - For '++' schemes, hostname length is in sequences, not characters
-- Check `docs/TDS-2.3-Standard.md` for specification details
+- Check `docs/TDT-2.2-Standard.md` for TDT 2.2 specification details
+- Check `docs/TDS-2.3-Standard.md` for TDS 2.3 specification details
+
+## Important Implementation Notes
+
+### '+' Scheme JSON Files
+The '+' scheme JSON files (SGTIN+.json, SSCC+.json, etc.) are from the GS1 standard and **should NOT be modified**. They support GS1 Digital Link URIs with ANY hostname, not just id.gs1.org.
+
+### '++' Scheme JSON Files
+The '++' scheme JSON files are custom implementations and **CAN be modified** as needed to match the TDS 2.3 specification.
+
+### Scheme Selection Ambiguity
+When GS1_DIGITAL_LINK input is provided, both '+' and '++' schemes may match the URL pattern:
+- '+' schemes match URLs with any hostname (e.g., `https://id.gs1.org/01/...`)
+- '++' schemes also match URLs with any hostname and capture it for encoding
+
+The engine may select the '++' scheme due to more specific pattern matching. For '+' scheme tests:
+- Test GS1_DIGITAL_LINK as OUTPUT only (translate from BINARY/BARE_IDENTIFIER to GS1_DIGITAL_LINK)
+- Do NOT test GS1_DIGITAL_LINK as INPUT (ambiguous which scheme will be selected)
+
+Use `ExecuteTestsWithOutputOnly()` helper for '+' scheme tests with GS1_DIGITAL_LINK.
+
+### Field Name Consistency
+Field names MUST match across all levels of a scheme:
+- BAD: `itipBinary` in BINARY level, `itip` in BARE_IDENTIFIER level (no conversion rule)
+- GOOD: `itip` in both BINARY and BARE_IDENTIFIER levels
+
+### '++' Scheme Specific Notes
+
+**DSGTIN++**: Requires multiple options for different date types (like DSGTIN+):
+- Option 0: prodDate (date type indicator 0000)
+- Option 4: expDate (date type indicator 0100)
+- etc.
+
+**GRAI++**: GS1_DIGITAL_LINK should capture 14-digit grai field (not 13 digits + hardcoded 0):
+- Pattern: `\\/8003\\/([0-9]{14})...`
+- Grammar: `'/8003/' grai urlEscapedSerial`
+
+**GDTI++**: BARE_IDENTIFIER should use `;serial=` separator:
+- Pattern: `^gdti=([0-9]{13});serial=...`
+- Grammar: `'gdti=' gdti ';serial=' serial ';hostname=' hostname`
+
+**ITIP++**: Use combined `itip` field (18 digits = gtin + piece + total):
+- BARE_IDENTIFIER: `itip=095211411234540102;serial=rif981;hostname=...`
+- GS1_DIGITAL_LINK: `/8006/095211411234540102/21/rif981`
 
 ## License
 

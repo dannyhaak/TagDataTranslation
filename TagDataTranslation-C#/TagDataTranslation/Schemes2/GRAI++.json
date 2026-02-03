@@ -107,8 +107,8 @@
           "option": [
             {
               "optionKey": "1",
-              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/8003\\/0([0-9]{13})((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,16})(?:\\?|$)",
-              "grammar": "'https://' hostname '/8003/0' grai urlEscapedSerial",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/8003\\/([0-9]{14})((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,16})(?:\\?|$)",
+              "grammar": "'https://' hostname '/8003/' grai urlEscapedSerial",
               "aiSequence": [
                 "8003"
               ],
@@ -121,9 +121,9 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999999",
+                  "decimalMaximum": "99999999999999",
                   "characterSet": "[0-9]*",
-                  "length": 13,
+                  "length": 14,
                   "padChar": "0",
                   "padDir": "LEFT",
                   "name": "grai"

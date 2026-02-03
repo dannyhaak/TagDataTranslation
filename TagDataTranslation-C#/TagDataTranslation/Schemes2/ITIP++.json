@@ -16,7 +16,7 @@
             {
               "optionKey": "1",
               "pattern": "^11101101([01])([01]{3})([01]{72})([01]*)",
-              "grammar": "'11101101' dataToggle filter itipBinary serialEncoded hostnameEncoded",
+              "grammar": "'11101101' dataToggle filter itip serialEncoded hostnameEncoded",
               "field": [
                 {
                   "seq": 1,
@@ -43,7 +43,8 @@
                   "characterSet": "[01]*",
                   "bitPadDir": "LEFT",
                   "bitLength": 72,
-                  "name": "itipBinary"
+                  "length": 18,
+                  "name": "itip"
                 }
               ],
               "variableLengthField": {
@@ -66,44 +67,30 @@
         },
         {
           "type": "BARE_IDENTIFIER",
-          "prefixMatch": "gtin=",
+          "prefixMatch": "itip=",
           "option": [
             {
               "optionKey": "1",
-              "pattern": "^gtin=([0-9]{14});piece=([0-9]{2});total=([0-9]{2});serial=([!%-?A-Z_a-z\\x22]{1,20});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
-              "grammar": "'gtin=' gtin ';piece=' piece ';total=' total ';serial=' serial ';hostname=' hostname",
+              "pattern": "^itip=([0-9]{18});serial=([!%-?A-Z_a-z\\x22]{1,20});hostname=([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})$",
+              "grammar": "'itip=' itip ';serial=' serial ';hostname=' hostname",
               "field": [
                 {
                   "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "999999999999999999",
                   "characterSet": "[0-9]*",
-                  "length": 14,
+                  "length": 18,
                   "padChar": "0",
                   "padDir": "LEFT",
-                  "name": "gtin"
+                  "name": "itip"
                 },
                 {
                   "seq": 2,
-                  "characterSet": "[0-9]*",
-                  "length": 2,
-                  "padChar": "0",
-                  "padDir": "LEFT",
-                  "name": "piece"
-                },
-                {
-                  "seq": 3,
-                  "characterSet": "[0-9]*",
-                  "length": 2,
-                  "padChar": "0",
-                  "padDir": "LEFT",
-                  "name": "total"
-                },
-                {
-                  "seq": 4,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
                   "name": "serial"
                 },
                 {
-                  "seq": 5,
+                  "seq": 3,
                   "characterSet": "[a-zA-Z0-9.-]*",
                   "name": "hostname"
                 }
