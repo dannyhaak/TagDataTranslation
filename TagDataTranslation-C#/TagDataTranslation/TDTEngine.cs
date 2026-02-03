@@ -251,6 +251,12 @@ namespace TagDataTranslation
         /// </summary>
         public Dictionary<string, string> ProcessInput(string epcIdentifier, string parameterList)
         {
+            // handle null input
+            if (string.IsNullOrEmpty(epcIdentifier))
+            {
+                return null;
+            }
+
             // 1. SETUP - Populate parameter dictionary
             Dictionary<string, string> parameterDictionary = new Dictionary<string, string>();
             if (parameterList != null)
@@ -261,7 +267,7 @@ namespace TagDataTranslation
                 }
                 catch (Exception)
                 {
-                    return null;
+                    throw new TDTTranslationException("TDTParameterErrorException");
                 }
             }
 
@@ -282,9 +288,20 @@ namespace TagDataTranslation
                         // Check taglength parameter matches if specified
                         if (parameterDictionary.TryGetValue("taglength", out string taglength))
                         {
-                            // If taglength is specified in params, prefer schemes with matching tagLength
-                            if (s.TagLength.HasValue && s.TagLength.Value > 0)
+                            bool isVarLength = taglength.Equals("var", StringComparison.OrdinalIgnoreCase);
+                            bool schemeHasFixedLength = s.TagLength.HasValue && s.TagLength.Value > 0;
+
+                            if (isVarLength)
                             {
+                                // tagLength=var should match variable-length schemes (no fixed tagLength)
+                                if (schemeHasFixedLength)
+                                {
+                                    continue;  // Skip fixed-length schemes when var is requested
+                                }
+                            }
+                            else if (schemeHasFixedLength)
+                            {
+                                // Specific tagLength requested - must match scheme's tagLength
                                 if (!taglength.Equals(s.TagLength.Value.ToString()))
                                 {
                                     continue;  // Skip schemes with non-matching tagLength
@@ -292,8 +309,8 @@ namespace TagDataTranslation
                             }
                             else
                             {
-                                // Skip "+" schemes (no tagLength) when specific tagLength is requested
-                                continue;
+                                // Specific tagLength requested but scheme has no fixed length
+                                continue;  // Skip variable-length schemes when specific length requested
                             }
                         }
 
@@ -304,7 +321,7 @@ namespace TagDataTranslation
 
             if (inputLevelsSchemes.Count == 0)
             {
-                return null;
+                throw new TDTTranslationException("TDTSchemeNotFound");
             }
 
             // 3. DETERMINE THE OPTION THAT MATCHES THE INPUT VALUE
@@ -342,31 +359,15 @@ namespace TagDataTranslation
                         }
                     }
 
-                    // Unescape input if Pure Identity or Tag Encoding
-                    string epcIdentifierUnescaped;
-                    var levelType = ParseLevelType(l.Type);
-                    if (levelType == LevelType.PURE_IDENTITY || levelType == LevelType.TAG_ENCODING)
-                    {
-                        epcIdentifierUnescaped = UriEncoder.UrnDecode(epcIdentifier);
-                    }
-                    else if (levelType == LevelType.GS1_DIGITAL_LINK)
-                    {
-                        epcIdentifierUnescaped = epcIdentifier;
-                    }
-                    else
-                    {
-                        epcIdentifierUnescaped = epcIdentifier;
-                    }
-
+                    // match against the original input (patterns expect percent-encoded chars)
                     var pattern = PrepareRegexPattern(o.Pattern);
                     Regex regex = new Regex(pattern);
-                    var isMatch = regex.IsMatch(epcIdentifierUnescaped);
+                    var isMatch = regex.IsMatch(epcIdentifier);
                     if (isMatch)
                     {
                         inputScheme = s;
                         inputLevel = l;
                         inputOption = o;
-                        epcIdentifier = epcIdentifierUnescaped;
                         break;
                     }
                 }
@@ -379,7 +380,7 @@ namespace TagDataTranslation
 
             if (inputOption == null)
             {
-                return null;
+                throw new TDTTranslationException("TDTOptionNotFound");
             }
 
             // Add option key and scheme name to parameter dictionary
@@ -404,7 +405,7 @@ namespace TagDataTranslation
                 {
                     if (!parameterDictionary.ContainsKey(s))
                     {
-                        return null;
+                        throw new TDTTranslationException("TDTUndefinedField");
                     }
                 }
             }
@@ -417,7 +418,7 @@ namespace TagDataTranslation
 
             if (!m.Success)
             {
-                return null;
+                throw new TDTTranslationException("TDTOptionNotFound");
             }
 
             // Sort fields by seq
@@ -436,7 +437,7 @@ namespace TagDataTranslation
                 {
                     if (!ValidateCharacterset(variableElement, inputField.CharacterSet))
                     {
-                        return null;
+                        throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
                     }
                 }
 
@@ -463,28 +464,28 @@ namespace TagDataTranslation
                         variableElement = DecompactBinaryToString(variableElement, compactionBits);
                         variableElement = variableElement.TrimEnd('\0').TrimEnd('@');
                     }
-                    else if (inputField.BitLength.HasValue && inputField.BitLength.Value % 4 == 0 &&
-                             inputField.DecimalMaximum != null &&
-                             BigInteger.TryParse(inputField.DecimalMaximum, out var maxVal))
+                    else if (inputField.BitLength.HasValue)
                     {
-                        // Check if field should use BCD decoding:
-                        // BCD uses 4 bits per digit, so if bitLength/4 matches expected digit count, use BCD
-                        int expectedDigits = inputField.BitLength.Value / 4;
-                        int maxDigits = inputField.DecimalMaximum.Length;
+                        // Check if this is BCD encoding (only for ++ schemes)
+                        // BCD is indicated when: scheme is ++, and bitLength == length * 4 (4 bits per digit)
+                        bool isPlusPlusScheme = inputScheme.Name?.EndsWith("++") == true;
+                        bool isBcd = isPlusPlusScheme &&
+                                     inputField.Length.HasValue &&
+                                     inputField.BitLength.Value == inputField.Length.Value * 4;
 
-                        if (expectedDigits == maxDigits)
+                        if (isBcd)
                         {
-                            // BCD decoding: each 4-bit nibble is a decimal digit
-                            var bcdResult = new StringBuilder();
+                            // BCD decoding: each 4 bits represents one decimal digit
+                            var decodedBuilder = new StringBuilder();
                             for (int j = 0; j < variableElement.Length; j += 4)
                             {
                                 if (j + 4 <= variableElement.Length)
                                 {
                                     int digit = Convert.ToInt32(variableElement.Substring(j, 4), 2);
-                                    bcdResult.Append(digit);
+                                    decodedBuilder.Append(digit);
                                 }
                             }
-                            variableElement = bcdResult.ToString();
+                            variableElement = decodedBuilder.ToString();
                         }
                         else
                         {
@@ -512,12 +513,16 @@ namespace TagDataTranslation
                         BigInteger integer = BigInteger.Parse(variableElement);
                         if (ValidateMinimum(integer, inputField.DecimalMinimum))
                         {
-                            return null;
+                            throw new TDTTranslationException("TDTFieldBelowMinimum");
                         }
+                    }
+                    catch (TDTTranslationException)
+                    {
+                        throw;
                     }
                     catch (Exception)
                     {
-                        return null;
+                        throw new TDTTranslationException("TDTNumericOverflow");
                     }
                 }
 
@@ -528,12 +533,16 @@ namespace TagDataTranslation
                         BigInteger integer = BigInteger.Parse(variableElement);
                         if (ValidateMaximum(integer, inputField.DecimalMaximum))
                         {
-                            return null;
+                            throw new TDTTranslationException("TDTFieldAboveMaximum");
                         }
+                    }
+                    catch (TDTTranslationException)
+                    {
+                        throw;
                     }
                     catch (Exception)
                     {
-                        return null;
+                        throw new TDTTranslationException("TDTNumericOverflow");
                     }
                 }
 
@@ -676,7 +685,7 @@ namespace TagDataTranslation
 
             if (outputLevel == null || outputOption == null)
             {
-                return null;
+                throw new TDTTranslationException("TDTLevelNotFound");
             }
 
             // Check required formatting parameters (case-insensitive)
@@ -693,7 +702,7 @@ namespace TagDataTranslation
                             parameterDictionary["uristem"] = "https://id.gs1.org";
                             continue;
                         }
-                        return null;
+                        throw new TDTTranslationException("TDTUndefinedField");
                     }
                 }
             }
@@ -899,45 +908,35 @@ namespace TagDataTranslation
                             int compactionBits = GetCompactionBits(binaryField.Compaction);
                             variableElement = CompactStringToBinary(variableElement, compactionBits);
                         }
-                        else if (binaryField != null && binaryField.BitLength.HasValue &&
-                                 binaryField.BitLength.Value % 4 == 0 &&
-                                 binaryField.DecimalMaximum != null)
+                        else if (binaryField != null && binaryField.BitLength.HasValue)
                         {
-                            // Check if field should use BCD encoding:
-                            // BCD uses 4 bits per digit, so if bitLength/4 matches expected digit count, use BCD
-                            int expectedDigits = binaryField.BitLength.Value / 4;
-                            int maxDigits = binaryField.DecimalMaximum.Length;
+                            // Check if this should be BCD encoding (only for ++ schemes)
+                            // BCD is indicated when: scheme is ++, and bitLength == length * 4 (4 bits per digit)
+                            bool isPlusPlusScheme = outputScheme?.Name?.EndsWith("++") == true;
+                            bool useBcd = isPlusPlusScheme &&
+                                          binaryField.Length.HasValue &&
+                                          binaryField.BitLength.Value == binaryField.Length.Value * 4 &&
+                                          variableElement.All(char.IsDigit);
 
-                            if (expectedDigits == maxDigits)
+                            if (useBcd)
                             {
-                                // BCD encoding: each decimal digit is 4 bits
-                                var bcdBits = new StringBuilder();
-                                var paddedValue = variableElement.PadLeft(expectedDigits, '0');
-                                foreach (char ch in paddedValue)
+                                // BCD encoding: 4 bits per decimal digit
+                                var bcdBuilder = new StringBuilder();
+                                foreach (char digitChar in variableElement.PadLeft(binaryField.Length.Value, '0'))
                                 {
-                                    if (char.IsDigit(ch))
-                                    {
-                                        int digit = ch - '0';
-                                        bcdBits.Append(Convert.ToString(digit, 2).PadLeft(4, '0'));
-                                    }
-                                    else
-                                    {
-                                        bcdBits.Append("0000");
-                                    }
+                                    int digit = digitChar - '0';
+                                    bcdBuilder.Append(Convert.ToString(digit, 2).PadLeft(4, '0'));
                                 }
-                                variableElement = bcdBits.ToString();
+                                variableElement = bcdBuilder.ToString();
+                            }
+                            else if (Int64.TryParse(variableElement, out var result))
+                            {
+                                // Regular binary encoding
+                                variableElement = Convert.ToString(result, 2).PadLeft(binaryField.BitLength.Value, '0');
                             }
                             else
                             {
-                                // Regular binary encoding
-                                if (Int64.TryParse(variableElement, out var result))
-                                {
-                                    variableElement = Convert.ToString(result, 2).PadLeft(binaryField.BitLength.Value, '0');
-                                }
-                                else
-                                {
-                                    variableElement = new string('0', binaryField.BitLength.Value);
-                                }
+                                variableElement = new string('0', binaryField.BitLength.Value);
                             }
                         }
                         else
@@ -972,7 +971,7 @@ namespace TagDataTranslation
                         {
                             if (!ValidateCharacterset(variableElement, field.CharacterSet))
                             {
-                                return null;
+                                throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
                             }
                         }
 
@@ -992,7 +991,10 @@ namespace TagDataTranslation
                     }
 
                     // Apply URI encoding for PURE_IDENTITY and TAG_ENCODING
-                    if (outputFormatType == LevelType.PURE_IDENTITY || outputFormatType == LevelType.TAG_ENCODING)
+                    // Skip encoding for fields that are already escaped/encoded (contain "Escaped" or "Encoded" in name)
+                    if ((outputFormatType == LevelType.PURE_IDENTITY || outputFormatType == LevelType.TAG_ENCODING) &&
+                        !s.Contains("Escaped", StringComparison.OrdinalIgnoreCase) &&
+                        !s.Contains("Encoded", StringComparison.OrdinalIgnoreCase))
                     {
                         variableElement = UriEncoder.UrnEncode(variableElement);
                     }
@@ -1253,7 +1255,14 @@ namespace TagDataTranslation
                     case "URLENCODE":
                         if (l >= 1)
                         {
-                            string urlInput = GetValue(functionParameters[0], parameterDictionary);
+                            // Skip if source field doesn't exist in dictionary
+                            var urlFieldName = functionParameters[0].Trim();
+                            if (!parameterDictionary.ContainsKey(urlFieldName) &&
+                                !parameterDictionary.Keys.Any(k => k.Equals(urlFieldName, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                continue;
+                            }
+                            string urlInput = GetValue(urlFieldName, parameterDictionary);
                             newFieldValue = UriEncoder.UrlEncode(urlInput);
                         }
                         break;
@@ -1261,7 +1270,14 @@ namespace TagDataTranslation
                     case "URLDECODE":
                         if (l >= 1)
                         {
-                            string urlInput = GetValue(functionParameters[0], parameterDictionary);
+                            // Skip if source field doesn't exist in dictionary
+                            var urlDecFieldName = functionParameters[0].Trim();
+                            if (!parameterDictionary.ContainsKey(urlDecFieldName) &&
+                                !parameterDictionary.Keys.Any(k => k.Equals(urlDecFieldName, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                continue;
+                            }
+                            string urlInput = GetValue(urlDecFieldName, parameterDictionary);
                             newFieldValue = UriEncoder.UrlDecode(urlInput);
                         }
                         break;
@@ -1269,7 +1285,14 @@ namespace TagDataTranslation
                     case "URNENCODE":
                         if (l >= 1)
                         {
-                            string urnInput = GetValue(functionParameters[0], parameterDictionary);
+                            // Skip if source field doesn't exist in dictionary
+                            var urnFieldName = functionParameters[0].Trim();
+                            if (!parameterDictionary.ContainsKey(urnFieldName) &&
+                                !parameterDictionary.Keys.Any(k => k.Equals(urnFieldName, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                continue;
+                            }
+                            string urnInput = GetValue(urnFieldName, parameterDictionary);
                             newFieldValue = UriEncoder.UrnEncode(urnInput);
                         }
                         break;
@@ -1277,7 +1300,14 @@ namespace TagDataTranslation
                     case "URNDECODE":
                         if (l >= 1)
                         {
-                            string urnInput = GetValue(functionParameters[0], parameterDictionary);
+                            // Skip if source field doesn't exist in dictionary
+                            var urnDecFieldName = functionParameters[0].Trim();
+                            if (!parameterDictionary.ContainsKey(urnDecFieldName) &&
+                                !parameterDictionary.Keys.Any(k => k.Equals(urnDecFieldName, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                continue;
+                            }
+                            string urnInput = GetValue(urnDecFieldName, parameterDictionary);
                             newFieldValue = UriEncoder.UrnDecode(urnInput);
                         }
                         break;
@@ -1323,6 +1353,12 @@ namespace TagDataTranslation
 
         private string GetValue(string input, Dictionary<string, string> epcIdentifierDictionary)
         {
+            // strip quotes from literal strings
+            if (input.StartsWith("'") && input.EndsWith("'") && input.Length >= 2)
+            {
+                return input.Substring(1, input.Length - 2);
+            }
+
             if (int.TryParse(input, out _))
             {
                 return input;

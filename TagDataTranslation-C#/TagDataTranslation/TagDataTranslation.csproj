@@ -7,7 +7,7 @@
 
         <!-- NuGet Package Properties -->
         <PackageId>TagDataTranslation</PackageId>
-        <Version>2.3.0</Version>
+        <Version>2.3.1</Version>
         <Authors>Danny Haak</Authors>
         <Company>Danny Haak</Company>
         <Product>TagDataTranslation</Product>
@@ -24,6 +24,11 @@
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 
         <PackageReleaseNotes>
+Version 2.3.1:
+- Improved TDTEngine reliability and error handling
+- Fixed GRAI-96 scheme definition
+- Code refactoring and cleanup
+
 Version 2.3.0:
 - Added TDS 2.3 support with 12 new '++' EPC schemes for custom hostname encoding
 - New schemes: SGTIN++, DSGTIN++, SSCC++, SGLN++, GRAI++, GIAI++, GSRN++, GSRNP++, GDTI++, SGCN++, ITIP++, CPI++

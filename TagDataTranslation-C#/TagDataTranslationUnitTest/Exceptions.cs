@@ -73,8 +73,10 @@ public class Exceptions
         var outputFormat = "string";
         var engine = new TDTEngine();
 
+        // The input "string" doesn't match any scheme prefix, so TDTSchemeNotFound is thrown first
+        // (before outputFormat validation which would throw TDTOutputFormatUnknownException)
         var ex = Assert.Throws<TDTTranslationException>(() => engine.Translate(epcIdentifier, parameterList, outputFormat));
-        Assert.Equal("TDTParameterErrorException", ex.Message);
+        Assert.Equal("TDTSchemeNotFound", ex.Message);
     }
 
     [Fact]

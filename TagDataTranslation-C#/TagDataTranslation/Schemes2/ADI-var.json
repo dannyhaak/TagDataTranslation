@@ -705,7 +705,7 @@
               "inputFormat": "STRING",
               "seq": 2,
               "newFieldName": "serial",
-              "characterSet": "[A-Z0-9/#-]]*",
+              "characterSet": "[A-Z0-9/#-]*",
               "function": "URNDECODE(urnEncodedSerial)"
             },
             {

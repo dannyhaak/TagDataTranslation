@@ -903,7 +903,7 @@
           "option": [
             {
               "optionKey": "12",
-              "pattern": "^grai=([0-9]{14,25})$",
+              "pattern": "^grai=([0-9]{15,26})$",
               "grammar": "'grai=' gs1companyprefix assettype checkdigit serial",
               "field": [
                 {
@@ -918,7 +918,7 @@
             },
             {
               "optionKey": "11",
-              "pattern": "^grai=([0-9]{14,25})$",
+              "pattern": "^grai=([0-9]{15,26})$",
               "grammar": "'grai=' gs1companyprefix assettype checkdigit serial",
               "field": [
                 {
@@ -933,7 +933,7 @@
             },
             {
               "optionKey": "10",
-              "pattern": "^grai=([0-9]{14,25})$",
+              "pattern": "^grai=([0-9]{15,26})$",
               "grammar": "'grai=' gs1companyprefix assettype checkdigit serial",
               "field": [
                 {
@@ -948,7 +948,7 @@
             },
             {
               "optionKey": "9",
-              "pattern": "^grai=([0-9]{14,25})$",
+              "pattern": "^grai=([0-9]{15,26})$",
               "grammar": "'grai=' gs1companyprefix assettype checkdigit serial",
               "field": [
                 {
@@ -963,7 +963,7 @@
             },
             {
               "optionKey": "8",
-              "pattern": "^grai=([0-9]{14,25})$",
+              "pattern": "^grai=([0-9]{15,26})$",
               "grammar": "'grai=' gs1companyprefix assettype checkdigit serial",
               "field": [
                 {
@@ -978,7 +978,7 @@
             },
             {
               "optionKey": "7",
-              "pattern": "^grai=([0-9]{14,25})$",
+              "pattern": "^grai=([0-9]{15,26})$",
               "grammar": "'grai=' gs1companyprefix assettype checkdigit serial",
               "field": [
                 {
@@ -993,7 +993,7 @@
             },
             {
               "optionKey": "6",
-              "pattern": "^grai=([0-9]{14,25})$",
+              "pattern": "^grai=([0-9]{15,26})$",
               "grammar": "'grai=' gs1companyprefix assettype checkdigit serial",
               "field": [
                 {
