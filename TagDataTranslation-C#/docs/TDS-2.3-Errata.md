@@ -73,6 +73,24 @@ This document lists errors found in the TDS 2.3 (Tag Data Standard) specificatio
 
 ---
 
+### Error 5: SGTIN-96 (Table 506) - Serial Number Typo in EPC URI
+
+**Location:** Section E.3, Table 506 (page 356)
+
+**Document states:**
+- GS1 element string: `(01)09506000134352(21)123456789`
+- EPC URI: `urn:epc:id:sgtin:95060001343.05.1234567896789`
+
+**Issue:**
+- The serial number in the element string is `123456789` (9 digits)
+- The EPC URI incorrectly shows serial as `1234567896789` (13 digits)
+- The hex encoding `3066C4409047E140075BCD15` correctly encodes serial `123456789` (hex `075BCD15` = 123456789 decimal)
+
+**Correct value:**
+- EPC URI should be: `urn:epc:id:sgtin:95060001343.05.123456789`
+
+---
+
 ## Hostname Encoding Reference
 
 For reference, the following hostname optimizations are defined in Table 14-11 (Optimisation Table A):
@@ -111,4 +129,4 @@ The verification code and tests are available in `TagDataTranslationUnitTest/TDS
 
 ---
 
-*Last updated: 2026-02-01*
+*Last updated: 2026-02-03*
