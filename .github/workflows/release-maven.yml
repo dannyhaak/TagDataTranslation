@@ -1,8 +1,12 @@
-name: Release Maven Central
+name: Release Android (GitHub Packages)
 
 on:
   push:
     tags: ["v*"]
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   publish:
@@ -10,19 +14,84 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: Install Android workload
         run: dotnet workload install maui-android
 
       - name: Build Android SDK
-        run: ./scripts/publish-maven.sh
+        run: |
+          dotnet publish sdk/android/TagDataTranslation.Android.csproj \
+            -c Release \
+            -o artifacts/android
 
-      # TODO: Add Gradle wrapper steps to package .aar and publish to Maven Central
-      # This requires:
-      #   - MAVEN_USERNAME and MAVEN_PASSWORD secrets
-      #   - GPG signing key for Maven Central
-      #   - Gradle wrapper in TagDataTranslation.Android/
+      - name: Create release zip
+        run: |
+          cd artifacts/android
+          zip -r ../TagDataTranslation.Android.zip .
+
+      - name: Upload Android SDK to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/TagDataTranslation.Android.zip
+
+      - name: Generate POM and publish to GitHub Packages
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          mkdir -p artifacts/maven
+          cat > artifacts/maven/pom.xml << 'POMEOF'
+          <project xmlns="http://maven.apache.org/POM/4.0.0">
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>nl.mimasu</groupId>
+            <artifactId>tag-data-translation</artifactId>
+            <version>VERSION_PLACEHOLDER</version>
+            <packaging>jar</packaging>
+            <name>TagDataTranslation</name>
+            <description>GS1 EPC Tag Data Translation for Android (.NET Android runtime required)</description>
+            <url>https://github.com/dannyhaak/TagDataTranslation</url>
+            <licenses>
+              <license>
+                <name>Business Source License 1.1</name>
+                <url>https://github.com/dannyhaak/TagDataTranslation/blob/master/LICENSING.md</url>
+              </license>
+            </licenses>
+          </project>
+          POMEOF
+
+          sed -i '' "s/VERSION_PLACEHOLDER/${VERSION}/" artifacts/maven/pom.xml
+
+          # package DLLs as a jar for Maven distribution
+          cd artifacts/android
+          jar cf "../maven/tag-data-translation-${VERSION}.jar" *.dll
+
+          cd ../maven
+          mvn deploy:deploy-file \
+            -DpomFile=pom.xml \
+            -Dfile="tag-data-translation-${VERSION}.jar" \
+            -DrepositoryId=github \
+            -Durl="https://maven.pkg.github.com/dannyhaak/TagDataTranslation" \
+            -s /dev/stdin << SETTINGS
+          <settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${{ github.actor }}</username>
+                <password>${{ secrets.GITHUB_TOKEN }}</password>
+              </server>
+            </servers>
+          </settings>
+          SETTINGS
