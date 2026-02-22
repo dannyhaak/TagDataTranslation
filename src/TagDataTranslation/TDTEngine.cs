@@ -84,6 +84,7 @@ namespace TagDataTranslation
                 {
                     using (var stream = assembly.GetManifestResourceStream(filename))
                     {
+                        if (stream == null) continue;
                         try
                         {
                             var root = JsonSerializer.Deserialize<TdtRoot>(stream, JsonOptions);
@@ -104,6 +105,7 @@ namespace TagDataTranslation
                 {
                     using (var stream = assembly.GetManifestResourceStream(filename))
                     {
+                        if (stream == null) continue;
                         if (filename.Contains("TableF"))
                         {
                             tableF = TableLoader.LoadTableF(stream);
@@ -128,15 +130,16 @@ namespace TagDataTranslation
                 {
                     using (var stream = assembly.GetManifestResourceStream(filename))
                     {
+                        if (stream == null) continue;
                         using (StreamReader sr = new StreamReader(stream))
                         {
                             string scheme = filename.Split('.')[2].Split('-')[1];
 
                             filterValueTables.Add(scheme, new Dictionary<int, string>());
 
-                            while (sr.Peek() >= 0)
+                            string? line;
+                            while ((line = sr.ReadLine()) != null)
                             {
-                                string line = sr.ReadLine();
                                 int filterValue = int.Parse(line.Split(',')[0]);
                                 string description = line.Split(',')[1].Trim('"');
                                 filterValueTables[scheme].Add(filterValue, description);

@@ -6,8 +6,8 @@ namespace TagDataTranslation
     public class TranslateResult
     {
         [XmlIgnore]
-        public Dictionary<string, string> ParameterDictionary { get; set; }
+        public Dictionary<string, string> ParameterDictionary { get; set; } = new();
 
-        public string Output { get; set; }
+        public string Output { get; set; } = string.Empty;
     }
 }
