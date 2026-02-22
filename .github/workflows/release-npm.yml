@@ -21,6 +21,11 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
 
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          cd npm && npm version "$VERSION" --no-git-tag-version
+
       - name: Install WASM workload
         run: dotnet workload install wasm-tools
 
