@@ -1,14 +1,21 @@
-name: Release iOS (CocoaPods + SPM)
+name: Release iOS (SPM)
 
 on:
   push:
     tags: ["v*"]
+
+permissions:
+  contents: write
 
 jobs:
   build-xcframework:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -31,8 +38,20 @@ jobs:
         with:
           files: artifacts/ios/TagDataTranslation.xcframework.zip
 
-      # TODO: Add CocoaPods trunk push
-      # - name: Push to CocoaPods
-      #   run: pod trunk push sdk/swift/TagDataTranslation.podspec
-      #   env:
-      #     COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      - name: Update Package.swift with new checksum
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          CHECKSUM=$(swift package compute-checksum artifacts/ios/TagDataTranslation.xcframework.zip)
+          URL="https://github.com/${{ github.repository }}/releases/download/v${VERSION}/TagDataTranslation.xcframework.zip"
+
+          sed -i '' "s|url: \".*xcframework.zip\"|url: \"${URL}\"|" sdk/swift/Package.swift
+          sed -i '' "s|checksum: \".*\"|checksum: \"${CHECKSUM}\"|" sdk/swift/Package.swift
+
+      - name: Commit updated Package.swift
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout master
+          git add sdk/swift/Package.swift
+          git commit -m "chore: update Package.swift checksum for v${{ steps.version.outputs.version }}"
+          git push origin master
