@@ -7,6 +7,7 @@
 [O]out/
 packages/
 TestResults/
+artifacts/
 
 # globs
 Makefile.in
@@ -43,5 +44,6 @@ Thumbs.db
 *.nupkg
 .vs
 out
-/TagDataTranslation-C\#/TagDataTranslation.1.0.0.nupkg.zip
-TagDataTranslation-C\#/nupkg
+
+# npm build output
+npm/dist/wasm/

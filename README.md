@@ -68,8 +68,8 @@ The NuGet package includes targets for .NET 8.0/9.0/10.0, Android, iOS, and macC
 
 ```bash
 git clone https://github.com/dannyhaak/TagDataTranslation.git
-cd TagDataTranslation/TagDataTranslation-C#/TagDataTranslation
-dotnet build
+cd TagDataTranslation
+dotnet build src/TagDataTranslation/TagDataTranslation.csproj
 ```
 
 ## Requirements
@@ -279,23 +279,19 @@ See the `examples/` directory for platform-specific sample projects:
 ## Building
 
 ```bash
-cd TagDataTranslation-C#/TagDataTranslation
-dotnet build
-dotnet test ../TagDataTranslationUnitTest
+dotnet build src/TagDataTranslation/TagDataTranslation.csproj
+dotnet test test/TagDataTranslation.Tests/TagDataTranslation.Tests.csproj
 ```
 
 ## Creating a NuGet Package
 
 ```bash
-cd TagDataTranslation-C#/TagDataTranslation
-dotnet pack -c Release
+dotnet pack src/TagDataTranslation/TagDataTranslation.csproj -c Release -o ./artifacts
 ```
-
-The package will be created in `bin/Release/`.
 
 To publish to NuGet.org:
 ```bash
-dotnet nuget push bin/Release/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY --source https://api.nuget.org/v3/index.json
+dotnet nuget push ./artifacts/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY --source https://api.nuget.org/v3/index.json
 ```
 
 ## Version History
@@ -318,7 +314,7 @@ This library is licensed under the **Business Source License 1.1** (BSL 1.1).
 - **Production use** requires a commercial license -- contact tdt@mimasu.nl
 - Each version converts to **Apache 2.0** four years after release
 
-See [LICENSING.md](TagDataTranslation-C#/LICENSING.md) for full details.
+See [LICENSING.md](LICENSING.md) for full details.
 
 The included JSON and XSD artifacts are (c) GS1 (https://www.gs1.org/standards/epc-rfid/tdt).
 
