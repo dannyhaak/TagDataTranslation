@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui
+
+      - name: Build library (all targets)
+        run: dotnet build src/TagDataTranslation/TagDataTranslation.csproj -c Release
+
+      - name: Run tests
+        run: dotnet test test/TagDataTranslation.Tests/TagDataTranslation.Tests.csproj -c Release --logger "trx;LogFileName=results.trx"
+
+      - name: Build Android SDK
+        run: dotnet build sdk/android/TagDataTranslation.Android.csproj -c Release
+
+      - name: Build iOS SDK
+        run: dotnet build sdk/ios/TagDataTranslation.iOS.csproj -c Release
+
+      - name: Build console example
+        run: dotnet build examples/ConsoleApp/ConsoleApp.csproj -c Release
+
+      - name: Pack NuGet
+        run: dotnet pack src/TagDataTranslation/TagDataTranslation.csproj -c Release -o ./artifacts
+
+      - name: Upload NuGet artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: ./artifacts/*.nupkg
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: "**/*.trx"
