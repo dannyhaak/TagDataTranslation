@@ -29,8 +29,7 @@ jobs:
       - name: Push to NuGet
         run: dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
 
-      - name: Create GitHub Release
+      - name: Attach NuGet package to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: ./artifacts/*.nupkg
-          generate_release_notes: true
