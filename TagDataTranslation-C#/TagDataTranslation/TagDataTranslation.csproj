@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
         <LangVersion>12.0</LangVersion>
         <Nullable>enable</Nullable>
 
         <!-- NuGet Package Properties -->
         <PackageId>TagDataTranslation</PackageId>
-        <Version>2.3.1</Version>
+        <Version>3.0.0</Version>
         <Authors>Danny Haak</Authors>
         <Company>Danny Haak</Company>
         <Product>TagDataTranslation</Product>
         <Title>TagDataTranslation</Title>
-        <Description>GS1 EPC Tag Data Translation 2.2 library for RAIN RFID. Supports encoding/decoding of SGTIN, SSCC, SGLN, GRAI, GIAI, GSRN, GDTI, SGCN, ITIP, GID, CPI, ADI, USDOD and Digital Link URIs. Converts between binary, hex, tag URI, pure identity URI, and legacy formats.</Description>
-        <Summary>Tag Data Translation 2.2 for RAIN RFID - encode/decode EPC tags</Summary>
-        <PackageTags>rfid;gs1;epc;tdt;rain;sgtin;sscc;sgln;grai;giai;gdti;digital-link;pure-identity;tag-uri;hex;binary;encode;decode</PackageTags>
+        <Description>GS1 EPC Tag Data Translation 2.2 library for RAIN RFID. Cross-platform: .NET, .NET MAUI, Android, iOS, macCatalyst. Supports encoding/decoding of SGTIN, SSCC, SGLN, GRAI, GIAI, GSRN, GDTI, SGCN, ITIP, GID, CPI, ADI, USDOD and Digital Link URIs. Converts between binary, hex, tag URI, pure identity URI, and legacy formats.</Description>
+        <Summary>Tag Data Translation 2.2 for RAIN RFID - cross-platform EPC encoding/decoding</Summary>
+        <PackageTags>rfid;gs1;epc;tdt;rain;sgtin;sscc;sgln;grai;giai;gdti;digital-link;pure-identity;tag-uri;hex;binary;encode;decode;maui;android;ios;mobile</PackageTags>
 
         <PackageProjectUrl>https://github.com/dannyhaak/TagDataTranslation</PackageProjectUrl>
         <RepositoryUrl>https://github.com/dannyhaak/TagDataTranslation.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 
         <PackageReleaseNotes>
+Version 3.0.0:
+- Cross-platform SDK: added mobile target frameworks (Android, iOS, macCatalyst) for .NET MAUI
+- Removed Console.WriteLine output (library-inappropriate for mobile/embedded)
+- Added LoadErrors property for programmatic inspection of scheme loading failures
+- Business Source License 1.1: free for non-production use, commercial license for production
+
 Version 2.3.1:
 - Improved TDTEngine reliability and error handling
 - Fixed GRAI-96 scheme definition
@@ -76,11 +82,7 @@ Version 2.0.0:
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Licenses\" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="Licenses\LICENSE.md">
+        <None Include="Licenses\LICENSE.md" Pack="true" PackagePath="\">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>

@@ -1,0 +1,36 @@
+name: Release npm
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install WASM workload
+        run: dotnet workload install wasm-tools
+
+      - name: Build WASM
+        run: node npm/scripts/build.js
+
+      - name: Run smoke test
+        run: node npm/test/smoke.js
+
+      - name: Publish to npm
+        run: cd npm && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

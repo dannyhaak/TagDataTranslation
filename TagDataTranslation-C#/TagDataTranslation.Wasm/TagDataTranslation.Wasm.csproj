@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>12.0</LangVersion>
+    <!-- Output as a reusable WASM module, not a standalone app -->
+    <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TagDataTranslation\TagDataTranslation.csproj" />
+  </ItemGroup>
+</Project>

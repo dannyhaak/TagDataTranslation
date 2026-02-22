@@ -18,6 +18,7 @@ namespace TagDataTranslation
     /// <summary>
     /// TDT 2.2 compliant Tag Data Translation Engine.
     /// Provides translation between different EPC encoding levels.
+    /// Licensed under BSL 1.1 -- production use requires a commercial license from tdt@mimasu.nl.
     /// </summary>
     public class TDTEngine
     {
@@ -59,11 +60,17 @@ namespace TagDataTranslation
         }
 
         /// <summary>
+        /// Contains any errors encountered while loading scheme files.
+        /// Inspect this property to debug missing or malformed schemes.
+        /// </summary>
+        public IReadOnlyList<string> LoadErrors => _loadErrors;
+        private readonly List<string> _loadErrors = new List<string>();
+
+        /// <summary>
         /// Creates a new TDTEngine instance and loads all scheme files.
         /// </summary>
         public TDTEngine()
         {
-            Console.WriteLine("[TagDataTranslation] This library is free for non-commercial use only. Please contact tdt@mimasu.nl for licensing information.");
 
             var assembly = typeof(TDTEngine).GetTypeInfo().Assembly;
             var schemeFilenameStart = "TagDataTranslation.Schemes2.";
@@ -87,7 +94,7 @@ namespace TagDataTranslation
                         }
                         catch (JsonException ex)
                         {
-                            Console.WriteLine($"[TagDataTranslation] Failed to load scheme {filename}: {ex.Message}");
+                            _loadErrors.Add($"Failed to load scheme {filename}: {ex.Message}");
                         }
                     }
                 }

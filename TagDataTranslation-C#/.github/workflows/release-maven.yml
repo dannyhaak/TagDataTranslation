@@ -1,0 +1,28 @@
+name: Release Maven Central
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install Android workload
+        run: dotnet workload install maui-android
+
+      - name: Build Android SDK
+        run: ./scripts/publish-maven.sh
+
+      # TODO: Add Gradle wrapper steps to package .aar and publish to Maven Central
+      # This requires:
+      #   - MAVEN_USERNAME and MAVEN_PASSWORD secrets
+      #   - GPG signing key for Maven Central
+      #   - Gradle wrapper in TagDataTranslation.Android/

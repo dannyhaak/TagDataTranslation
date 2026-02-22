@@ -1,0 +1,27 @@
+name: Release pub.dev
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+
+      - name: Get dependencies
+        run: cd flutter/tag_data_translation && flutter pub get
+
+      - name: Analyze
+        run: cd flutter/tag_data_translation && flutter analyze
+
+      # TODO: Add pub.dev publishing
+      # Requires: GOOGLE_SERVICE_ACCOUNT_KEY secret for pub.dev authentication
+      # - name: Publish to pub.dev
+      #   run: cd flutter/tag_data_translation && flutter pub publish --force

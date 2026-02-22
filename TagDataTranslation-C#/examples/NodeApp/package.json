@@ -1,0 +1,13 @@
+{
+  "name": "tdt-node-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Example Node.js application using @mimasu/tdt",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@mimasu/tdt": "^3.0.0"
+  }
+}

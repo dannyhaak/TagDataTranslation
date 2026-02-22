@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TdtMauiExample.MainPage"
+             Title="TDT Example">
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="15">
+            <Label Text="TagDataTranslation" FontSize="24" FontAttributes="Bold" />
+            <Label Text="Enter an EPC hex value to decode:" />
+            <Entry x:Name="HexInput" Placeholder="e.g. 30340242201d8840009efdf7"
+                   Text="30340242201d8840009efdf7" />
+            <Button Text="Translate" Clicked="OnTranslateClicked" />
+            <Label x:Name="ResultLabel" FontFamily="Courier New" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

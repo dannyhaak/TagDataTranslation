@@ -1,0 +1,4 @@
+module TagDataTranslationC {
+    header "tdt.h"
+    export *
+}

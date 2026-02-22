@@ -7,11 +7,25 @@ Tag Data Translation implemented according to the **GS1 EPC Tag Data Standard (T
 ## Features
 
 - Full TDS 2.3 / TDT 2.2 support with JSON-based scheme definitions
-- **NEW in 2.3**: 12 '++' schemes with custom hostname encoding for branded Digital Link URIs
+- 12 '++' schemes with custom hostname encoding for branded Digital Link URIs
 - Digital Link URI generation and parsing
 - GS1 Company Prefix lookup
 - Filter Value tables
 - Exception-free `TryTranslate` API for high-throughput scenarios
+- **Cross-platform**: .NET, .NET MAUI, Android, iOS, macCatalyst
+
+## Platform Support
+
+| Platform | Package | Status |
+|----------|---------|--------|
+| .NET 8/9/10 | [NuGet](https://www.nuget.org/packages/TagDataTranslation) | Available |
+| .NET MAUI (Android) | NuGet | Available (3.0.0+) |
+| .NET MAUI (iOS) | NuGet | Available (3.0.0+) |
+| .NET MAUI (macCatalyst) | NuGet | Available (3.0.0+) |
+| JavaScript/TypeScript | npm | Planned |
+| Android (Kotlin/Java) | Maven Central | Planned |
+| iOS (Swift) | CocoaPods / SPM | Planned |
+| Flutter (Dart) | pub.dev | Planned |
 
 ## Supported Schemes
 
@@ -37,7 +51,7 @@ Tag Data Translation implemented according to the **GS1 EPC Tag Data Standard (T
 
 ## Installation
 
-### NuGet
+### NuGet (.NET and .NET MAUI)
 
 ```bash
 dotnet add package TagDataTranslation
@@ -47,6 +61,8 @@ Or via Package Manager:
 ```
 Install-Package TagDataTranslation
 ```
+
+The NuGet package includes targets for .NET 8.0/9.0/10.0, Android, iOS, and macCatalyst. .NET MAUI projects will automatically resolve the correct platform target.
 
 ### From Source
 
@@ -59,6 +75,7 @@ dotnet build
 ## Requirements
 
 - .NET 8.0 or later (supports .NET 8.0, 9.0, and 10.0)
+- For mobile targets: .NET MAUI workload (`dotnet workload install maui`)
 
 ## Quick Start
 
@@ -135,6 +152,19 @@ Console.WriteLine($"Prefix: {result.Prefix}, Length: {result.Length}");
 // Prefix: 0037000, Length: 7
 ```
 
+### Debugging Scheme Loading
+
+```csharp
+var engine = new TDTEngine();
+if (engine.LoadErrors.Count > 0)
+{
+    foreach (var error in engine.LoadErrors)
+    {
+        Console.WriteLine(error);
+    }
+}
+```
+
 ## API Reference
 
 ### TDTEngine
@@ -206,6 +236,14 @@ public Dictionary<int, string> GetFilterValueTable(string scheme)
 
 Returns the filter value descriptions for a scheme (e.g., "SGTIN" returns `{0: "All Others", 1: "POS Item", ...}`).
 
+#### LoadErrors
+
+```csharp
+public IReadOnlyList<string> LoadErrors { get; }
+```
+
+Contains any errors encountered while loading scheme files. Inspect this after construction to debug missing or malformed schemes.
+
 #### Helper Methods
 
 ```csharp
@@ -229,6 +267,14 @@ public string BinaryToHex(string binary)   // Convert binary string to hex
 | `TDTOptionNotFound` | No matching option found |
 | `TDTLookupFailed` | External table lookup failed |
 | `TDTNumericOverflow` | Numeric overflow occurred |
+
+## Examples
+
+See the `examples/` directory for platform-specific sample projects:
+
+- `examples/ConsoleApp/` -- .NET console application
+- `examples/MauiApp/` -- .NET MAUI cross-platform app (Android, iOS, macCatalyst)
+- `examples/NodeApp/` -- Node.js application (via WebAssembly)
 
 ## Building
 
@@ -256,6 +302,7 @@ dotnet nuget push bin/Release/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY 
 
 | Version | Changes |
 |---------|---------|
+| 3.0.0 | Cross-platform SDK: mobile target frameworks (Android, iOS, macCatalyst), removed console output, BSL 1.1 licensing, `LoadErrors` property |
 | 2.3.0 | TDS 2.3 support with 12 new '++' schemes for custom hostname encoding in Digital Link URIs |
 | 2.1.0 | Added TryTranslate/TryTranslateDetails for exception-free high-throughput translation |
 | 2.0.1 | Multi-targeting support for .NET 8.0, 9.0, and 10.0 |
@@ -265,9 +312,13 @@ dotnet nuget push bin/Release/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY 
 
 ## License
 
-This library is dual-licensed:
-- **GNU Affero General Public License version 3** (AGPL-3.0)
-- **Commercial license** - contact tdt@dannyhaak.nl for details
+This library is licensed under the **Business Source License 1.1** (BSL 1.1).
+
+- **Non-production use** (development, testing, evaluation) is free
+- **Production use** requires a commercial license -- contact tdt@mimasu.nl
+- Each version converts to **Apache 2.0** four years after release
+
+See [LICENSING.md](TagDataTranslation-C#/LICENSING.md) for full details.
 
 The included JSON and XSD artifacts are (c) GS1 (https://www.gs1.org/standards/epc-rfid/tdt).
 

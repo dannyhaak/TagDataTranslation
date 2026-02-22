@@ -1,0 +1,38 @@
+{
+  "name": "@mimasu/tdt",
+  "version": "3.0.0",
+  "description": "GS1 EPC Tag Data Translation for JavaScript/TypeScript via WebAssembly. Encode and decode SGTIN, SSCC, SGLN, GRAI, and all EPC schemes.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node test/smoke.js"
+  },
+  "keywords": [
+    "rfid",
+    "gs1",
+    "epc",
+    "tdt",
+    "rain",
+    "sgtin",
+    "sscc",
+    "wasm",
+    "webassembly",
+    "tag-data-translation",
+    "digital-link"
+  ],
+  "author": "Danny Haak",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dannyhaak/TagDataTranslation.git"
+  },
+  "homepage": "https://www.mimasu.nl/tdt",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
