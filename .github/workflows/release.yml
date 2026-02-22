@@ -1,0 +1,61 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          # get the previous tag
+          PREV_TAG=$(git tag --sort=-v:refname | grep '^v' | sed -n '2p')
+
+          {
+            echo 'notes<<RELEASE_NOTES_EOF'
+
+            echo "## What's Changed"
+            echo ""
+
+            if [ -n "$PREV_TAG" ]; then
+              # list commits since previous tag, formatted as bullet points
+              git log "${PREV_TAG}..HEAD" --pretty=format:"- %s" --no-merges
+            else
+              # first release: list all commits
+              git log --pretty=format:"- %s" --no-merges | head -20
+            fi
+
+            echo ""
+            echo ""
+            echo "## Installation"
+            echo ""
+            echo '```bash'
+            echo "dotnet add package TagDataTranslation --version ${{ steps.version.outputs.version }}"
+            echo '```'
+            echo ""
+            echo "**Full changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG:-}...${GITHUB_REF_NAME}"
+
+            echo 'RELEASE_NOTES_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: v${{ steps.version.outputs.version }}
+          body: ${{ steps.notes.outputs.notes }}
+          draft: false
+          prerelease: false
