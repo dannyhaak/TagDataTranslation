@@ -6,26 +6,29 @@ const path = require("path");
  * @typedef {import('./index').TDTEngine} TDTEngine
  */
 
-let _dotnetRuntime = null;
+let _runtime = null;
+let _exports = null;
 
 /**
  * Initialize the TDT WebAssembly engine.
  * @returns {Promise<TDTEngine>}
  */
 async function createEngine() {
-  if (!_dotnetRuntime) {
-    // load the .NET WASM runtime
+  if (!_exports) {
     const wasmPath = path.join(__dirname, "wasm");
     const { dotnet } = await import(
-      path.join(wasmPath, "dotnet.js")
+      "file://" + path.join(wasmPath, "dotnet.js")
     );
-    _dotnetRuntime = await dotnet.create();
+    const { getAssemblyExports, getConfig, runMain } = await dotnet.create();
+
+    const config = getConfig();
+    _exports = await getAssemblyExports(config.mainAssemblyName);
+
+    // run Main to ensure the runtime is fully initialized
+    await runMain();
   }
 
-  const exports = _dotnetRuntime.getAssemblyExports(
-    "TagDataTranslation.Wasm"
-  );
-  const interop = exports.TagDataTranslation.Wasm.JsInterop;
+  const interop = _exports.TagDataTranslation.Wasm.JsInterop;
 
   return {
     translate: (epcIdentifier, parameterList, outputFormat) =>

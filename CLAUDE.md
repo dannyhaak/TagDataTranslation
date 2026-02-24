@@ -125,7 +125,67 @@ dotnet test test/TagDataTranslation.Tests/TagDataTranslation.Tests.csproj
 # Run specific test categories
 dotnet test --filter "FullyQualifiedName~TDS23"
 dotnet test --filter "FullyQualifiedName~TDT22"
+
+# Build npm WASM package
+cd npm && npm run build
+
+# Run npm smoke test
+cd npm && node test/smoke.js
 ```
+
+## npm Package (@mimasu/tdt)
+
+### Architecture
+The npm package wraps the .NET library via WebAssembly. The build pipeline:
+1. `dotnet publish` compiles the WASM project (`sdk/wasm/`) targeting `browser-wasm`
+2. `npm/scripts/build.js` copies the `_framework/` output to `npm/dist/wasm/`
+3. `npm/dist/index.js` loads the .NET WASM runtime and exposes `createEngine()`
+
+### Key Files
+| Path | Description |
+|------|-------------|
+| `sdk/wasm/TagDataTranslation.Wasm.csproj` | WASM project (net10.0, browser-wasm) |
+| `sdk/wasm/JsInterop.cs` | JSExport methods callable from JavaScript |
+| `sdk/wasm/Program.cs` | Minimal entry point required by runtime |
+| `sdk/wasm/main.js` | WASM module entry point |
+| `npm/package.json` | npm package metadata |
+| `npm/dist/index.js` | CJS wrapper with `createEngine()` |
+| `npm/dist/index.mjs` | ESM re-export |
+| `npm/dist/index.d.ts` | TypeScript type definitions |
+| `npm/scripts/build.js` | Build script (WASM compile + license copy) |
+| `npm/test/smoke.js` | Smoke test for encode/decode/tryTranslate |
+| `examples/NodeApp/` | Example Node.js app using the published package |
+
+### .NET 10 WASM Gotchas
+- **SDK**: Use `Microsoft.NET.Sdk` (not `Microsoft.NET.Sdk.BlazorWebAssembly`) for library-style WASM
+- **AllowUnsafeBlocks**: Required — the JSExport source generator emits unsafe code in .NET 10
+- **JsonSerializerIsReflectionEnabledByDefault**: Must be `true` — trimmed WASM disables reflection-based JSON by default, but TDTEngine uses `System.Text.Json` with reflection to load scheme files
+- **TrimmerRootAssembly**: Must include `TagDataTranslation` — without this, the IL trimmer strips model constructors, causing `DeserializeNoConstructor` errors at runtime
+- **Entry point**: .NET 10 requires a `Program.cs` with `Main` (even for library-style WASM)
+- **Output path**: .NET 10 outputs to `AppBundle/_framework/` (not Blazor's `wwwroot/_framework/`)
+- **getAssemblyExports**: Returns a Promise in .NET 10 — must `await` it
+- **Initialization order**: Call `dotnet.create()`, then `getAssemblyExports()`, then `runMain()`
+
+### Publishing to npm
+```bash
+# Build WASM + copy license
+cd npm && npm run build
+
+# Set version
+npm version 3.x.x --no-git-tag-version
+
+# Publish (opens browser for auth challenge)
+npm publish --tag beta --access public   # prerelease
+npm publish --access public              # stable release
+```
+
+The build script auto-copies `LICENSING.md` from the repo root to `npm/LICENSE.md` (gitignored) so the license ships with every publish.
+
+### Package Details
+- **Scope**: `@mimasu` (public)
+- **License**: BSL-1.1
+- **Size**: ~2.6 MB compressed, ~15.7 MB unpacked (includes .NET WASM runtime)
+- **Engine requirement**: Node.js >= 18.0.0
 
 ## File Locations
 

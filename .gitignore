@@ -47,3 +47,4 @@ out
 
 # npm build output
 npm/dist/wasm/
+npm/LICENSE.md

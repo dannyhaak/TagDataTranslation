@@ -1,6 +1,6 @@
 {
   "name": "@mimasu/tdt",
-  "version": "3.0.0",
+  "version": "3.0.0-beta.1",
   "description": "GS1 EPC Tag Data Translation for JavaScript/TypeScript via WebAssembly. Encode and decode SGTIN, SSCC, SGLN, GRAI, and all EPC schemes.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -26,7 +26,7 @@
     "digital-link"
   ],
   "author": "Danny Haak",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "BSL-1.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dannyhaak/TagDataTranslation.git"
