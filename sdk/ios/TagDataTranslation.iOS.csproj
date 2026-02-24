@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0-ios</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>12.0</LangVersion>
-    <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
-    <!-- NativeAOT for iOS produces a native static library -->
+    <!-- NativeAOT cross-compilation for iOS without iOS workload dependency -->
     <PublishAot>true</PublishAot>
+    <PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>
+    <NativeLib>Static</NativeLib>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\TagDataTranslation\TagDataTranslation.csproj" />

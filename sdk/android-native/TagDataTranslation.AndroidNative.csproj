@@ -4,8 +4,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>12.0</LangVersion>
-    <!-- NativeAOT for Android produces a native shared library -->
+    <!-- NativeAOT cross-compilation for Android -->
     <PublishAot>true</PublishAot>
+    <PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>
+    <NativeLib>Shared</NativeLib>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\TagDataTranslation\TagDataTranslation.csproj" />
