@@ -11,13 +11,13 @@ namespace TagDataTranslation.Models;
 public class TdtRoot
 {
     [JsonPropertyName("tdt:epcTagDataTranslation")]
-    public EpcTagDataTranslation2? EpcTagDataTranslation { get; set; }
+    public EpcTagDataTranslation? EpcTagDataTranslation { get; set; }
 }
 
 /// <summary>
 /// EPC Tag Data Translation document metadata and scheme definition.
 /// </summary>
-public class EpcTagDataTranslation2
+public class EpcTagDataTranslation
 {
     [JsonPropertyName("version")]
     public string? Version { get; set; }
@@ -29,13 +29,13 @@ public class EpcTagDataTranslation2
     public string? EpcTDSVersion { get; set; }
 
     [JsonPropertyName("scheme")]
-    public Scheme2? Scheme { get; set; }
+    public Scheme? Scheme { get; set; }
 }
 
 /// <summary>
 /// Defines an EPC scheme (e.g., SGTIN-96, SSCC-96).
 /// </summary>
-public class Scheme2
+public class Scheme
 {
     [JsonPropertyName("name")]
     public string? Name { get; set; }
@@ -53,13 +53,13 @@ public class Scheme2
     public bool SupportsHostname { get; set; }
 
     [JsonPropertyName("level")]
-    public List<Level2>? Level { get; set; }
+    public List<Level>? Level { get; set; }
 }
 
 /// <summary>
 /// Represents an encoding level (BINARY, TAG_ENCODING, PURE_IDENTITY, etc.).
 /// </summary>
-public class Level2
+public class Level
 {
     /// <summary>
     /// Level type: BINARY, TAG_ENCODING, PURE_IDENTITY, ELEMENT_STRING,
@@ -90,16 +90,16 @@ public class Level2
     public List<string>? DlpKeyQualifiers { get; set; }
 
     [JsonPropertyName("option")]
-    public List<Option2>? Option { get; set; }
+    public List<Option>? Option { get; set; }
 
     [JsonPropertyName("rule")]
-    public List<Rule2>? Rule { get; set; }
+    public List<Rule>? Rule { get; set; }
 }
 
 /// <summary>
 /// Represents an option within a level, defining pattern matching and field extraction.
 /// </summary>
-public class Option2
+public class Option
 {
     [JsonPropertyName("optionKey")]
     public string? OptionKey { get; set; }
@@ -117,7 +117,7 @@ public class Option2
     public List<string>? AiSequence { get; set; }
 
     [JsonPropertyName("field")]
-    public List<Field2>? Field { get; set; }
+    public List<Field>? Field { get; set; }
 
     /// <summary>
     /// Encoded AI definitions for BINARY level options.
@@ -198,7 +198,7 @@ public class HostnameFieldDefinition
 /// <summary>
 /// Defines a field within an option for data extraction and formatting.
 /// </summary>
-public class Field2
+public class Field
 {
     [JsonPropertyName("seq")]
     public int Seq { get; set; }
@@ -273,7 +273,7 @@ public class EncodedAI
 /// <summary>
 /// Defines a transformation rule for EXTRACT or FORMAT operations.
 /// </summary>
-public class Rule2
+public class Rule
 {
     /// <summary>
     /// Rule type: EXTRACT or FORMAT.

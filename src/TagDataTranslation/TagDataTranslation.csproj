@@ -71,14 +71,14 @@ Version 2.0.0:
     <ItemGroup>
         <None Remove="FilterValueTables\*.csv" />
         <None Remove="GCPPrefixFormatList\*.xml" />
-        <None Remove="Schemes2\*.json" />
+        <None Remove="Schemes\*.json" />
         <None Remove="Tables\*.json" />
     </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="FilterValueTables\*.csv" />
         <EmbeddedResource Include="GCPPrefixFormatList\*.xml" />
-        <EmbeddedResource Include="Schemes2\*.json" />
+        <EmbeddedResource Include="Schemes\*.json" />
         <EmbeddedResource Include="Tables\*.json" />
     </ItemGroup>
 
