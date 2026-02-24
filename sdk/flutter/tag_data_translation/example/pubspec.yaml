@@ -1,0 +1,13 @@
+name: tag_data_translation_example
+description: Demonstrates usage of the tag_data_translation plugin.
+publish_to: 'none'
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  tag_data_translation:
+    path: ../

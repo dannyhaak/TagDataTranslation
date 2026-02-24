@@ -6,13 +6,29 @@
 /// Example:
 /// ```dart
 /// final binary = TDTEngine.hexToBinary('30340242201d8840009efdf7');
-/// final uri = await TDTEngine.translate(binary, 'PURE_IDENTITY', params: 'tagLength=96');
+/// final uri = TDTEngine.translate(binary, 'PURE_IDENTITY', params: 'tagLength=96');
 /// ```
 library tag_data_translation;
 
-import 'tag_data_translation_platform_interface.dart';
+import 'dart:ffi';
+
+import 'package:ffi/ffi.dart';
+
+import 'src/native_bindings.dart';
+
+/// Error thrown when EPC translation fails.
+class TranslationError implements Exception {
+  final String message;
+  const TranslationError(this.message);
+
+  @override
+  String toString() => 'TranslationError: $message';
+}
 
 /// GS1 EPC Tag Data Translation engine.
+///
+/// Uses dart:ffi to call the NativeAOT-compiled TagDataTranslation library
+/// directly, without platform channels.
 class TDTEngine {
   /// Translate an EPC identifier between encoding levels.
   ///
@@ -20,29 +36,60 @@ class TDTEngine {
   /// [outputFormat] is the target format (BINARY, LEGACY, TAG_ENCODING, PURE_IDENTITY).
   /// [params] is an optional semicolon-delimited key=value string.
   ///
-  /// Throws [PlatformException] if translation fails.
-  static Future<String> translate(
+  /// Throws [TranslationError] if translation fails.
+  static String translate(
     String epcIdentifier,
     String outputFormat, {
     String params = '',
   }) {
-    return TagDataTranslationPlatform.instance
-        .translate(epcIdentifier, params, outputFormat);
+    final bindings = NativeBindings.instance;
+    final epcPtr = epcIdentifier.toNativeUtf8();
+    final paramsPtr = params.toNativeUtf8();
+    final formatPtr = outputFormat.toNativeUtf8();
+
+    try {
+      final resultPtr = bindings.translate(epcPtr, paramsPtr, formatPtr);
+      final result = resultPtr.toDartString();
+      bindings.freeString(resultPtr);
+
+      if (result.startsWith('ERROR:')) {
+        throw TranslationError(result.substring(6));
+      }
+      return result;
+    } finally {
+      malloc.free(epcPtr);
+      malloc.free(paramsPtr);
+      malloc.free(formatPtr);
+    }
   }
 
   /// Translate without throwing. Returns null on failure.
-  static Future<String?> tryTranslate(
+  static String? tryTranslate(
     String epcIdentifier,
     String outputFormat, {
     String params = '',
   }) {
-    return TagDataTranslationPlatform.instance
-        .tryTranslate(epcIdentifier, params, outputFormat);
+    final bindings = NativeBindings.instance;
+    final epcPtr = epcIdentifier.toNativeUtf8();
+    final paramsPtr = params.toNativeUtf8();
+    final formatPtr = outputFormat.toNativeUtf8();
+
+    try {
+      final resultPtr = bindings.tryTranslate(epcPtr, paramsPtr, formatPtr);
+      if (resultPtr == nullptr) return null;
+      final result = resultPtr.toDartString();
+      bindings.freeString(resultPtr);
+      return result;
+    } finally {
+      malloc.free(epcPtr);
+      malloc.free(paramsPtr);
+      malloc.free(formatPtr);
+    }
   }
 
   /// Convert hexadecimal string to binary string.
   ///
-  /// This is a pure Dart implementation -- no platform channel needed.
+  /// This is a pure Dart implementation -- no native call needed.
   static String hexToBinary(String hex) {
     final buffer = StringBuffer();
     for (var i = 0; i < hex.length; i++) {
@@ -54,7 +101,7 @@ class TDTEngine {
 
   /// Convert binary string to hexadecimal string.
   ///
-  /// This is a pure Dart implementation -- no platform channel needed.
+  /// This is a pure Dart implementation -- no native call needed.
   static String binaryToHex(String binary) {
     // pad to multiple of 4
     final padded = binary.padLeft(((binary.length + 3) ~/ 4) * 4, '0');

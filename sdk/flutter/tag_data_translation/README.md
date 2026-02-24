@@ -2,11 +2,13 @@
 
 GS1 EPC Tag Data Translation for Flutter. Encode and decode all EPC schemes on Android and iOS.
 
-## Status
+## Features
 
-This plugin is a scaffold. The native Android and iOS SDKs need to be built and linked
-before the platform channel calls will work. The pure Dart `hexToBinary` and `binaryToHex`
-methods work immediately.
+- Translate between all EPC encoding levels: Binary, Hex, Tag URI, Pure Identity URI, GS1 Digital Link
+- All standard schemes: SGTIN-96, SGTIN-198, SSCC-96, SGLN, GRAI, GIAI, GSRN, GDTI, SGCN
+- TDS 2.3 '+' and '++' scheme support with GS1 Digital Link URIs
+- Pure Dart hex/binary conversion utilities
+- Synchronous API via dart:ffi (no async overhead)
 
 ## Installation
 
@@ -20,13 +22,52 @@ dependencies:
 ```dart
 import 'package:tag_data_translation/tag_data_translation.dart';
 
-// pure Dart -- works immediately
+// convert hex EPC to binary
 final binary = TDTEngine.hexToBinary('30340242201d8840009efdf7');
-final hex = TDTEngine.binaryToHex(binary);
 
-// platform channel -- requires native SDK
-final uri = await TDTEngine.translate(binary, 'PURE_IDENTITY', params: 'tagLength=96');
+// translate to Pure Identity URI
+final uri = TDTEngine.translate(
+  binary,
+  'PURE_IDENTITY',
+  params: 'tagLength=96',
+);
+// => urn:epc:id:sgtin:0037000.030241.10419703
+
+// encode a GTIN to EPC hex
+final hex = TDTEngine.translate(
+  'urn:epc:id:sgtin:0037000.030241.10419703',
+  'TAG_ENCODING',
+  params: 'tagLength=96;filter=3',
+);
+
+// safe translation (returns null on failure)
+final result = TDTEngine.tryTranslate(binary, 'PURE_IDENTITY', params: 'tagLength=96');
 ```
+
+## Error handling
+
+`translate()` throws `TranslationError` on invalid input. Use `tryTranslate()` for a null-safe alternative.
+
+```dart
+try {
+  final uri = TDTEngine.translate(input, 'PURE_IDENTITY');
+} on TranslationError catch (e) {
+  print('Translation failed: $e');
+}
+```
+
+## Platform support
+
+| Platform | Architecture | Status |
+|----------|-------------|--------|
+| iOS | arm64 | Supported |
+| iOS Simulator | arm64 | Supported |
+| Android | arm64-v8a | Supported |
+| Android | x86_64 | Supported |
+
+## How it works
+
+This plugin uses dart:ffi to call a NativeAOT-compiled .NET library directly. There is no platform channel overhead -- translation calls are synchronous and fast.
 
 ## License
 
