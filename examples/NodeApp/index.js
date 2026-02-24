@@ -44,7 +44,7 @@ async function main() {
   // encode: GTIN + serial -> binary -> hex
   console.log(`\nEncode GTIN to hex:`);
   const input = "gtin=00037000302414;serial=10419703";
-  const params = "filter=3;gs1companyprefixlength=7;tagLength=96";
+  const params = "filter=1;gs1companyprefixlength=7;tagLength=96";
   const encodedBinary = engine.translate(input, params, "BINARY");
   const encodedHex = engine.binaryToHex(encodedBinary);
   console.log(`  Input:  ${input}`);
