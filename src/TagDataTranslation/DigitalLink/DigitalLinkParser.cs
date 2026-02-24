@@ -74,7 +74,7 @@ namespace TagDataTranslation.DigitalLink
         /// <returns>True if parsing succeeded, false otherwise.</returns>
         public static bool TryParse(string uri, out DigitalLinkComponents components)
         {
-            components = null;
+            components = null!;
 
             try
             {

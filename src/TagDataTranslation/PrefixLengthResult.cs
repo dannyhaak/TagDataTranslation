@@ -4,7 +4,7 @@ namespace TagDataTranslation
 {
     public class PrefixLengthResult
     {
-        public string Prefix { get; set; }
+        public string Prefix { get; set; } = string.Empty;
         public int Length { get; set; }
     }
 }

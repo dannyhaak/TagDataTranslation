@@ -32,10 +32,10 @@ namespace TagDataTranslation
         private readonly Dictionary<string, Dictionary<int, string>> filterValueTables = new Dictionary<string, Dictionary<int, string>>();
 
         // TDT 2.2 Tables
-        private TableF tableF;
-        private TableK tableK;
-        private TableE tableE;
-        private TableB tableB;
+        private TableF tableF = null!;
+        private TableK tableK = null!;
+        private TableE tableE = null!;
+        private TableB tableB = null!;
 
         // JSON serialization options
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
@@ -153,8 +153,9 @@ namespace TagDataTranslation
                 {
                     using (var stream = assembly.GetManifestResourceStream(filename))
                     {
+                        if (stream == null) continue;
                         var xdoc = XDocument.Load(stream);
-                        gcpPrefixLengths = xdoc.Root.Descendants().ToDictionary(k => (string)k.FirstAttribute.Value, k => int.Parse(k.LastAttribute.Value));
+                        gcpPrefixLengths = xdoc.Root!.Descendants().ToDictionary(k => (string)k.FirstAttribute!.Value, k => int.Parse(k.LastAttribute!.Value));
                     }
                 }
             }
@@ -167,7 +168,7 @@ namespace TagDataTranslation
         /// <param name="parameterList">Semicolon-separated list of key=value parameters.</param>
         /// <param name="outputFormat">The desired output format (e.g., "BINARY", "PURE_IDENTITY", "GS1_DIGITAL_LINK").</param>
         /// <returns>The translated EPC identifier string, or null if translation fails.</returns>
-        public string Translate(string epcIdentifier, string parameterList, string outputFormat)
+        public string? Translate(string epcIdentifier, string parameterList, string outputFormat)
         {
             return TranslateDetails(epcIdentifier, parameterList, outputFormat)?.Output;
         }
@@ -179,7 +180,7 @@ namespace TagDataTranslation
         /// <param name="parameterList">Semicolon-separated list of key=value parameters.</param>
         /// <param name="outputFormat">The desired output format.</param>
         /// <returns>Translation result with output and parameter dictionary, or null if translation fails.</returns>
-        public TranslateResult TranslateDetails(string epcIdentifier, string parameterList, string outputFormat)
+        public TranslateResult? TranslateDetails(string epcIdentifier, string parameterList, string outputFormat)
         {
             var parameterDictionary = ProcessInput(epcIdentifier, parameterList);
 
@@ -195,7 +196,7 @@ namespace TagDataTranslation
             return new TranslateResult()
             {
                 ParameterDictionary = parameterDictionary,
-                Output = outputResult  // May be null if requested format isn't supported
+                Output = outputResult ?? ""  // empty if requested format isn't supported
             };
         }
 
@@ -259,7 +260,7 @@ namespace TagDataTranslation
         /// <summary>
         /// Processes the input EPC identifier and extracts field values.
         /// </summary>
-        public Dictionary<string, string> ProcessInput(string epcIdentifier, string parameterList)
+        public Dictionary<string, string>? ProcessInput(string epcIdentifier, string parameterList)
         {
             // handle null input
             if (string.IsNullOrEmpty(epcIdentifier))
@@ -296,7 +297,7 @@ namespace TagDataTranslation
                     if (epcIdentifier.StartsWith(l.PrefixMatch, StringComparison.CurrentCulture))
                     {
                         // Check taglength parameter matches if specified
-                        if (parameterDictionary.TryGetValue("taglength", out string taglength))
+                        if (parameterDictionary.TryGetValue("taglength", out string? taglength))
                         {
                             bool isVarLength = taglength.Equals("var", StringComparison.OrdinalIgnoreCase);
                             bool schemeHasFixedLength = s.TagLength.HasValue && s.TagLength.Value > 0;
@@ -312,7 +313,7 @@ namespace TagDataTranslation
                             else if (schemeHasFixedLength)
                             {
                                 // Specific tagLength requested - must match scheme's tagLength
-                                if (!taglength.Equals(s.TagLength.Value.ToString()))
+                                if (!taglength!.Equals(s.TagLength!.Value.ToString()))
                                 {
                                     continue;  // Skip schemes with non-matching tagLength
                                 }
@@ -335,9 +336,9 @@ namespace TagDataTranslation
             }
 
             // 3. DETERMINE THE OPTION THAT MATCHES THE INPUT VALUE
-            Level2 inputLevel = null;
-            Scheme2 inputScheme = null;
-            Option2 inputOption = null;
+            Level2? inputLevel = null;
+            Scheme2? inputScheme = null;
+            Option2? inputOption = null;
 
             // Sort by longest prefix matches
             inputLevelsSchemes = inputLevelsSchemes.OrderByDescending(i => i.Key.PrefixMatch?.Length ?? 0).ToDictionary(x => x.Key, y => y.Value);
@@ -352,7 +353,7 @@ namespace TagDataTranslation
                     // Check optionKey if specified
                     if (s.OptionKey != null)
                     {
-                        string value;
+                        string? value;
 
                         if (int.TryParse(s.OptionKey, out _))
                         {
@@ -370,7 +371,7 @@ namespace TagDataTranslation
                     }
 
                     // match against the original input (patterns expect percent-encoded chars)
-                    var pattern = PrepareRegexPattern(o.Pattern);
+                    var pattern = PrepareRegexPattern(o.Pattern ?? "");
                     Regex regex = new Regex(pattern);
                     var isMatch = regex.IsMatch(epcIdentifier);
                     if (isMatch)
@@ -388,7 +389,7 @@ namespace TagDataTranslation
                 }
             }
 
-            if (inputOption == null)
+            if (inputOption == null || inputScheme == null || inputLevel == null)
             {
                 throw new TDTTranslationException("TDTOptionNotFound");
             }
@@ -421,7 +422,7 @@ namespace TagDataTranslation
             }
 
             // 4. PARSE THE INPUT VALUE TO EXTRACT VALUES FOR EACH FIELD
-            var pattern2 = PrepareRegexPattern(inputOption.Pattern);
+            var pattern2 = PrepareRegexPattern(inputOption.Pattern ?? "");
             Regex r = new Regex(pattern2);
 
             Match m = r.Match(epcIdentifier);
@@ -434,7 +435,7 @@ namespace TagDataTranslation
             // Sort fields by seq
             var fields = inputOption.Field ?? new List<Field2>();
             var fieldsSorted = fields.OrderBy(c => c.Seq).ToList();
-            var inputLevelType = ParseLevelType(inputLevel.Type);
+            var inputLevelType = ParseLevelType(inputLevel.Type!);
 
             for (int i = 1; i <= fieldsSorted.Count; i++)
             {
@@ -511,7 +512,7 @@ namespace TagDataTranslation
                     }
 
                     // Handle padding from TAG_ENCODING level
-                    var tagEncodingField = FindCorrespondingField(inputScheme, "TAG_ENCODING", inputOption.OptionKey, name);
+                    var tagEncodingField = FindCorrespondingField(inputScheme, "TAG_ENCODING", inputOption.OptionKey ?? "", name);
                     variableElement = HandlePaddingOnDecode(variableElement, inputField, tagEncodingField);
                 }
 
@@ -652,7 +653,7 @@ namespace TagDataTranslation
         /// <summary>
         /// Processes the output format and generates the translated EPC identifier.
         /// </summary>
-        private string ProcessOutput(Dictionary<string, string> parameterDictionary, string outputFormat)
+        private string? ProcessOutput(Dictionary<string, string> parameterDictionary, string outputFormat)
         {
             // Parse output format type
             LevelType outputFormatType;
@@ -666,9 +667,9 @@ namespace TagDataTranslation
             }
 
             // 6. FIND THE CORRESPONDING OPTION IN THE OUTBOUND REPRESENTATION
-            Scheme2 outputScheme = null;
-            Level2 outputLevel = null;
-            Option2 outputOption = null;
+            Scheme2? outputScheme = null;
+            Level2? outputLevel = null;
+            Option2? outputOption = null;
 
             foreach (var e in epcTagDataTranslations2)
             {
@@ -679,7 +680,7 @@ namespace TagDataTranslation
 
                 foreach (var l in s.Level ?? Enumerable.Empty<Level2>())
                 {
-                    if (ParseLevelType(l.Type) != outputFormatType) continue;
+                    if (l.Type == null || ParseLevelType(l.Type) != outputFormatType) continue;
 
                     outputLevel = l;
 
@@ -693,7 +694,7 @@ namespace TagDataTranslation
                 }
             }
 
-            if (outputLevel == null || outputOption == null)
+            if (outputLevel == null || outputOption == null || outputScheme == null)
             {
                 throw new TDTTranslationException("TDTLevelNotFound");
             }
@@ -744,7 +745,7 @@ namespace TagDataTranslation
 
             foreach (var c in collection)
             {
-                string s = c.ToString();
+                string s = c.ToString() ?? "";
 
                 if (s[0] == '\'')
                 {
@@ -872,7 +873,7 @@ namespace TagDataTranslation
                         continue;
                     }
 
-                    string variableElement;
+                    string? variableElement;
                     if (!parameterDictionary.TryGetValue(s, out variableElement))
                     {
                         // Try case-insensitive lookup
@@ -890,10 +891,10 @@ namespace TagDataTranslation
                     // Handle BINARY output
                     if (outputFormatType == LevelType.BINARY)
                     {
-                        var tagEncodingField = FindCorrespondingField(outputScheme, "TAG_ENCODING", outputOption.OptionKey, s);
+                        var tagEncodingField = FindCorrespondingField(outputScheme!, "TAG_ENCODING", outputOption.OptionKey ?? "", s);
                         var binaryField = outputOption.Field?.FirstOrDefault(f => f.Name == s);
 
-                        variableElement = HandlePaddingOnEncode(variableElement, tagEncodingField, binaryField);
+                        variableElement = HandlePaddingOnEncode(variableElement ?? "", tagEncodingField, binaryField);
 
                         // Handle special encodings (e.g., dateYYMMDD for DSGTIN+)
                         if (binaryField != null && !string.IsNullOrEmpty(binaryField.Encoding))
@@ -932,7 +933,7 @@ namespace TagDataTranslation
                             {
                                 // BCD encoding: 4 bits per decimal digit
                                 var bcdBuilder = new StringBuilder();
-                                foreach (char digitChar in variableElement.PadLeft(binaryField.Length.Value, '0'))
+                                foreach (char digitChar in variableElement.PadLeft(binaryField.Length!.Value, '0'))
                                 {
                                     int digit = digitChar - '0';
                                     bcdBuilder.Append(Convert.ToString(digit, 2).PadLeft(4, '0'));
@@ -1225,7 +1226,7 @@ namespace TagDataTranslation
                 Array.Copy(functionSplit, 1, functionParameters, 0, functionSplit.Length - 2);
                 int l = functionParameters.Length;
 
-                string newFieldValue = null;
+                string? newFieldValue = null;
 
                 switch (functionName)
                 {
@@ -1374,7 +1375,7 @@ namespace TagDataTranslation
                 return input;
             }
 
-            if (epcIdentifierDictionary.TryGetValue(input, out string newInput))
+            if (epcIdentifierDictionary.TryGetValue(input, out string? newInput))
             {
                 return newInput;
             }
@@ -1602,9 +1603,9 @@ namespace TagDataTranslation
             return pattern;
         }
 
-        private Field2 FindCorrespondingField(Scheme2 scheme, string levelType, string optionKey, string fieldName)
+        private Field2? FindCorrespondingField(Scheme2 scheme, string levelType, string optionKey, string fieldName)
         {
-            if (scheme?.Level == null) return null;
+            if (scheme.Level == null) return null;
 
             foreach (var l in scheme.Level)
             {
@@ -1754,32 +1755,32 @@ namespace TagDataTranslation
             return bits.ToString();
         }
 
-        private string HandlePaddingOnDecode(string value, Field2 inputField, Field2 tagEncodingField)
+        private string HandlePaddingOnDecode(string value, Field2? inputField, Field2? tagEncodingField)
         {
             bool padCharInBinary = inputField?.PadChar != null;
             bool padCharInTagEncoding = tagEncodingField?.PadChar != null;
 
             if (padCharInBinary && !padCharInTagEncoding)
             {
-                if (inputField.PadDir?.ToUpper() == "LEFT")
+                if (inputField!.PadDir?.ToUpper() == "LEFT")
                 {
-                    value = value.TrimStart(inputField.PadChar[0]);
+                    value = value.TrimStart(inputField.PadChar![0]);
                 }
                 else
                 {
-                    value = value.TrimEnd(inputField.PadChar[0]);
+                    value = value.TrimEnd(inputField.PadChar![0]);
                 }
             }
 
             if (!padCharInBinary && padCharInTagEncoding)
             {
-                if (tagEncodingField.PadDir?.ToUpper() == "LEFT")
+                if (tagEncodingField!.PadDir?.ToUpper() == "LEFT")
                 {
-                    value = value.PadLeft(tagEncodingField.Length ?? 0, tagEncodingField.PadChar[0]);
+                    value = value.PadLeft(tagEncodingField.Length ?? 0, tagEncodingField.PadChar![0]);
                 }
                 else
                 {
-                    value = value.PadRight(tagEncodingField.Length ?? 0, tagEncodingField.PadChar[0]);
+                    value = value.PadRight(tagEncodingField.Length ?? 0, tagEncodingField!.PadChar![0]);
                 }
 
                 if ((tagEncodingField.Length ?? 0) == 0)
@@ -1791,32 +1792,32 @@ namespace TagDataTranslation
             return value;
         }
 
-        private string HandlePaddingOnEncode(string value, Field2 tagEncodingField, Field2 binaryField)
+        private string HandlePaddingOnEncode(string value, Field2? tagEncodingField, Field2? binaryField)
         {
             bool padCharInTagEncoding = tagEncodingField?.PadChar != null;
             bool padCharInBinary = binaryField?.PadChar != null;
 
             if (padCharInTagEncoding && !padCharInBinary)
             {
-                if (tagEncodingField.PadDir?.ToUpper() == "LEFT")
+                if (tagEncodingField!.PadDir?.ToUpper() == "LEFT")
                 {
-                    value = value.TrimStart(tagEncodingField.PadChar[0]);
+                    value = value.TrimStart(tagEncodingField.PadChar![0]);
                 }
                 else
                 {
-                    value = value.TrimEnd(tagEncodingField.PadChar[0]);
+                    value = value.TrimEnd(tagEncodingField!.PadChar![0]);
                 }
             }
 
             if (!padCharInTagEncoding && padCharInBinary)
             {
-                if (binaryField.PadDir?.ToUpper() == "LEFT")
+                if (binaryField!.PadDir?.ToUpper() == "LEFT")
                 {
-                    value = value.PadLeft(binaryField.Length ?? 0, binaryField.PadChar[0]);
+                    value = value.PadLeft(binaryField.Length ?? 0, binaryField.PadChar![0]);
                 }
                 else
                 {
-                    value = value.PadRight(binaryField.Length ?? 0, binaryField.PadChar[0]);
+                    value = value.PadRight(binaryField!.Length ?? 0, binaryField.PadChar![0]);
                 }
             }
 
@@ -1846,7 +1847,7 @@ namespace TagDataTranslation
             foreach (var ai in encodedAIs.OrderBy(a => a.Seq))
             {
                 // Get the value from parameters
-                if (!parameters.TryGetValue(ai.Name, out var value))
+                if (!parameters.TryGetValue(ai.Name ?? "", out var value))
                 {
                     // Try case-insensitive lookup
                     var key = parameters.Keys.FirstOrDefault(k => k.Equals(ai.Name, StringComparison.OrdinalIgnoreCase));
@@ -1862,7 +1863,7 @@ namespace TagDataTranslation
                 }
 
                 // Get the encoding format from Table F
-                var format = tableF.GetEntry(ai.Ai);
+                var format = tableF.GetEntry(ai.Ai ?? "");
                 if (format == null)
                 {
                     // Unknown AI, cannot encode
@@ -2527,7 +2528,7 @@ namespace TagDataTranslation
             foreach (var ai in encodedAIs.OrderBy(a => a.Seq))
             {
                 // Get the encoding format from Table F
-                var format = tableF.GetEntry(ai.Ai);
+                var format = tableF.GetEntry(ai.Ai ?? "");
                 if (format == null)
                 {
                     continue;
@@ -2552,7 +2553,7 @@ namespace TagDataTranslation
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(combinedValue))
+                    if (!string.IsNullOrEmpty(combinedValue) && ai.Name != null)
                     {
                         parameters[ai.Name] = combinedValue;
                     }
@@ -2561,7 +2562,7 @@ namespace TagDataTranslation
                 {
                     // Single component AI - decode normally
                     var (value, bitsConsumed) = DecodeAIValue(binaryData.Substring(bitPosition), format, false);
-                    if (value != null)
+                    if (value != null && ai.Name != null)
                     {
                         parameters[ai.Name] = value;
                     }
@@ -2932,7 +2933,7 @@ namespace TagDataTranslation
 
             foreach (var c in collection)
             {
-                string s = c.ToString();
+                string s = c.ToString() ?? "";
 
                 if (s[0] == '\'')
                 {
@@ -3262,9 +3263,9 @@ namespace TagDataTranslation
 
             foreach (var ai in aiSequence)
             {
-                if (aiToFieldMapping.TryGetValue(ai, out string fieldName))
+                if (aiToFieldMapping.TryGetValue(ai, out string? fieldName))
                 {
-                    if (parameterDictionary.TryGetValue(fieldName, out string fieldValue))
+                    if (parameterDictionary.TryGetValue(fieldName!, out string? fieldValue))
                     {
                         jsonObject[ai] = fieldValue;
                     }

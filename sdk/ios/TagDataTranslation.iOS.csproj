@@ -8,8 +8,11 @@
     <PublishAot>true</PublishAot>
     <PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>
     <NativeLib>Static</NativeLib>
+    <!-- Suppress AOT trimming warnings — library uses reflection-based JSON but preserves types via TrimmerRootAssembly -->
+    <NoWarn>IL2026;IL3050</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <TrimmerRootAssembly Include="TagDataTranslation" />
     <ProjectReference Include="..\..\src\TagDataTranslation\TagDataTranslation.csproj" />
   </ItemGroup>
 </Project>
