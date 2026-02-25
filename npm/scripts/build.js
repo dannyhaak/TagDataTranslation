@@ -14,8 +14,9 @@ const WASM_PROJECT = path.join(ROOT, "sdk/wasm", "TagDataTranslation.Wasm.csproj
 const DIST_WASM = path.join(__dirname, "..", "dist", "wasm");
 
 console.log("Building TagDataTranslation.Wasm...");
+// override TargetFrameworks on the referenced main csproj to avoid needing MAUI workloads on CI
 execSync(
-  `dotnet publish "${WASM_PROJECT}" -c Release`,
+  `dotnet publish "${WASM_PROJECT}" -c Release /p:TargetFrameworks=net10.0`,
   { stdio: "inherit" }
 );
 
