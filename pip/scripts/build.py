@@ -25,6 +25,8 @@ def main() -> None:
             "dotnet", "build", str(CSPROJ),
             "-c", "Release",
             "-f", FRAMEWORK,
+            # override TargetFrameworks to avoid needing MAUI workloads on CI
+            f"/p:TargetFrameworks={FRAMEWORK}",
         ],
         check=True,
     )

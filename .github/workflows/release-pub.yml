@@ -25,6 +25,41 @@ jobs:
           cd sdk/flutter/tag_data_translation
           sed -i "s/^version: .*/version: ${VERSION}/" pubspec.yaml
 
+      # pub.dev has a 100 MB package size limit. The iOS xcframework includes both
+      # device (arm64) and simulator (arm64-simulator) slices at ~48 MB each, pushing
+      # the total over 100 MB. Remove the simulator slice before publishing.
+      - name: Reduce package size
+        run: |
+          cd sdk/flutter/tag_data_translation
+          rm -rf ios/Frameworks/TagDataTranslation.xcframework/ios-arm64-simulator
+          cat > ios/Frameworks/TagDataTranslation.xcframework/Info.plist << 'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>AvailableLibraries</key>
+            <array>
+              <dict>
+                <key>HeadersPath</key>
+                <string>Headers</string>
+                <key>LibraryIdentifier</key>
+                <string>ios-arm64</string>
+                <key>LibraryPath</key>
+                <string>TagDataTranslation.iOS.a</string>
+                <key>SupportedArchitectures</key>
+                <array><string>arm64</string></array>
+                <key>SupportedPlatform</key>
+                <string>ios</string>
+              </dict>
+            </array>
+            <key>CFBundlePackageType</key>
+            <string>XFWK</string>
+            <key>XCFrameworkFormatVersion</key>
+            <string>1.0</string>
+          </dict>
+          </plist>
+          PLIST
+
       - name: Get dependencies
         run: cd sdk/flutter/tag_data_translation && flutter pub get
 

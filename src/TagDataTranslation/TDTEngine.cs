@@ -51,11 +51,6 @@ namespace TagDataTranslation
         private EncodedAICodec encodedAICodec = null!;
         private VariableLengthFieldCodec variableLengthFieldCodec = null!;
 
-        // JSON serialization options
-        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
 
         // static compiled regex for grammar string parsing
         private static readonly Regex GrammarRegex = new(@"\'.*?\'|\s*[\w]+\s*", RegexOptions.Compiled);
@@ -131,7 +126,7 @@ namespace TagDataTranslation
                         if (stream == null) continue;
                         try
                         {
-                            var root = JsonSerializer.Deserialize<TdtRoot>(stream, JsonOptions);
+                            var root = JsonSerializer.Deserialize(stream, TdtJsonContext.Default.TdtRoot);
                             if (root?.EpcTagDataTranslation?.Scheme != null)
                             {
                                 epcTagDataTranslations.Add(root.EpcTagDataTranslation);
@@ -1504,7 +1499,7 @@ namespace TagDataTranslation
                 }
             }
 
-            return JsonSerializer.Serialize(jsonObject);
+            return JsonSerializer.Serialize(jsonObject, TdtJsonContext.Default.DictionaryStringString);
         }
 
         #endregion

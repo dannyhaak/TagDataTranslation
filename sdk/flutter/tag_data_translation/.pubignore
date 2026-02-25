@@ -18,3 +18,7 @@ coverage/
 # git
 .git/
 .gitkeep
+
+# iOS simulator framework — saves ~48 MB to stay under pub.dev's 100 MB limit.
+# Simulator builds use the device .a via Rosetta or require building from source.
+ios/Frameworks/TagDataTranslation.xcframework/ios-arm64-simulator/

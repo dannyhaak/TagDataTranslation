@@ -11,12 +11,8 @@ namespace TagDataTranslation.Tables;
 /// <summary>
 /// Provides static methods to load TDT 2.2 tables from JSON streams.
 /// </summary>
-public static class TableLoader
+public static partial class TableLoader
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
 
     #region JSON Models for Deserialization
 
@@ -170,6 +166,15 @@ public static class TableLoader
 
     #endregion
 
+    [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
+    [JsonSerializable(typeof(TableJsonRoot<TableFRow>))]
+    [JsonSerializable(typeof(TableJsonRoot<TableKRow>))]
+    [JsonSerializable(typeof(TableJsonRoot<TableERow>))]
+    [JsonSerializable(typeof(TableJsonRoot<TableBRow>))]
+    private partial class TableJsonContext : JsonSerializerContext
+    {
+    }
+
     /// <summary>
     /// Loads Table F from a JSON stream.
     /// </summary>
@@ -177,7 +182,7 @@ public static class TableLoader
     /// <returns>The loaded TableF instance.</returns>
     public static TableF LoadTableF(Stream stream)
     {
-        var root = JsonSerializer.Deserialize<TableJsonRoot<TableFRow>>(stream, JsonOptions)
+        var root = JsonSerializer.Deserialize(stream, TableJsonContext.Default.TableJsonRootTableFRow)
             ?? throw new InvalidOperationException("Failed to deserialize Table F JSON");
 
         var table = new TableF();
@@ -221,7 +226,7 @@ public static class TableLoader
     /// <returns>The loaded TableK instance.</returns>
     public static TableK LoadTableK(Stream stream)
     {
-        var root = JsonSerializer.Deserialize<TableJsonRoot<TableKRow>>(stream, JsonOptions)
+        var root = JsonSerializer.Deserialize(stream, TableJsonContext.Default.TableJsonRootTableKRow)
             ?? throw new InvalidOperationException("Failed to deserialize Table K JSON");
 
         var table = new TableK();
@@ -253,7 +258,7 @@ public static class TableLoader
     /// <returns>The loaded TableE instance.</returns>
     public static TableE LoadTableE(Stream stream)
     {
-        var root = JsonSerializer.Deserialize<TableJsonRoot<TableERow>>(stream, JsonOptions)
+        var root = JsonSerializer.Deserialize(stream, TableJsonContext.Default.TableJsonRootTableERow)
             ?? throw new InvalidOperationException("Failed to deserialize Table E JSON");
 
         var table = new TableE();
@@ -287,7 +292,7 @@ public static class TableLoader
     /// <returns>The loaded TableB instance.</returns>
     public static TableB LoadTableB(Stream stream)
     {
-        var root = JsonSerializer.Deserialize<TableJsonRoot<TableBRow>>(stream, JsonOptions)
+        var root = JsonSerializer.Deserialize(stream, TableJsonContext.Default.TableJsonRootTableBRow)
             ?? throw new InvalidOperationException("Failed to deserialize Table B JSON");
 
         var table = new TableB();
