@@ -4,6 +4,10 @@ on:
   push:
     tags: ["v*"]
 
+# OIDC token for pub.dev authentication (no secrets needed)
+permissions:
+  id-token: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -13,7 +17,13 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.0"
+          channel: stable
+
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          cd sdk/flutter/tag_data_translation
+          sed -i "s/^version: .*/version: ${VERSION}/" pubspec.yaml
 
       - name: Get dependencies
         run: cd sdk/flutter/tag_data_translation && flutter pub get
@@ -21,7 +31,11 @@ jobs:
       - name: Analyze
         run: cd sdk/flutter/tag_data_translation && flutter analyze
 
-      # TODO: Add pub.dev publishing
-      # Requires: GOOGLE_SERVICE_ACCOUNT_KEY secret for pub.dev authentication
-      # - name: Publish to pub.dev
-      #   run: cd sdk/flutter/tag_data_translation && flutter pub publish --force
+      # Uses dart-lang/setup-dart's reusable workflow for OIDC-based publishing.
+      # Requires: enable "publishing from GitHub Actions" on pub.dev package admin
+      # with repository dannyhaak/TagDataTranslation and tag pattern v{{version}}.
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Publish to pub.dev
+        run: cd sdk/flutter/tag_data_translation && dart pub publish --force
