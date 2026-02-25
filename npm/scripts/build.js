@@ -32,8 +32,8 @@ if (fs.existsSync(DIST_WASM)) {
 }
 fs.mkdirSync(DIST_WASM, { recursive: true });
 
-// copy framework files, skip debug symbols and source maps
-const skipPatterns = [".symbols", ".js.map"];
+// copy framework files, skip source maps
+const skipPatterns = [".js.map"];
 for (const file of fs.readdirSync(publishDir)) {
   if (skipPatterns.some((p) => file.endsWith(p))) continue;
   fs.copyFileSync(path.join(publishDir, file), path.join(DIST_WASM, file));
