@@ -503,13 +503,5 @@ namespace TagDataTranslation.Encoding
 
             return sb.ToString();
         }
-
-        /// <summary>
-        /// Gets the bit length of an encoded hostname.
-        /// </summary>
-        public static int GetEncodedBitLength(string binary)
-        {
-            return binary.Length;
-        }
     }
 }

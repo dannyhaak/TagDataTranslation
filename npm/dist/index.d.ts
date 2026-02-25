@@ -19,13 +19,22 @@ export interface TDTEngine {
    */
   tryTranslate(epcIdentifier: string, parameterList: string, outputFormat: string): string | null;
 
+  /**
+   * Translate an EPC identifier and return detailed results including all decoded fields.
+   * @returns JSON object with output string and fields dictionary, or null if translation failed
+   */
+  translateDetails(epcIdentifier: string, parameterList: string, outputFormat: string): { output: string; fields: Record<string, string> } | null;
+
   /** Convert hexadecimal string to binary string */
   hexToBinary(hex: string): string;
 
   /** Convert binary string to hexadecimal string */
   binaryToHex(binary: string): string;
 
-  /** Get any errors encountered while loading scheme files */
+  /**
+   * Get any errors encountered while loading scheme files.
+   * Returns a newline-delimited string of error messages, or "" if none.
+   */
   getLoadErrors(): string;
 }
 

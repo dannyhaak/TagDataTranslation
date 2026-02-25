@@ -177,7 +177,8 @@ namespace TagDataTranslation
         /// <returns>The translated EPC identifier string, or null if translation fails.</returns>
         public string? Translate(string epcIdentifier, string parameterList, string outputFormat)
         {
-            return TranslateDetails(epcIdentifier, parameterList, outputFormat)?.Output;
+            var result = TranslateDetails(epcIdentifier, parameterList, outputFormat)?.Output;
+            return string.IsNullOrEmpty(result) ? null : result;
         }
 
         /// <summary>
@@ -301,7 +302,7 @@ namespace TagDataTranslation
                 {
                     if (level.PrefixMatch == null) continue;
 
-                    if (epcIdentifier.StartsWith(level.PrefixMatch, StringComparison.CurrentCulture))
+                    if (epcIdentifier.StartsWith(level.PrefixMatch, StringComparison.Ordinal))
                     {
                         // Check taglength parameter matches if specified
                         if (parameterDictionary.TryGetValue("taglength", out string? taglength))
@@ -379,7 +380,7 @@ namespace TagDataTranslation
 
                     // match against the original input (patterns expect percent-encoded chars)
                     var pattern = option.Pattern ?? "";
-                    var isMatch = new Regex(pattern).IsMatch(epcIdentifier);
+                    var isMatch = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(200)).IsMatch(epcIdentifier);
                     if (isMatch)
                     {
                         inputScheme = scheme;
@@ -429,7 +430,7 @@ namespace TagDataTranslation
 
             // 4. PARSE THE INPUT VALUE TO EXTRACT VALUES FOR EACH FIELD
             var pattern2 = inputOption.Pattern ?? "";
-            Regex regex = new Regex(pattern2);
+            Regex regex = new Regex(pattern2, RegexOptions.None, TimeSpan.FromMilliseconds(200));
 
             Match match = regex.Match(epcIdentifier);
 
@@ -471,8 +472,7 @@ namespace TagDataTranslation
                         else
                         {
                             // Unknown encoding, treat as numeric
-                            Int64 integer = Convert.ToInt64(variableElement, 2);
-                            variableElement = Convert.ToString(integer);
+                            variableElement = BinaryConverter.BinaryStringToBigInteger(variableElement).ToString();
                         }
                     }
                     else if (!string.IsNullOrEmpty(inputField.Compaction))
@@ -507,14 +507,12 @@ namespace TagDataTranslation
                         else
                         {
                             // Regular binary to decimal
-                            Int64 integer = Convert.ToInt64(variableElement, 2);
-                            variableElement = Convert.ToString(integer);
+                            variableElement = BinaryConverter.BinaryStringToBigInteger(variableElement).ToString();
                         }
                     }
                     else
                     {
-                        Int64 integer = Convert.ToInt64(variableElement, 2);
-                        variableElement = Convert.ToString(integer);
+                        variableElement = BinaryConverter.BinaryStringToBigInteger(variableElement).ToString();
                     }
 
                     // Handle padding from TAG_ENCODING level
@@ -528,7 +526,7 @@ namespace TagDataTranslation
                     try
                     {
                         BigInteger integer = BigInteger.Parse(variableElement);
-                        if (IsBelowMinimum(integer, inputField.DecimalMinimum))
+                        if (RuleExecutor.IsBelowMinimum(integer, inputField.DecimalMinimum))
                         {
                             throw new TDTTranslationException("TDTFieldBelowMinimum");
                         }
@@ -548,7 +546,7 @@ namespace TagDataTranslation
                     try
                     {
                         BigInteger integer = BigInteger.Parse(variableElement);
-                        if (IsAboveMaximum(integer, inputField.DecimalMaximum))
+                        if (RuleExecutor.IsAboveMaximum(integer, inputField.DecimalMaximum))
                         {
                             throw new TDTTranslationException("TDTFieldAboveMaximum");
                         }
@@ -946,10 +944,10 @@ namespace TagDataTranslation
                                 }
                                 variableElement = bcdBuilder.ToString();
                             }
-                            else if (Int64.TryParse(variableElement, out var result))
+                            else if (BigInteger.TryParse(variableElement, out var result))
                             {
                                 // Regular binary encoding
-                                variableElement = Convert.ToString(result, 2).PadLeft(binaryField.BitLength.Value, '0');
+                                variableElement = EncodedAICodec.ToBinaryString(result).PadLeft(binaryField.BitLength.Value, '0');
                             }
                             else
                             {
@@ -958,12 +956,12 @@ namespace TagDataTranslation
                         }
                         else
                         {
-                            Int64 result;
-                            if (!Int64.TryParse(variableElement, out result))
+                            BigInteger result;
+                            if (!BigInteger.TryParse(variableElement, out result))
                             {
                                 result = 0;
                             }
-                            variableElement = Convert.ToString(result, 2);
+                            variableElement = EncodedAICodec.ToBinaryString(result);
                         }
 
                         // Handle bit padding for non-BCD fields
@@ -1046,22 +1044,6 @@ namespace TagDataTranslation
 
         #endregion
 
-        #region Validation
-
-        private bool IsBelowMinimum(BigInteger input, string minimum)
-        {
-            BigInteger.TryParse(minimum, out BigInteger minimumInt);
-            return input < minimumInt;
-        }
-
-        private bool IsAboveMaximum(BigInteger input, string maximum)
-        {
-            BigInteger.TryParse(maximum, out BigInteger maximumInt);
-            return input > maximumInt;
-        }
-
-        #endregion
-
         #region Helper Methods
 
         private void ParseInput(string input, Dictionary<string, string> parameterDictionary)
@@ -1070,10 +1052,10 @@ namespace TagDataTranslation
             {
                 foreach (string s in input.Split(';'))
                 {
-                    var parts = s.Split('=');
-                    if (parts.Length >= 2)
+                    var idx = s.IndexOf('=');
+                    if (idx > 0)
                     {
-                        parameterDictionary[parts[0].Trim().ToLower()] = parts[1].Trim();
+                        parameterDictionary[s.Substring(0, idx).Trim().ToLower()] = s.Substring(idx + 1).Trim();
                     }
                 }
             }
@@ -1084,7 +1066,7 @@ namespace TagDataTranslation
         /// </summary>
         public PrefixLengthResult GetPrefixLength(string input)
         {
-            var prefixLength = gcpPrefixLengths.Where(x => input.StartsWith(x.Key, StringComparison.CurrentCulture)).FirstOrDefault();
+            var prefixLength = gcpPrefixLengths.Where(x => input.StartsWith(x.Key, StringComparison.Ordinal)).FirstOrDefault();
 
             return new PrefixLengthResult() { Prefix = prefixLength.Key, Length = prefixLength.Value };
         }
@@ -1222,7 +1204,11 @@ namespace TagDataTranslation
                 string binary = Convert.ToString(packedDate, 2);
                 return binary.PadLeft(bitLength, '0');
             }
-            catch
+            catch (FormatException)
+            {
+                return new string('0', bitLength);
+            }
+            catch (OverflowException)
             {
                 return new string('0', bitLength);
             }
@@ -1255,7 +1241,11 @@ namespace TagDataTranslation
                 // Format as YYMMDD
                 return $"{year:D2}{month:D2}{day:D2}";
             }
-            catch
+            catch (FormatException)
+            {
+                return "000000";
+            }
+            catch (OverflowException)
             {
                 return "000000";
             }
@@ -1390,9 +1380,11 @@ namespace TagDataTranslation
                 {
                     s = s.Trim();
                     if (s.Equals("encodedAI", StringComparison.OrdinalIgnoreCase) ||
-                        s.EndsWith("Encoded", StringComparison.OrdinalIgnoreCase))
+                        s.EndsWith("Encoded", StringComparison.OrdinalIgnoreCase) ||
+                        s.EndsWith("Binary", StringComparison.OrdinalIgnoreCase) ||
+                        s.EndsWith("Numeric", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Stop counting - encodedAI, serialEncoded, hostnameEncoded are variable length
+                        // stop counting - these tokens represent variable-length fields
                         break;
                     }
 

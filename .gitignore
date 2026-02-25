@@ -48,3 +48,11 @@ out
 # npm build output
 npm/dist/wasm/
 npm/LICENSE.md
+
+# pip build output
+pip/src/tag_data_translation/dotnet/
+pip/LICENSE.md
+pip/dist/
+pip/*.egg-info/
+pip/src/*.egg-info/
+pip/.venv/

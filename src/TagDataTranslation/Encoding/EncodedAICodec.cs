@@ -739,13 +739,14 @@ namespace TagDataTranslation.Encoding
                 return "0";
             }
 
-            var bits = new StringBuilder();
+            // stack-based to avoid O(n²) from StringBuilder.Insert(0, ...)
+            var digits = new Stack<char>();
             while (value > 0)
             {
-                bits.Insert(0, (value % 2).ToString());
+                digits.Push((char)('0' + (int)(value % 2)));
                 value /= 2;
             }
-            return bits.ToString();
+            return new string(digits.ToArray());
         }
 
         #endregion

@@ -175,7 +175,15 @@ namespace TagDataTranslation.Encoding
             {
                 return HostnameEncoder.Decode(binaryData);
             }
-            catch
+            catch (FormatException)
+            {
+                return null;
+            }
+            catch (OverflowException)
+            {
+                return null;
+            }
+            catch (ArgumentException)
             {
                 return null;
             }

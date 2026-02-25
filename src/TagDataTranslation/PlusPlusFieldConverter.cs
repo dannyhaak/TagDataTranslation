@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -110,7 +111,11 @@ namespace TagDataTranslation
                     itipValue = BigInteger.Parse(itipBinaryStr);
                 }
             }
-            catch
+            catch (FormatException)
+            {
+                return;
+            }
+            catch (OverflowException)
             {
                 return;
             }
@@ -153,7 +158,11 @@ namespace TagDataTranslation
                     dateBinary = int.Parse(dateBinaryStr);
                 }
             }
-            catch
+            catch (FormatException)
+            {
+                return;
+            }
+            catch (OverflowException)
             {
                 return;
             }

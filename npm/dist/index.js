@@ -37,6 +37,11 @@ async function createEngine() {
     tryTranslate: (epcIdentifier, parameterList, outputFormat) =>
       interop.TryTranslate(epcIdentifier, parameterList, outputFormat),
 
+    translateDetails: (epcIdentifier, parameterList, outputFormat) => {
+      const json = interop.TranslateDetails(epcIdentifier, parameterList, outputFormat);
+      return json ? JSON.parse(json) : null;
+    },
+
     hexToBinary: (hex) => interop.HexToBinary(hex),
 
     binaryToHex: (binary) => interop.BinaryToHex(binary),

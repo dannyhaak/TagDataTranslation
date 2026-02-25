@@ -143,20 +143,30 @@ namespace TagDataTranslation
                 // validate range
                 if (rule.DecimalMinimum != null)
                 {
-                    BigInteger integer = BigInteger.Parse(newFieldValue);
-                    if (IsBelowMinimum(integer, rule.DecimalMinimum))
+                    try
                     {
-                        throw new TDTTranslationException("TDTFieldBelowMinimum");
+                        BigInteger integer = BigInteger.Parse(newFieldValue);
+                        if (IsBelowMinimum(integer, rule.DecimalMinimum))
+                        {
+                            throw new TDTTranslationException("TDTFieldBelowMinimum");
+                        }
                     }
+                    catch (TDTTranslationException) { throw; }
+                    catch (Exception) { throw new TDTTranslationException("TDTNumericOverflow"); }
                 }
 
                 if (rule.DecimalMaximum != null)
                 {
-                    BigInteger integer = BigInteger.Parse(newFieldValue);
-                    if (IsAboveMaximum(integer, rule.DecimalMaximum))
+                    try
                     {
-                        throw new TDTTranslationException("TDTFieldAboveMaximum");
+                        BigInteger integer = BigInteger.Parse(newFieldValue);
+                        if (IsAboveMaximum(integer, rule.DecimalMaximum))
+                        {
+                            throw new TDTTranslationException("TDTFieldAboveMaximum");
+                        }
                     }
+                    catch (TDTTranslationException) { throw; }
+                    catch (Exception) { throw new TDTTranslationException("TDTNumericOverflow"); }
                 }
 
                 parameterDictionary[newFieldName] = newFieldValue;
@@ -229,7 +239,7 @@ namespace TagDataTranslation
 
             try
             {
-                System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("^" + characterSet + "$");
+                System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("^" + characterSet + "$", System.Text.RegularExpressions.RegexOptions.None, TimeSpan.FromMilliseconds(200));
                 return r.IsMatch(input);
             }
             catch
@@ -240,15 +250,21 @@ namespace TagDataTranslation
             }
         }
 
-        private static bool IsBelowMinimum(BigInteger input, string minimum)
+        internal static bool IsBelowMinimum(BigInteger input, string minimum)
         {
-            BigInteger.TryParse(minimum, out BigInteger minimumInt);
+            if (!BigInteger.TryParse(minimum, out BigInteger minimumInt))
+            {
+                throw new TDTTranslationException("TDTInvalidSchemeDefinition");
+            }
             return input < minimumInt;
         }
 
-        private static bool IsAboveMaximum(BigInteger input, string maximum)
+        internal static bool IsAboveMaximum(BigInteger input, string maximum)
         {
-            BigInteger.TryParse(maximum, out BigInteger maximumInt);
+            if (!BigInteger.TryParse(maximum, out BigInteger maximumInt))
+            {
+                throw new TDTTranslationException("TDTInvalidSchemeDefinition");
+            }
             return input > maximumInt;
         }
     }

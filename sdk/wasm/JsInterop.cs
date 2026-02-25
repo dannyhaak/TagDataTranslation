@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json;
 using TagDataTranslation;
 
 namespace TagDataTranslation.Wasm;
@@ -16,7 +17,8 @@ public partial class JsInterop
     [JSExport]
     public static string Translate(string epcIdentifier, string parameterList, string outputFormat)
     {
-        return Engine.Translate(epcIdentifier, parameterList, outputFormat);
+        return Engine.Translate(epcIdentifier, parameterList, outputFormat)
+            ?? throw new InvalidOperationException("Translation returned no result");
     }
 
     [JSExport]
@@ -25,6 +27,18 @@ public partial class JsInterop
         if (Engine.TryTranslate(epcIdentifier, parameterList, outputFormat, out var result, out _))
             return result;
         return null;
+    }
+
+    [JSExport]
+    public static string? TranslateDetails(string epcIdentifier, string parameterList, string outputFormat)
+    {
+        var result = Engine.TranslateDetails(epcIdentifier, parameterList, outputFormat);
+        if (result == null) return null;
+        return JsonSerializer.Serialize(new
+        {
+            output = result.Output,
+            fields = result.ParameterDictionary
+        });
     }
 
     [JSExport]

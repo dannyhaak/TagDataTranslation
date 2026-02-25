@@ -61,7 +61,7 @@ jobs:
             <version>VERSION_PLACEHOLDER</version>
             <packaging>jar</packaging>
             <name>TagDataTranslation</name>
-            <description>GS1 EPC Tag Data Translation for Android (.NET Android runtime required)</description>
+            <description>GS1 EPC Tag Data Translation for Android and RAIN (UHF) RFID (.NET Android runtime required)</description>
             <url>https://github.com/dannyhaak/TagDataTranslation</url>
             <licenses>
               <license>
