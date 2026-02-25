@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,15 @@ namespace TagDataTranslation
     /// </summary>
     public class TDTEngine
     {
+        // compiled regex cache shared across all engine instances
+        private static readonly ConcurrentDictionary<string, Regex> _regexCache = new();
+
+        private static Regex GetCachedRegex(string pattern)
+        {
+            return _regexCache.GetOrAdd(pattern, p =>
+                new Regex(p, RegexOptions.Compiled, TimeSpan.FromMilliseconds(200)));
+        }
+
         // TDT 2.2 JSON scheme data
         private readonly List<EpcTagDataTranslation> epcTagDataTranslations = new List<EpcTagDataTranslation>();
 
@@ -46,6 +56,36 @@ namespace TagDataTranslation
         {
             PropertyNameCaseInsensitive = true
         };
+
+        // static compiled regex for grammar string parsing
+        private static readonly Regex GrammarRegex = new(@"\'.*?\'|\s*[\w]+\s*", RegexOptions.Compiled);
+
+        // cached grammar tokens: grammar string → array of (isLiteral, value)
+        private static readonly ConcurrentDictionary<string, GrammarToken[]> _grammarTokenCache = new();
+
+        private readonly record struct GrammarToken(bool IsLiteral, string Value);
+
+        private static GrammarToken[] ParseGrammarTokens(string grammar)
+        {
+            return _grammarTokenCache.GetOrAdd(grammar, g =>
+            {
+                var matches = GrammarRegex.Matches(g);
+                var tokens = new GrammarToken[matches.Count];
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    string s = matches[i].Value;
+                    if (s[0] == '\'')
+                    {
+                        tokens[i] = new GrammarToken(true, s.Substring(1, s.Length - 2));
+                    }
+                    else
+                    {
+                        tokens[i] = new GrammarToken(false, s.Trim());
+                    }
+                }
+                return tokens;
+            });
+        }
 
         /// <summary>
         /// TDT 2.2 Level Types.
@@ -166,6 +206,38 @@ namespace TagDataTranslation
 
             encodedAICodec = new EncodedAICodec(tableF, tableB);
             variableLengthFieldCodec = new VariableLengthFieldCodec(tableB);
+
+            // pre-sort fields and rules so we don't sort on every call
+            foreach (var translation in epcTagDataTranslations)
+            {
+                var scheme = translation.Scheme;
+                if (scheme?.Level == null) continue;
+
+                foreach (var level in scheme.Level)
+                {
+                    // pre-sort rules into extract and format lists
+                    if (level.Rule != null)
+                    {
+                        level.ExtractRules = level.Rule
+                            .Where(r => r.Type == "EXTRACT")
+                            .OrderBy(r => r.Seq)
+                            .ToList();
+                        level.FormatRules = level.Rule
+                            .Where(r => r.Type == "FORMAT")
+                            .OrderBy(r => r.Seq)
+                            .ToList();
+                    }
+
+                    // pre-sort fields by seq in each option
+                    if (level.Option != null)
+                    {
+                        foreach (var option in level.Option)
+                        {
+                            option.Field?.Sort((a, b) => a.Seq.CompareTo(b.Seq));
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -380,7 +452,7 @@ namespace TagDataTranslation
 
                     // match against the original input (patterns expect percent-encoded chars)
                     var pattern = option.Pattern ?? "";
-                    var isMatch = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(200)).IsMatch(epcIdentifier);
+                    var isMatch = GetCachedRegex(pattern).IsMatch(epcIdentifier);
                     if (isMatch)
                     {
                         inputScheme = scheme;
@@ -430,18 +502,15 @@ namespace TagDataTranslation
 
             // 4. PARSE THE INPUT VALUE TO EXTRACT VALUES FOR EACH FIELD
             var pattern2 = inputOption.Pattern ?? "";
-            Regex regex = new Regex(pattern2, RegexOptions.None, TimeSpan.FromMilliseconds(200));
-
-            Match match = regex.Match(epcIdentifier);
+            Match match = GetCachedRegex(pattern2).Match(epcIdentifier);
 
             if (!match.Success)
             {
                 throw new TDTTranslationException("TDTOptionNotFound");
             }
 
-            // Sort fields by seq
-            var fields = inputOption.Field ?? new List<Field>();
-            var fieldsSorted = fields.OrderBy(c => c.Seq).ToList();
+            // fields are pre-sorted by seq at load time
+            var fieldsSorted = inputOption.Field ?? new List<Field>();
             var inputLevelType = ParseLevelType(inputLevel.Type!);
 
             for (int i = 1; i <= fieldsSorted.Count; i++)
@@ -634,10 +703,9 @@ namespace TagDataTranslation
             }
 
             // 5. PERFORM EXTRACT RULES
-            if (inputLevel.Rule != null)
+            if (inputLevel.ExtractRules != null)
             {
-                var extractRules = inputLevel.Rule.Where(rule => rule.Type == "EXTRACT").OrderBy(c => c.Seq).ToList();
-                RuleExecutor.ExecuteRules(extractRules, parameterDictionary);
+                RuleExecutor.ExecuteRules(inputLevel.ExtractRules, parameterDictionary);
             }
 
             // 5.5. Handle scheme-specific field conversions for '++' schemes
@@ -723,10 +791,9 @@ namespace TagDataTranslation
             }
 
             // 7. PERFORM FORMAT RULES
-            if (outputLevel.Rule != null)
+            if (outputLevel.FormatRules != null)
             {
-                var formatRules = outputLevel.Rule.Where(rule => rule.Type == "FORMAT").OrderBy(c => c.Seq).ToList();
-                RuleExecutor.ExecuteRules(formatRules, parameterDictionary);
+                RuleExecutor.ExecuteRules(outputLevel.FormatRules, parameterDictionary);
             }
 
             // 7.5. Handle DSGTIN++/ITIP++ date binary conversion
@@ -742,22 +809,19 @@ namespace TagDataTranslation
             // 8. BUILD OUTPUT VALUE FROM GRAMMAR STRING
             string grammarstring = outputOption.Grammar ?? "";
 
-            StringBuilder outputString = new StringBuilder();
+            StringBuilder outputString = new StringBuilder(128);
 
-            Regex abnf = new Regex(@"\'.*?\'|\s*[\w]+\s*");
-            MatchCollection collection = abnf.Matches(grammarstring);
+            var tokens = ParseGrammarTokens(grammarstring);
 
-            foreach (var c in collection)
+            foreach (var token in tokens)
             {
-                string s = c.ToString() ?? "";
-
-                if (s[0] == '\'')
+                if (token.IsLiteral)
                 {
-                    outputString.Append(s.Substring(1, s.Length - 2));
+                    outputString.Append(token.Value);
                 }
                 else
                 {
-                    s = s.Trim();
+                    string s = token.Value;
 
                     // Handle encodedAI token for "+" schemes (SGTIN+, SSCC+, GRAI+, etc.)
                     if (s.Equals("encodedAI", StringComparison.OrdinalIgnoreCase) && outputOption.EncodedAI != null)
@@ -1360,17 +1424,14 @@ namespace TagDataTranslation
             // Parse the grammar to count fixed bits
             // Grammar format: "'11111011' dataToggle filter '0100' expDate encodedAI"
             int totalBits = 0;
-            Regex abnf = new Regex(@"\'.*?\'|\s*[\w]+\s*");
-            MatchCollection collection = abnf.Matches(option.Grammar);
+            var tokens = ParseGrammarTokens(option.Grammar);
 
-            foreach (var c in collection)
+            foreach (var token in tokens)
             {
-                string s = c.ToString() ?? "";
-
-                if (s[0] == '\'')
+                if (token.IsLiteral)
                 {
                     // Literal binary string - count its bits
-                    string literal = s.Substring(1, s.Length - 2);
+                    string literal = token.Value;
                     if (literal.All(ch => ch == '0' || ch == '1'))
                     {
                         totalBits += literal.Length;
@@ -1378,7 +1439,7 @@ namespace TagDataTranslation
                 }
                 else
                 {
-                    s = s.Trim();
+                    string s = token.Value;
                     if (s.Equals("encodedAI", StringComparison.OrdinalIgnoreCase) ||
                         s.EndsWith("Encoded", StringComparison.OrdinalIgnoreCase) ||
                         s.EndsWith("Binary", StringComparison.OrdinalIgnoreCase) ||

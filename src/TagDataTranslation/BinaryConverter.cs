@@ -9,18 +9,35 @@ namespace TagDataTranslation
     /// </summary>
     public static class BinaryConverter
     {
+        // lookup table: hex char (by ASCII index) → 4-char binary string
+        private static readonly string[] HexToBinaryTable = new string[128];
+
+        // lookup table: 4-bit value (0–15) → hex char
+        private static readonly char[] BinaryToHexTable = "0123456789abcdef".ToCharArray();
+
+        static BinaryConverter()
+        {
+            for (int i = 0; i < 16; i++)
+            {
+                string bits = Convert.ToString(i, 2).PadLeft(4, '0');
+                char lower = "0123456789abcdef"[i];
+                char upper = "0123456789ABCDEF"[i];
+                HexToBinaryTable[lower] = bits;
+                HexToBinaryTable[upper] = bits;
+            }
+        }
+
         /// <summary>
         /// Converts a hexadecimal string to binary.
         /// </summary>
         public static string HexToBinary(string hex)
         {
             int length = hex.Length;
-            StringBuilder binary = new StringBuilder();
+            StringBuilder binary = new StringBuilder(length * 4);
 
             for (int i = 0; i < length; i++)
             {
-                int integer = Convert.ToInt16(hex.Substring(i, 1), 16);
-                binary.Append(Convert.ToString(integer, 2).PadLeft(4, '0'));
+                binary.Append(HexToBinaryTable[hex[i]]);
             }
 
             return binary.ToString();
@@ -39,11 +56,14 @@ namespace TagDataTranslation
                 length = binary.Length;
             }
 
-            StringBuilder hex = new StringBuilder();
+            StringBuilder hex = new StringBuilder(length / 4);
             for (int i = 0; i < length; i += 4)
             {
-                int integer = Convert.ToInt16(binary.Substring(i, 4), 2);
-                hex.Append(Convert.ToString(integer, 16));
+                int value = (binary[i] - '0') * 8
+                          + (binary[i + 1] - '0') * 4
+                          + (binary[i + 2] - '0') * 2
+                          + (binary[i + 3] - '0');
+                hex.Append(BinaryToHexTable[value]);
             }
 
             return hex.ToString();

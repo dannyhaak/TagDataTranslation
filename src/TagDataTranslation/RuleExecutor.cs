@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using TagDataTranslation.DigitalLink;
 using TagDataTranslation.Encoding;
 using TagDataTranslation.Models;
@@ -13,6 +15,9 @@ namespace TagDataTranslation
     /// </summary>
     internal static class RuleExecutor
     {
+        // compiled regex cache for character set validation
+        private static readonly ConcurrentDictionary<string, Regex?> _charsetRegexCache = new();
+
         /// <summary>
         /// Executes transformation rules on the parameter dictionary.
         /// </summary>
@@ -237,17 +242,24 @@ namespace TagDataTranslation
             if (input.Length == 0)
                 return true;
 
-            try
+            var regex = _charsetRegexCache.GetOrAdd(characterSet, cs =>
             {
-                System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("^" + characterSet + "$", System.Text.RegularExpressions.RegexOptions.None, TimeSpan.FromMilliseconds(200));
-                return r.IsMatch(input);
-            }
-            catch
-            {
-                // invalid regex in character set pattern — allow input through
-                // rather than silently rejecting or crashing
+                try
+                {
+                    return new Regex("^" + cs + "$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(200));
+                }
+                catch
+                {
+                    // invalid regex in character set pattern — cache null to avoid retrying
+                    return null;
+                }
+            });
+
+            // null means invalid pattern — allow input through
+            if (regex == null)
                 return true;
-            }
+
+            return regex.IsMatch(input);
         }
 
         internal static bool IsBelowMinimum(BigInteger input, string minimum)

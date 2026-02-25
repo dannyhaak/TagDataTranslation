@@ -94,6 +94,13 @@ public class Level
 
     [JsonPropertyName("rule")]
     public List<Rule>? Rule { get; set; }
+
+    // pre-sorted rule lists computed once at load time
+    [JsonIgnore]
+    internal List<Rule>? ExtractRules { get; set; }
+
+    [JsonIgnore]
+    internal List<Rule>? FormatRules { get; set; }
 }
 
 /// <summary>

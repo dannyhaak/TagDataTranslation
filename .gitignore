@@ -45,6 +45,9 @@ Thumbs.db
 .vs
 out
 
+# benchmark artifacts
+BenchmarkDotNet.Artifacts/
+
 # npm build output
 npm/dist/wasm/
 npm/LICENSE.md
