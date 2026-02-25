@@ -69,6 +69,17 @@ try {
 
 This plugin uses dart:ffi to call a NativeAOT-compiled .NET library directly. There is no platform channel overhead -- translation calls are synchronous and fast.
 
+## Performance
+
+Translation calls go directly through dart:ffi to the NativeAOT-compiled .NET engine -- no platform channel serialization. The core engine translates a typical SGTIN-96 in ~8 us on ARM64.
+
+| Operation | .NET native |
+|-----------|-------------|
+| SGTIN-96 encode | 7.8 us |
+| SGTIN-96 decode | 7.7 us |
+| HexToBinary (96-bit) | 99 ns |
+| BinaryToHex (96-bit) | 54 ns |
+
 ## License
 
 Business Source License 1.1. Production use requires a commercial license -- contact tdt@mimasu.nl.

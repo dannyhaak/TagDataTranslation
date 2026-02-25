@@ -268,6 +268,27 @@ public string BinaryToHex(string binary)   // Convert binary string to hex
 | `TDTLookupFailed` | External table lookup failed |
 | `TDTNumericOverflow` | Numeric overflow occurred |
 
+## Performance
+
+Benchmarked on Apple M1 Pro, .NET 8.0 (BenchmarkDotNet):
+
+| Operation | Mean | Allocated |
+|-----------|------|-----------|
+| SGTIN-96 encode (GTIN → binary) | 7.8 us | 9.9 KB |
+| SGTIN-96 decode (binary → GTIN) | 7.7 us | 9.2 KB |
+| SGTIN++ encode (with hostname) | 24.3 us | 75.3 KB |
+| SGTIN++ decode (with hostname) | 5.0 us | 7.8 KB |
+| HexToBinary (96-bit) | 99 ns | 480 B |
+| BinaryToHex (96-bit) | 54 ns | 192 B |
+
+The engine uses compiled regex caching, pre-sorted scheme data, and lookup tables for hex/binary conversion. The `TDTEngine` constructor loads all schemes once; subsequent `Translate()` calls benefit from cached patterns and pre-computed data structures.
+
+Run benchmarks yourself:
+
+```bash
+dotnet run -c Release --project test/TagDataTranslation.Benchmarks
+```
+
 ## Examples
 
 See the `examples/` directory for platform-specific sample projects:

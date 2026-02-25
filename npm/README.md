@@ -50,6 +50,17 @@ Convert hexadecimal to binary string.
 
 Convert binary string to hexadecimal.
 
+## Performance
+
+The underlying .NET engine translates a typical SGTIN-96 in ~8 us. Hex/binary conversion completes in under 100 ns. The WASM bridge adds minimal overhead on top of the native .NET performance.
+
+| Operation | .NET native |
+|-----------|-------------|
+| SGTIN-96 encode | 7.8 us |
+| SGTIN-96 decode | 7.7 us |
+| HexToBinary (96-bit) | 99 ns |
+| BinaryToHex (96-bit) | 54 ns |
+
 ## License
 
 Business Source License 1.1. Production use requires a commercial license -- contact tdt@mimasu.nl.
