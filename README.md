@@ -22,10 +22,11 @@ Tag Data Translation implemented according to the **GS1 EPC Tag Data Standard (T
 | .NET MAUI (Android) | NuGet | Available (3.0.0+) |
 | .NET MAUI (iOS) | NuGet | Available (3.0.0+) |
 | .NET MAUI (macCatalyst) | NuGet | Available (3.0.0+) |
-| JavaScript/TypeScript | npm | Planned |
-| Android (Kotlin/Java) | Maven Central | Planned |
-| iOS (Swift) | CocoaPods / SPM | Planned |
-| Flutter (Dart) | pub.dev | Planned |
+| JavaScript/TypeScript | [npm](https://www.npmjs.com/package/@mimasu/tdt) | Available (3.0.0+) |
+| Python | [PyPI](https://pypi.org/project/tag-data-translation/) | Available (3.0.0+) |
+| iOS (Swift) | Swift Package Manager | Available (3.0.0+) |
+| Android (Kotlin/Java) | GitHub Packages | Available (3.0.0+) |
+| Flutter (Dart) | pub.dev | Available (3.0.0+) |
 
 ## Supported Schemes
 
@@ -319,7 +320,7 @@ dotnet nuget push ./artifacts/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY 
 
 | Version | Changes |
 |---------|---------|
-| 3.0.0 | Cross-platform SDK: mobile target frameworks (Android, iOS, macCatalyst), removed console output, BSL 1.1 licensing, `LoadErrors` property |
+| 3.0.0 | Cross-platform SDKs: npm (WASM), Python (pythonnet), Swift (NativeAOT), Android (NativeAOT), Flutter (dart:ffi), .NET MAUI (Android, iOS, macCatalyst); performance optimizations (regex caching, lookup tables, pre-sorted fields); BSL 1.1 licensing |
 | 2.3.0 | TDS 2.3 support with 12 new '++' schemes for custom hostname encoding in Digital Link URIs |
 | 2.1.0 | Added TryTranslate/TryTranslateDetails for exception-free high-throughput translation |
 | 2.0.1 | Multi-targeting support for .NET 8.0, 9.0, and 10.0 |

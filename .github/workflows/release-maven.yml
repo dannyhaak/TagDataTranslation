@@ -34,9 +34,10 @@ jobs:
 
       - name: Build Android SDK
         run: |
-          dotnet publish sdk/android/TagDataTranslation.Android.csproj \
-            -c Release \
-            -o artifacts/android
+          dotnet build sdk/android/TagDataTranslation.Android.csproj -c Release
+          mkdir -p artifacts/android
+          cp sdk/android/bin/Release/net10.0-android/TagDataTranslation.Android.dll artifacts/android/
+          cp sdk/android/bin/Release/net10.0-android/TagDataTranslation.dll artifacts/android/
 
       - name: Create release zip
         run: |

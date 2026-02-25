@@ -26,7 +26,7 @@ public class TDTEngineAndroid : Java.Lang.Object
     [Export("translate")]
     public string Translate(string epcIdentifier, string parameterList, string outputFormat)
     {
-        return _engine.Translate(epcIdentifier, parameterList, outputFormat);
+        return _engine.Translate(epcIdentifier, parameterList, outputFormat) ?? "";
     }
 
     /// <summary>

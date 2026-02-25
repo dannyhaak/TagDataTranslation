@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tag-data-translation"
+version = "3.0.0"
+description = "GS1 EPC Tag Data Translation for Python and RAIN (UHF) RFID. Encode and decode SGTIN, SSCC, SGLN, GRAI, and all EPC schemes."
+readme = "README.md"
+license = "LicenseRef-BSL-1.1"
+requires-python = ">=3.9"
+authors = [
+    { name = "Danny Haak", email = "tdt@mimasu.nl" },
+]
+keywords = ["rfid", "gs1", "epc", "tdt", "rain", "sgtin", "sscc", "tag-data-translation", "digital-link"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "pythonnet>=3.0",
+]
+
+[project.urls]
+Homepage = "https://www.mimasu.nl/tag-data-translation/sdk"
+Repository = "https://github.com/dannyhaak/TagDataTranslation"
+Documentation = "https://www.mimasu.nl/tag-data-translation/sdk"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+tag_data_translation = ["dotnet/**/*"]

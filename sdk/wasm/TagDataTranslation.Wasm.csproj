@@ -8,6 +8,8 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <!-- keep reflection-based JSON serialization for TDTEngine scheme loading -->
     <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <!-- suppress trimming warning — types preserved via TrimmerRootAssembly + JsonSerializerIsReflectionEnabledByDefault -->
+    <NoWarn>IL2026</NoWarn>
     <!-- WASM-specific settings -->
     <WasmMainJSPath>main.js</WasmMainJSPath>
     <WasmEnableThreads>false</WasmEnableThreads>

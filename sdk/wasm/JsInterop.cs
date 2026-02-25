@@ -1,4 +1,6 @@
+using System;
 using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.Versioning;
 using System.Text.Json;
 using TagDataTranslation;
 
@@ -8,6 +10,7 @@ namespace TagDataTranslation.Wasm;
 /// JavaScript interop exports for the TagDataTranslation engine.
 /// These methods are callable from JavaScript after the WASM module loads.
 /// </summary>
+[SupportedOSPlatform("browser")]
 public partial class JsInterop
 {
     private static TDTEngine? _engine;
@@ -17,8 +20,7 @@ public partial class JsInterop
     [JSExport]
     public static string Translate(string epcIdentifier, string parameterList, string outputFormat)
     {
-        return Engine.Translate(epcIdentifier, parameterList, outputFormat)
-            ?? throw new InvalidOperationException("Translation returned no result");
+        return Engine.Translate(epcIdentifier, parameterList, outputFormat) ?? "";
     }
 
     [JSExport]

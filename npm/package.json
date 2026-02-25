@@ -1,6 +1,6 @@
 {
   "name": "@mimasu/tdt",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0",
   "description": "GS1 EPC Tag Data Translation for JavaScript/TypeScript and RAIN (UHF) RFID via WebAssembly. Encode and decode SGTIN, SSCC, SGLN, GRAI, and all EPC schemes.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

@@ -126,6 +126,9 @@ dotnet test test/TagDataTranslation.Tests/TagDataTranslation.Tests.csproj
 dotnet test --filter "FullyQualifiedName~TDS23"
 dotnet test --filter "FullyQualifiedName~TDT22"
 
+# Run benchmarks
+dotnet run -c Release --project test/TagDataTranslation.Benchmarks
+
 # Build npm WASM package
 cd npm && npm run build
 
@@ -209,6 +212,38 @@ The build script auto-copies `LICENSING.md` from the repo root to `npm/LICENSE.m
 3. Add BINARY pattern with appropriate capture groups
 4. For '++' schemes, add `variableLengthField` and `hostnameField` definitions
 5. Add tests in appropriate test file
+
+## Performance
+
+### Caching Architecture
+The Translate() hot path uses several caches to avoid repeated work:
+- **Regex cache**: `ConcurrentDictionary<string, Regex>` in TDTEngine — compiled regex patterns shared across all engine instances
+- **Character set regex cache**: `ConcurrentDictionary<string, Regex?>` in RuleExecutor — caches ValidateCharacterset patterns (null = invalid pattern)
+- **Grammar token cache**: `ConcurrentDictionary<string, GrammarToken[]>` in TDTEngine — parsed grammar strings cached as token arrays
+- **Pre-sorted fields/rules**: Option.Field sorted by Seq at load time; Level.ExtractRules/FormatRules pre-split and sorted at load time
+- **BinaryConverter lookup tables**: Static arrays for hex↔binary conversion (no per-character Convert calls)
+- **Static grammar regex**: Single compiled Regex instance for grammar parsing
+
+All caches are static and thread-safe. They grow monotonically (no eviction) which is fine because the set of patterns/grammars is bounded by the scheme definitions.
+
+### Benchmarks
+Run with `dotnet run -c Release --project test/TagDataTranslation.Benchmarks`. Results on Apple M1 Pro, .NET 8.0:
+
+| Benchmark | Mean | Allocated |
+|---|---|---|
+| SGTIN-96 encode | 7.82 us | 9.9 KB |
+| SGTIN-96 decode | 7.65 us | 9.2 KB |
+| SGTIN++ encode | 24.31 us | 75.3 KB |
+| SGTIN++ decode | 5.02 us | 7.8 KB |
+| HexToBinary (96-bit) | 99 ns | 480 B |
+| BinaryToHex (96-bit) | 54 ns | 192 B |
+| Failure (random hex) | 17.82 us | 504 B |
+| Failure (random binary) | 18.27 us | 784 B |
+
+### Performance Guidelines
+- Do NOT create `new Regex(pattern)` in the hot path — use `GetCachedRegex(pattern)` in TDTEngine or the RuleExecutor charset cache
+- Do NOT use `.OrderBy().ToList()` on fields/rules — they are pre-sorted at load time
+- Pre-size StringBuilder when output length is predictable (e.g., `hex.Length * 4` for HexToBinary)
 
 ## Debugging Tips
 

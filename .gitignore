@@ -59,3 +59,20 @@ pip/dist/
 pip/*.egg-info/
 pip/src/*.egg-info/
 pip/.venv/
+
+# flutter generated files
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+*.iml
+
+# node
+node_modules/
+package-lock.json
+
+# python
+__pycache__/
+
+# .NET generated
+**/Properties/launchSettings.json

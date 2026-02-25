@@ -16,13 +16,18 @@ OUTPUT_DIR="$ROOT_DIR/artifacts/android"
 echo "=== Building TagDataTranslation.Android v${VERSION} ==="
 
 # build the .NET Android library
-dotnet publish "$ROOT_DIR/sdk/android/TagDataTranslation.Android.csproj" \
-    -c Release \
-    -o "$OUTPUT_DIR/build"
+# note: .NET Android class libraries don't copy DLLs to -o; build normally and copy
+BUILD_DIR="$ROOT_DIR/sdk/android/bin/Release/net10.0-android"
+dotnet build "$ROOT_DIR/sdk/android/TagDataTranslation.Android.csproj" -c Release
+
+mkdir -p "$OUTPUT_DIR/build"
+cp "$BUILD_DIR/TagDataTranslation.Android.dll" "$OUTPUT_DIR/build/"
+cp "$BUILD_DIR/TagDataTranslation.dll" "$OUTPUT_DIR/build/"
 
 echo ""
 echo "=== Build complete ==="
 echo "Output: $OUTPUT_DIR/build/"
+ls -lh "$OUTPUT_DIR/build/"*.dll
 echo ""
 echo "To publish to Maven Central:"
 echo "  1. Package as .aar with the Gradle wrapper in the output directory"
