@@ -703,7 +703,7 @@ namespace TagDataTranslation
 
                 // 4d. DECODE +AIDC DATA (TDS 2.3 Section 15.3)
                 // when dataToggle=1 and there are remaining bits after the EPC
-                if (parameterDictionary.TryGetValue("datatoggle", out var dataToggle) &&
+                if (parameterDictionary.TryGetValue("dataToggle", out var dataToggle) &&
                     dataToggle == "1" &&
                     bitPosition < epcIdentifier.Length)
                 {
