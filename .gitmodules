@@ -1,0 +1,3 @@
+[submodule "test/TagDataTranslation.Tests"]
+	path = test/TagDataTranslation.Tests
+	url = git@github.com:dannyhaak/TagDataTranslation.Tests.git

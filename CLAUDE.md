@@ -107,6 +107,11 @@ See `docs/TDS-2.3-Errata.md` for documented errors in the TDS 2.3 specification,
 
 ## Testing Requirements
 
+**Tests are in a private submodule.** After cloning, initialize:
+```bash
+git submodule update --init --recursive
+```
+
 **All tests must pass.** Tests are never allowed to fail. Before committing any changes, ensure all tests pass by running:
 
 ```bash

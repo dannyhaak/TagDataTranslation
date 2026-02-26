@@ -10,7 +10,13 @@ jobs:
   build-and-test:
     runs-on: macos-latest
     steps:
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.TDT_TESTS_DEPLOY_KEY }}
+
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
