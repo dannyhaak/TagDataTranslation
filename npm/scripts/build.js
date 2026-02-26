@@ -32,12 +32,21 @@ if (fs.existsSync(DIST_WASM)) {
 }
 fs.mkdirSync(DIST_WASM, { recursive: true });
 
-// copy framework files, skip source maps
-const skipPatterns = [".js.map"];
+// copy framework files, skip source maps and symbol files
+const skipPatterns = [".js.map", ".js.symbols"];
 for (const file of fs.readdirSync(publishDir)) {
   if (skipPatterns.some((p) => file.endsWith(p))) continue;
   fs.copyFileSync(path.join(publishDir, file), path.join(DIST_WASM, file));
 }
+
+// patch boot config to remove wasmSymbols (prevents MONO_WASM symbol file warning)
+const bootConfigPath = path.join(DIST_WASM, "dotnet.boot.js");
+let bootConfig = fs.readFileSync(bootConfigPath, "utf8");
+bootConfig = bootConfig.replace(
+  /,\s*"wasmSymbols"\s*:\s*\[[^\]]*\]/,
+  ""
+);
+fs.writeFileSync(bootConfigPath, bootConfig);
 
 // copy license from repo root
 const licenseSrc = path.join(ROOT, "LICENSING.md");
