@@ -24,8 +24,8 @@ let package = Package(
         .binaryTarget(
             name: "TagDataTranslationBinary",
             // TODO: Update URL and checksum for each release
-            url: "https://github.com/dannyhaak/TagDataTranslation/releases/download/v3.0.3/TagDataTranslation.xcframework.zip",
-            checksum: "b8c65348e132ce1a364002faba4dbcd821576840e45b4c1a90a5757b05a37fbb"
+            url: "https://github.com/dannyhaak/TagDataTranslation/releases/download/v3.0.4/TagDataTranslation.xcframework.zip",
+            checksum: "19593e32f0df393daa2c21e16b063ce9f2beb55aaa40c9e8fc0509dbe3e89df9"
         )
     ]
 )
