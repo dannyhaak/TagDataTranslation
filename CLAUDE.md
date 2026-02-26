@@ -118,6 +118,28 @@ git submodule update --init --recursive
 dotnet test test/TagDataTranslation.Tests/TagDataTranslation.Tests.csproj
 ```
 
+## Test Coverage
+
+Use the coverage script to generate an HTML coverage report:
+
+```bash
+./scripts/coverage.sh
+```
+
+This runs all tests with coverlet, generates a Cobertura XML file, and produces an HTML report at `coveragereport/index.html` (opens automatically on macOS).
+
+**Coverage-driven test improvement process:**
+1. Run `./scripts/coverage.sh` to generate the report
+2. Read the Cobertura XML (`test/TagDataTranslation.Tests/TestResults/*/coverage.cobertura.xml`) to identify uncovered lines/branches per class
+3. Prioritize gaps by impact: internal classes with `InternalsVisibleTo` access can be tested directly; otherwise test through `TDTEngine.Translate()`
+4. Write tests targeting the uncovered lines, run the suite, re-run coverage to verify improvement
+
+**Key coverage notes:**
+- `InternalsVisibleTo("TagDataTranslation.Tests")` is set in `AssemblyInfo.cs` — internal classes like `EncodedAICodec`, `VariableLengthFieldCodec`, `PlusPlusFieldConverter` can be tested directly
+- Generated JSON serializer code (`TdtJsonContext`, `TableJsonContext`) will always have partial coverage — this is expected
+- Table lookup classes (TableB, TableK, TableE) are exercised indirectly through scheme translations; their query methods may show low coverage if only used by specific scheme paths
+- `coveragereport/` and `TestResults/` are gitignored
+
 ## Build Commands
 
 ```bash
