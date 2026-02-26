@@ -140,7 +140,7 @@ namespace TagDataTranslation.Encoding
             return bitPosition;
         }
 
-        private string EncodeAIValue(string value, TableFEntry format, bool isSecondComponent)
+        internal string EncodeAIValue(string value, TableFEntry format, bool isSecondComponent)
         {
             var bits = new StringBuilder();
 
@@ -176,7 +176,7 @@ namespace TagDataTranslation.Encoding
             return bits.ToString();
         }
 
-        private (string? value, int bitsConsumed) DecodeAIValue(string binaryData, TableFEntry format, bool isSecondComponent)
+        internal (string? value, int bitsConsumed) DecodeAIValue(string binaryData, TableFEntry format, bool isSecondComponent)
         {
             if (string.IsNullOrEmpty(binaryData))
             {
@@ -238,6 +238,29 @@ namespace TagDataTranslation.Encoding
                 }
                 return sb.ToString();
             }
+            else if (formatType.Contains("6-digit date", StringComparison.OrdinalIgnoreCase) ||
+                     formatType.Contains("YYMMDD", StringComparison.Ordinal) && !formatType.Contains("hhmm", StringComparison.OrdinalIgnoreCase))
+            {
+                return PackDateYYMMDD(value);
+            }
+            else if (formatType.Contains("10-digit date", StringComparison.OrdinalIgnoreCase) ||
+                     formatType.Contains("YYMMDDhhmm", StringComparison.Ordinal) && !formatType.Contains("ss", StringComparison.OrdinalIgnoreCase))
+            {
+                return PackDateTimeYYMMDDhhmm(value);
+            }
+            else if (formatType.Contains("Single data bit", StringComparison.OrdinalIgnoreCase))
+            {
+                return value == "1" ? "1" : "0";
+            }
+            else if (formatType.Contains("Optional minus", StringComparison.OrdinalIgnoreCase) ||
+                     formatType.Contains("minus sign", StringComparison.OrdinalIgnoreCase))
+            {
+                return value == "-" ? "1" : "0";
+            }
+            else if (formatType.Contains("Sequence indicator", StringComparison.OrdinalIgnoreCase))
+            {
+                return EncodeSequenceIndicator(value);
+            }
             else if (formatType.Contains("date", StringComparison.OrdinalIgnoreCase) ||
                 formatType.Contains("Fixed-Bit-Length", StringComparison.OrdinalIgnoreCase))
             {
@@ -288,6 +311,29 @@ namespace TagDataTranslation.Encoding
                 }
                 return (sb.ToString(), bitLength);
             }
+            else if (formatType.Contains("6-digit date", StringComparison.OrdinalIgnoreCase) ||
+                     formatType.Contains("YYMMDD", StringComparison.Ordinal) && !formatType.Contains("hhmm", StringComparison.OrdinalIgnoreCase))
+            {
+                return (UnpackDateYYMMDD(bits), 16);
+            }
+            else if (formatType.Contains("10-digit date", StringComparison.OrdinalIgnoreCase) ||
+                     formatType.Contains("YYMMDDhhmm", StringComparison.Ordinal) && !formatType.Contains("ss", StringComparison.OrdinalIgnoreCase))
+            {
+                return (UnpackDateTimeYYMMDDhhmm(bits), 27);
+            }
+            else if (formatType.Contains("Single data bit", StringComparison.OrdinalIgnoreCase))
+            {
+                return (bits[0] == '1' ? "1" : "0", 1);
+            }
+            else if (formatType.Contains("Optional minus", StringComparison.OrdinalIgnoreCase) ||
+                     formatType.Contains("minus sign", StringComparison.OrdinalIgnoreCase))
+            {
+                return (bits[0] == '1' ? "-" : "", 1);
+            }
+            else if (formatType.Contains("Sequence indicator", StringComparison.OrdinalIgnoreCase))
+            {
+                return (DecodeSequenceIndicator(bits), 8);
+            }
             else if (formatType.Contains("date", StringComparison.OrdinalIgnoreCase) ||
                 formatType.Contains("Fixed-Bit-Length", StringComparison.OrdinalIgnoreCase))
             {
@@ -315,7 +361,16 @@ namespace TagDataTranslation.Encoding
             int encodingIndicator;
             string dataBits;
 
-            if (formatType.Contains("alphanumeric", StringComparison.OrdinalIgnoreCase))
+            if (formatType.Contains("Variable-format date", StringComparison.OrdinalIgnoreCase) ||
+                formatType.Contains("date range", StringComparison.OrdinalIgnoreCase))
+            {
+                return EncodeVariableFormatDate(value);
+            }
+            else if (formatType.Contains("Variable-precision date", StringComparison.OrdinalIgnoreCase))
+            {
+                return EncodeVariablePrecisionDateTime(value);
+            }
+            else if (formatType.Contains("alphanumeric", StringComparison.OrdinalIgnoreCase))
             {
                 (encodingIndicator, dataBits) = ChooseOptimalEncoding(value, tableB);
             }
@@ -355,7 +410,16 @@ namespace TagDataTranslation.Encoding
 
         private (string? value, int bitsConsumed) DecodeVariableLength(string binaryData, string formatType, int encodingIndicatorBits, int lengthIndicatorBits)
         {
-            if (formatType.Contains("Delimited/terminated numeric", StringComparison.OrdinalIgnoreCase))
+            if (formatType.Contains("Variable-format date", StringComparison.OrdinalIgnoreCase) ||
+                formatType.Contains("date range", StringComparison.OrdinalIgnoreCase))
+            {
+                return DecodeVariableFormatDate(binaryData);
+            }
+            else if (formatType.Contains("Variable-precision date", StringComparison.OrdinalIgnoreCase))
+            {
+                return DecodeVariablePrecisionDateTime(binaryData);
+            }
+            else if (formatType.Contains("Delimited/terminated numeric", StringComparison.OrdinalIgnoreCase))
             {
                 return VariableLengthFieldCodec.DecodeDelimitedTerminatedNumeric(binaryData);
             }
@@ -747,6 +811,312 @@ namespace TagDataTranslation.Encoding
                 value /= 2;
             }
             return new string(digits.ToArray());
+        }
+
+        #endregion
+
+        #region Date encoding helpers (TDS 2.3 §14.5.8–14.5.11)
+
+        /// <summary>
+        /// Packs a YYMMDD string into 16 bits: YY(7) + MM(4) + DD(5).
+        /// </summary>
+        internal static string PackDateYYMMDD(string yymmdd)
+        {
+            if (string.IsNullOrEmpty(yymmdd) || yymmdd.Length != 6)
+            {
+                return new string('0', 16);
+            }
+
+            if (!int.TryParse(yymmdd.Substring(0, 2), out int yy) ||
+                !int.TryParse(yymmdd.Substring(2, 2), out int mm) ||
+                !int.TryParse(yymmdd.Substring(4, 2), out int dd))
+            {
+                return new string('0', 16);
+            }
+
+            var bits = new StringBuilder(16);
+            bits.Append(Convert.ToString(yy, 2).PadLeft(7, '0'));
+            bits.Append(Convert.ToString(mm, 2).PadLeft(4, '0'));
+            bits.Append(Convert.ToString(dd, 2).PadLeft(5, '0'));
+            return bits.ToString();
+        }
+
+        /// <summary>
+        /// Unpacks 16 bits into a YYMMDD string: YY(7) + MM(4) + DD(5).
+        /// </summary>
+        internal static string UnpackDateYYMMDD(string bits)
+        {
+            if (string.IsNullOrEmpty(bits) || bits.Length < 16)
+            {
+                return "000000";
+            }
+
+            int yy = Convert.ToInt32(bits.Substring(0, 7), 2);
+            int mm = Convert.ToInt32(bits.Substring(7, 4), 2);
+            int dd = Convert.ToInt32(bits.Substring(11, 5), 2);
+
+            return $"{yy:D2}{mm:D2}{dd:D2}";
+        }
+
+        /// <summary>
+        /// Packs a YYMMDDhhmm string into 27 bits: YY(7) + MM(4) + DD(5) + hh(5) + mm(6).
+        /// </summary>
+        internal static string PackDateTimeYYMMDDhhmm(string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length != 10)
+            {
+                return new string('0', 27);
+            }
+
+            if (!int.TryParse(value.Substring(0, 2), out int yy) ||
+                !int.TryParse(value.Substring(2, 2), out int mm) ||
+                !int.TryParse(value.Substring(4, 2), out int dd) ||
+                !int.TryParse(value.Substring(6, 2), out int hh) ||
+                !int.TryParse(value.Substring(8, 2), out int min))
+            {
+                return new string('0', 27);
+            }
+
+            var bits = new StringBuilder(27);
+            bits.Append(Convert.ToString(yy, 2).PadLeft(7, '0'));
+            bits.Append(Convert.ToString(mm, 2).PadLeft(4, '0'));
+            bits.Append(Convert.ToString(dd, 2).PadLeft(5, '0'));
+            bits.Append(Convert.ToString(hh, 2).PadLeft(5, '0'));
+            bits.Append(Convert.ToString(min, 2).PadLeft(6, '0'));
+            return bits.ToString();
+        }
+
+        /// <summary>
+        /// Unpacks 27 bits into a YYMMDDhhmm string: YY(7) + MM(4) + DD(5) + hh(5) + mm(6).
+        /// </summary>
+        internal static string UnpackDateTimeYYMMDDhhmm(string bits)
+        {
+            if (string.IsNullOrEmpty(bits) || bits.Length < 27)
+            {
+                return "0000000000";
+            }
+
+            int yy = Convert.ToInt32(bits.Substring(0, 7), 2);
+            int mm = Convert.ToInt32(bits.Substring(7, 4), 2);
+            int dd = Convert.ToInt32(bits.Substring(11, 5), 2);
+            int hh = Convert.ToInt32(bits.Substring(16, 5), 2);
+            int min = Convert.ToInt32(bits.Substring(21, 6), 2);
+
+            return $"{yy:D2}{mm:D2}{dd:D2}{hh:D2}{min:D2}";
+        }
+
+        /// <summary>
+        /// Encodes a variable-format date or date range (§14.5.10).
+        /// Input: 6-digit YYMMDD or 12-digit YYMMDDYYMMDD.
+        /// Output: 1-bit indicator + 16 or 32 bits of packed date(s).
+        /// </summary>
+        internal static string EncodeVariableFormatDate(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return "0" + new string('0', 16);
+            }
+
+            if (value.Length == 6)
+            {
+                // single date
+                return "0" + PackDateYYMMDD(value);
+            }
+            else if (value.Length == 12)
+            {
+                // date range
+                return "1" + PackDateYYMMDD(value.Substring(0, 6)) + PackDateYYMMDD(value.Substring(6, 6));
+            }
+
+            return "0" + new string('0', 16);
+        }
+
+        /// <summary>
+        /// Decodes a variable-format date or date range (§14.5.10).
+        /// </summary>
+        internal static (string? value, int bitsConsumed) DecodeVariableFormatDate(string binaryData)
+        {
+            if (string.IsNullOrEmpty(binaryData) || binaryData.Length < 17)
+            {
+                return (null, 0);
+            }
+
+            bool isRange = binaryData[0] == '1';
+
+            if (isRange)
+            {
+                if (binaryData.Length < 33)
+                {
+                    return (null, 0);
+                }
+                string date1 = UnpackDateYYMMDD(binaryData.Substring(1, 16));
+                string date2 = UnpackDateYYMMDD(binaryData.Substring(17, 16));
+                return (date1 + date2, 33);
+            }
+            else
+            {
+                string date = UnpackDateYYMMDD(binaryData.Substring(1, 16));
+                return (date, 17);
+            }
+        }
+
+        /// <summary>
+        /// Encodes a variable-precision date+time (§14.5.11).
+        /// Input: 6/8/10/12 digit string. Output: 2-bit indicator + date/time bits.
+        /// </summary>
+        internal static string EncodeVariablePrecisionDateTime(string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length < 6)
+            {
+                return "11" + new string('0', 16);
+            }
+
+            int yy = int.Parse(value.Substring(0, 2));
+            int mm = int.Parse(value.Substring(2, 2));
+            int dd = int.Parse(value.Substring(4, 2));
+
+            var bits = new StringBuilder(35);
+
+            if (value.Length == 6)
+            {
+                // YYMMDD: indicator '11'
+                bits.Append("11");
+                bits.Append(Convert.ToString(yy, 2).PadLeft(7, '0'));
+                bits.Append(Convert.ToString(mm, 2).PadLeft(4, '0'));
+                bits.Append(Convert.ToString(dd, 2).PadLeft(5, '0'));
+            }
+            else if (value.Length == 8)
+            {
+                // YYMMDDhh: indicator '00'
+                int hh = int.Parse(value.Substring(6, 2));
+                bits.Append("00");
+                bits.Append(Convert.ToString(yy, 2).PadLeft(7, '0'));
+                bits.Append(Convert.ToString(mm, 2).PadLeft(4, '0'));
+                bits.Append(Convert.ToString(dd, 2).PadLeft(5, '0'));
+                bits.Append(Convert.ToString(hh, 2).PadLeft(5, '0'));
+            }
+            else if (value.Length == 10)
+            {
+                // YYMMDDhhmm: indicator '01'
+                int hh = int.Parse(value.Substring(6, 2));
+                int min = int.Parse(value.Substring(8, 2));
+                bits.Append("01");
+                bits.Append(Convert.ToString(yy, 2).PadLeft(7, '0'));
+                bits.Append(Convert.ToString(mm, 2).PadLeft(4, '0'));
+                bits.Append(Convert.ToString(dd, 2).PadLeft(5, '0'));
+                bits.Append(Convert.ToString(hh, 2).PadLeft(5, '0'));
+                bits.Append(Convert.ToString(min, 2).PadLeft(6, '0'));
+            }
+            else if (value.Length >= 12)
+            {
+                // YYMMDDhhmmss: indicator '10'
+                int hh = int.Parse(value.Substring(6, 2));
+                int min = int.Parse(value.Substring(8, 2));
+                int ss = int.Parse(value.Substring(10, 2));
+                bits.Append("10");
+                bits.Append(Convert.ToString(yy, 2).PadLeft(7, '0'));
+                bits.Append(Convert.ToString(mm, 2).PadLeft(4, '0'));
+                bits.Append(Convert.ToString(dd, 2).PadLeft(5, '0'));
+                bits.Append(Convert.ToString(hh, 2).PadLeft(5, '0'));
+                bits.Append(Convert.ToString(min, 2).PadLeft(6, '0'));
+                bits.Append(Convert.ToString(ss, 2).PadLeft(6, '0'));
+            }
+            else
+            {
+                // fallback: treat as YYMMDD
+                bits.Append("11");
+                bits.Append(Convert.ToString(yy, 2).PadLeft(7, '0'));
+                bits.Append(Convert.ToString(mm, 2).PadLeft(4, '0'));
+                bits.Append(Convert.ToString(dd, 2).PadLeft(5, '0'));
+            }
+
+            return bits.ToString();
+        }
+
+        /// <summary>
+        /// Decodes a variable-precision date+time (§14.5.11).
+        /// </summary>
+        internal static (string? value, int bitsConsumed) DecodeVariablePrecisionDateTime(string binaryData)
+        {
+            if (string.IsNullOrEmpty(binaryData) || binaryData.Length < 18)
+            {
+                return (null, 0);
+            }
+
+            int indicator = Convert.ToInt32(binaryData.Substring(0, 2), 2);
+            int pos = 2;
+
+            int yy = Convert.ToInt32(binaryData.Substring(pos, 7), 2); pos += 7;
+            int mm = Convert.ToInt32(binaryData.Substring(pos, 4), 2); pos += 4;
+            int dd = Convert.ToInt32(binaryData.Substring(pos, 5), 2); pos += 5;
+
+            switch (indicator)
+            {
+                case 3: // '11' = YYMMDD
+                    return ($"{yy:D2}{mm:D2}{dd:D2}", 18);
+
+                case 0: // '00' = YYMMDDhh
+                    if (binaryData.Length < 23) return (null, 0);
+                    int hh0 = Convert.ToInt32(binaryData.Substring(pos, 5), 2); pos += 5;
+                    return ($"{yy:D2}{mm:D2}{dd:D2}{hh0:D2}", 23);
+
+                case 1: // '01' = YYMMDDhhmm
+                    if (binaryData.Length < 29) return (null, 0);
+                    int hh1 = Convert.ToInt32(binaryData.Substring(pos, 5), 2); pos += 5;
+                    int min1 = Convert.ToInt32(binaryData.Substring(pos, 6), 2); pos += 6;
+                    return ($"{yy:D2}{mm:D2}{dd:D2}{hh1:D2}{min1:D2}", 29);
+
+                case 2: // '10' = YYMMDDhhmmss
+                    if (binaryData.Length < 35) return (null, 0);
+                    int hh2 = Convert.ToInt32(binaryData.Substring(pos, 5), 2); pos += 5;
+                    int min2 = Convert.ToInt32(binaryData.Substring(pos, 6), 2); pos += 6;
+                    int ss2 = Convert.ToInt32(binaryData.Substring(pos, 6), 2); pos += 6;
+                    return ($"{yy:D2}{mm:D2}{dd:D2}{hh2:D2}{min2:D2}{ss2:D2}", 35);
+
+                default:
+                    return (null, 0);
+            }
+        }
+
+        #endregion
+
+        #region Sequence indicator (TDS 2.3 §14.5.15)
+
+        /// <summary>
+        /// Encodes a sequence indicator "n/m" into 8 bits (4 bits per digit).
+        /// </summary>
+        internal static string EncodeSequenceIndicator(string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length != 3 || value[1] != '/')
+            {
+                return "00000000";
+            }
+
+            int n = value[0] - '0';
+            int m = value[2] - '0';
+
+            if (n < 1 || n > 9 || m < 1 || m > 9)
+            {
+                return "00000000";
+            }
+
+            return Convert.ToString(n, 2).PadLeft(4, '0') + Convert.ToString(m, 2).PadLeft(4, '0');
+        }
+
+        /// <summary>
+        /// Decodes 8 bits into a sequence indicator "n/m".
+        /// </summary>
+        internal static string DecodeSequenceIndicator(string bits)
+        {
+            if (string.IsNullOrEmpty(bits) || bits.Length < 8)
+            {
+                return "0/0";
+            }
+
+            int n = Convert.ToInt32(bits.Substring(0, 4), 2);
+            int m = Convert.ToInt32(bits.Substring(4, 4), 2);
+
+            return $"{n}/{m}";
         }
 
         #endregion

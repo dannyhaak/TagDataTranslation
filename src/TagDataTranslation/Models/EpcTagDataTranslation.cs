@@ -278,6 +278,23 @@ public class EncodedAI
 }
 
 /// <summary>
+/// Represents a decoded AIDC data entry (AI code + value).
+/// Used when dataToggle=1 and additional AI data follows the EPC in tag memory.
+/// </summary>
+public class AidcEntry
+{
+    /// <summary>
+    /// GS1 Application Identifier code (e.g., "10", "17", "4321").
+    /// </summary>
+    public string AI { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Decoded value for the AI (e.g., "LOT42", "261231").
+    /// </summary>
+    public string Value { get; set; } = string.Empty;
+}
+
+/// <summary>
 /// Defines a transformation rule for EXTRACT or FORMAT operations.
 /// </summary>
 public class Rule

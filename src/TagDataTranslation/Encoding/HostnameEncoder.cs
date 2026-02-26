@@ -374,6 +374,59 @@ namespace TagDataTranslation.Encoding
         }
 
         /// <summary>
+        /// Calculates the total bit length consumed by an encoded hostname.
+        /// </summary>
+        /// <param name="binary">The binary string starting at the hostname encoding.</param>
+        /// <returns>Total bits consumed by the hostname (indicator + length + data).</returns>
+        public static int CalculateBitLength(string binary)
+        {
+            if (string.IsNullOrEmpty(binary) || binary.Length < 7)
+            {
+                return 0;
+            }
+
+            bool isCode40 = binary[0] == '0';
+            int length = Convert.ToInt32(binary.Substring(1, 6), 2);
+
+            if (isCode40)
+            {
+                // 1 indicator + 6 length + triplets * 16
+                int triplets = (length + 2) / 3;
+                return 1 + 6 + (triplets * 16);
+            }
+            else
+            {
+                // 7-bit ASCII: walk through units to count actual bits
+                int pos = 7; // skip indicator(1) + length(6)
+                int unitsRead = 0;
+
+                while (unitsRead < length && pos < binary.Length)
+                {
+                    if (pos + 7 > binary.Length)
+                        break;
+
+                    var sevenBits = binary.Substring(pos, 7);
+
+                    // check for 14-bit sequences
+                    if ((sevenBits == "0000000" || sevenBits == "0000001" ||
+                         sevenBits == "0000010" || sevenBits == "0000011") &&
+                        pos + 14 <= binary.Length)
+                    {
+                        pos += 14;
+                        unitsRead += 2;
+                    }
+                    else
+                    {
+                        pos += 7;
+                        unitsRead++;
+                    }
+                }
+
+                return pos;
+            }
+        }
+
+        /// <summary>
         /// Decodes a binary string to a hostname.
         /// </summary>
         /// <param name="binary">The binary string to decode</param>

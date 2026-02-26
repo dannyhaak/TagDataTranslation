@@ -50,6 +50,7 @@ namespace TagDataTranslation
         // encoding codecs
         private EncodedAICodec encodedAICodec = null!;
         private VariableLengthFieldCodec variableLengthFieldCodec = null!;
+        private AidcDataCodec aidcDataCodec = null!;
 
 
         // static compiled regex for grammar string parsing
@@ -201,6 +202,7 @@ namespace TagDataTranslation
 
             encodedAICodec = new EncodedAICodec(tableF, tableB);
             variableLengthFieldCodec = new VariableLengthFieldCodec(tableB);
+            aidcDataCodec = new AidcDataCodec(tableF, tableK, encodedAICodec);
 
             // pre-sort fields and rules so we don't sort on every call
             foreach (var translation in epcTagDataTranslations)
@@ -629,6 +631,7 @@ namespace TagDataTranslation
             }
 
             // 4b. DECODE ENCODED AI DATA (for "+" schemes with BINARY input)
+            int encodedAIBitsConsumed = 0;
             if (inputLevelType == LevelType.BINARY && inputOption.EncodedAI != null && inputOption.EncodedAI.Count > 0)
             {
                 // Calculate the bit position where encodedAI data starts
@@ -638,16 +641,17 @@ namespace TagDataTranslation
                 if (epcIdentifier.Length > fixedBitsLength)
                 {
                     string encodedAIBinary = epcIdentifier.Substring(fixedBitsLength);
-                    encodedAICodec.DecodeEncodedAI(encodedAIBinary, inputOption.EncodedAI, parameterDictionary);
+                    encodedAIBitsConsumed = encodedAICodec.DecodeEncodedAI(encodedAIBinary, inputOption.EncodedAI, parameterDictionary);
                 }
             }
 
             // 4c. DECODE VARIABLE-LENGTH FIELDS (for "++" schemes with BINARY input, TDS 2.3)
             // Order matches the grammar: delimited numeric → variable-length alphanumeric/numeric → hostname
+            // Also decodes +AIDC data when dataToggle=1
             if (inputLevelType == LevelType.BINARY)
             {
                 int fixedBitsLength = CalculateFixedBitsLength(inputOption);
-                int bitPosition = fixedBitsLength;
+                int bitPosition = fixedBitsLength + encodedAIBitsConsumed;
 
                 // Decode delimited numeric field first (e.g., giai, cpi) - comes before other variable fields
                 if (inputOption.DelimitedNumericField != null && epcIdentifier.Length > bitPosition)
@@ -685,7 +689,7 @@ namespace TagDataTranslation
                     }
                 }
 
-                // Decode hostname field (for ++ schemes) - always last
+                // Decode hostname field (for ++ schemes) - always last EPC field
                 if (inputOption.HostnameField != null && epcIdentifier.Length > bitPosition)
                 {
                     string remainingBinary = epcIdentifier.Substring(bitPosition);
@@ -693,6 +697,24 @@ namespace TagDataTranslation
                     if (hostname != null)
                     {
                         parameterDictionary[inputOption.HostnameField.Name ?? "hostname"] = hostname;
+                        bitPosition += HostnameEncoder.CalculateBitLength(remainingBinary);
+                    }
+                }
+
+                // 4d. DECODE +AIDC DATA (TDS 2.3 Section 15.3)
+                // when dataToggle=1 and there are remaining bits after the EPC
+                if (parameterDictionary.TryGetValue("datatoggle", out var dataToggle) &&
+                    dataToggle == "1" &&
+                    bitPosition < epcIdentifier.Length)
+                {
+                    string aidcBinary = epcIdentifier.Substring(bitPosition);
+                    if (aidcBinary.Length >= 8)
+                    {
+                        var aidcEntries = aidcDataCodec.Decode(aidcBinary);
+                        foreach (var entry in aidcEntries)
+                        {
+                            parameterDictionary[$"aidc_{entry.AI}"] = entry.Value;
+                        }
                     }
                 }
             }
@@ -1079,10 +1101,73 @@ namespace TagDataTranslation
                 }
             }
 
+            // Encode +AIDC data for BINARY output (TDS 2.3 Section 15.3)
+            if (outputFormatType == LevelType.BINARY)
+            {
+                var aidcEntries = CollectAidcEntries(parameterDictionary);
+                if (aidcEntries.Count > 0)
+                {
+                    // set dataToggle=1 if not already set
+                    parameterDictionary["datatoggle"] = "1";
+
+                    string aidcBinary = aidcDataCodec.Encode(aidcEntries);
+                    int totalBits = outputString.Length + aidcBinary.Length;
+
+                    if (totalBits > 496)
+                    {
+                        throw new TDTTranslationException("TDTAidcDataExceeds496Bits");
+                    }
+
+                    outputString.Append(aidcBinary);
+                }
+
+                // pad to 16-bit word boundary
+                int remainder = outputString.Length % 16;
+                if (remainder != 0)
+                {
+                    outputString.Append(new string('0', 16 - remainder));
+                }
+            }
+
             // Handle special outputs
             if (outputFormatType == LevelType.GS1_AI_JSON)
             {
                 return FormatAsAiJson(parameterDictionary, outputOption);
+            }
+
+            // Append AIDC data to non-BINARY output formats
+            if (outputFormatType != LevelType.BINARY)
+            {
+                var aidcEntries = CollectAidcEntries(parameterDictionary);
+                if (aidcEntries.Count > 0)
+                {
+                    if (outputFormatType == LevelType.GS1_DIGITAL_LINK)
+                    {
+                        // append AIDC AIs as query parameters
+                        var output = outputString.ToString();
+                        char separator = output.Contains('?') ? '&' : '?';
+                        foreach (var entry in aidcEntries)
+                        {
+                            outputString.Append(separator);
+                            outputString.Append(entry.AI);
+                            outputString.Append('=');
+                            outputString.Append(Uri.EscapeDataString(entry.Value));
+                            separator = '&';
+                        }
+                    }
+                    else if (outputFormatType == LevelType.BARE_IDENTIFIER ||
+                             outputFormatType == LevelType.BARE_IDENTIFIER_ALT)
+                    {
+                        // append as ;aidc:AI=VALUE
+                        foreach (var entry in aidcEntries)
+                        {
+                            outputString.Append(";aidc:");
+                            outputString.Append(entry.AI);
+                            outputString.Append('=');
+                            outputString.Append(entry.Value);
+                        }
+                    }
+                }
             }
 
             return outputString.ToString();
@@ -1235,79 +1320,20 @@ namespace TagDataTranslation
 
         /// <summary>
         /// Encodes a YYMMDD date string to binary representation.
-        /// Uses GS1 packed objects date encoding: days since January 1, 2000.
+        /// Uses TDS 2.3 packed date encoding: YY(7) + MM(4) + DD(5) = 16 bits.
         /// </summary>
-        /// <param name="yymmdd">Date in YYMMDD format (e.g., "261231" for Dec 31, 2026).</param>
-        /// <param name="bitLength">Number of bits for the output (typically 16).</param>
-        /// <returns>Binary string representation of the date.</returns>
         private string EncodeDateYYMMDD(string yymmdd, int bitLength)
         {
-            if (string.IsNullOrEmpty(yymmdd) || yymmdd.Length != 6)
-            {
-                return new string('0', bitLength);
-            }
-
-            try
-            {
-                // Parse YYMMDD
-                int year = int.Parse(yymmdd.Substring(0, 2));
-                int month = int.Parse(yymmdd.Substring(2, 2));
-                int day = int.Parse(yymmdd.Substring(4, 2));
-
-                // TDS 2.3 packed date encoding formula: YY * 512 + MM * 32 + DD
-                // This uses 9 bits for year (0-511), 5 bits for month (0-31), 5 bits for day (0-31)
-                // Total = 16 bits (bit 15-7 for year, 6-2 for month, 1-0 and upper bits of next for day)
-                int packedDate = (year * 512) + (month * 32) + day;
-
-                // Convert to binary and pad
-                string binary = Convert.ToString(packedDate, 2);
-                return binary.PadLeft(bitLength, '0');
-            }
-            catch (FormatException)
-            {
-                return new string('0', bitLength);
-            }
-            catch (OverflowException)
-            {
-                return new string('0', bitLength);
-            }
+            return EncodedAICodec.PackDateYYMMDD(yymmdd);
         }
 
         /// <summary>
         /// Decodes a binary date representation back to YYMMDD format.
-        /// Uses TDS 2.3 packed date encoding: YY * 512 + MM * 32 + DD.
+        /// Uses TDS 2.3 packed date encoding: YY(7) + MM(4) + DD(5) = 16 bits.
         /// </summary>
-        /// <param name="binary">Binary string representation of the date.</param>
-        /// <returns>Date in YYMMDD format (e.g., "261231" for Dec 31, 2026).</returns>
         private string DecodeDateYYMMDD(string binary)
         {
-            if (string.IsNullOrEmpty(binary))
-            {
-                return "000000";
-            }
-
-            try
-            {
-                // Convert binary to packed date value
-                int packedDate = Convert.ToInt32(binary, 2);
-
-                // TDS 2.3 packed date encoding: YY * 512 + MM * 32 + DD
-                int year = packedDate / 512;
-                int remainder = packedDate % 512;
-                int month = remainder / 32;
-                int day = remainder % 32;
-
-                // Format as YYMMDD
-                return $"{year:D2}{month:D2}{day:D2}";
-            }
-            catch (FormatException)
-            {
-                return "000000";
-            }
-            catch (OverflowException)
-            {
-                return "000000";
-            }
+            return EncodedAICodec.UnpackDateYYMMDD(binary);
         }
 
         private string CompactStringToBinary(string text, int compactionBits)
@@ -1499,7 +1525,34 @@ namespace TagDataTranslation
                 }
             }
 
+            // include AIDC entries
+            var aidcEntries = CollectAidcEntries(parameterDictionary);
+            foreach (var entry in aidcEntries)
+            {
+                jsonObject[entry.AI] = entry.Value;
+            }
+
             return JsonSerializer.Serialize(jsonObject, TdtJsonContext.Default.DictionaryStringString);
+        }
+
+        /// <summary>
+        /// Collects aidc_* parameters from the dictionary into AidcEntry objects.
+        /// </summary>
+        private static List<Models.AidcEntry> CollectAidcEntries(Dictionary<string, string> parameterDictionary)
+        {
+            var entries = new List<Models.AidcEntry>();
+            foreach (var kvp in parameterDictionary)
+            {
+                if (kvp.Key.StartsWith("aidc_", StringComparison.Ordinal) && kvp.Key.Length > 5)
+                {
+                    entries.Add(new Models.AidcEntry
+                    {
+                        AI = kvp.Key.Substring(5),
+                        Value = kvp.Value
+                    });
+                }
+            }
+            return entries;
         }
 
         #endregion
