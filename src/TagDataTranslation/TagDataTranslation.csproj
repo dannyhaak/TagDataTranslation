@@ -12,9 +12,9 @@
         <Company>Danny Haak</Company>
         <Product>TagDataTranslation</Product>
         <Title>TagDataTranslation</Title>
-        <Description>GS1 EPC Tag Data Translation 2.2 library for RAIN RFID. Cross-platform: .NET, .NET MAUI, Android, iOS, macCatalyst. Supports encoding/decoding of SGTIN, SSCC, SGLN, GRAI, GIAI, GSRN, GDTI, SGCN, ITIP, GID, CPI, ADI, USDOD and Digital Link URIs. Converts between binary, hex, tag URI, pure identity URI, and legacy formats.</Description>
-        <Summary>Tag Data Translation 2.2 for RAIN RFID - cross-platform EPC encoding/decoding</Summary>
-        <PackageTags>rfid;gs1;epc;tdt;rain;sgtin;sscc;sgln;grai;giai;gdti;digital-link;pure-identity;tag-uri;hex;binary;encode;decode;maui;android;ios;mobile</PackageTags>
+        <Description>GS1 EPC Tag Data Translation (TDT 2.2 / TDS 2.3) library for RAIN RFID. Cross-platform: .NET, .NET MAUI, Android, iOS, macCatalyst. Supports encoding/decoding of SGTIN, SSCC, SGLN, GRAI, GIAI, GSRN, GDTI, SGCN, ITIP, GID, CPI, ADI, USDOD and Digital Link URIs. Includes TDS 2.3 '+' and '++' schemes with custom hostname encoding. Converts between binary, hex, tag URI, pure identity URI, and legacy formats.</Description>
+        <Summary>Tag Data Translation (TDT 2.2 / TDS 2.3) for RAIN RFID - cross-platform EPC encoding/decoding</Summary>
+        <PackageTags>rfid;gs1;epc;tdt;tds;rain;sgtin;sscc;sgln;grai;giai;gdti;digital-link;pure-identity;tag-uri;hex;binary;encode;decode;tag-data-translation;maui;android;ios;mobile</PackageTags>
 
         <PackageProjectUrl>https://github.com/dannyhaak/TagDataTranslation</PackageProjectUrl>
         <RepositoryUrl>https://github.com/dannyhaak/TagDataTranslation.git</RepositoryUrl>

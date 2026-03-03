@@ -3,6 +3,11 @@ description: GS1 EPC Tag Data Translation for Flutter and RAIN (UHF) RFID. Encod
 version: 3.0.0
 homepage: https://www.mimasu.nl
 repository: https://github.com/dannyhaak/TagDataTranslation
+topics:
+  - rfid
+  - gs1
+  - epc
+  - barcode
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

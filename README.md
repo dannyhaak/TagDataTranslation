@@ -6,6 +6,11 @@ Implements the **GS1 EPC Tag Data Standard (TDS) 2.3** and **Tag Data Translatio
 
 [![NuGet](https://img.shields.io/nuget/v/TagDataTranslation)](https://www.nuget.org/packages/TagDataTranslation)
 [![npm](https://img.shields.io/npm/v/@mimasu/tdt)](https://www.npmjs.com/package/@mimasu/tdt)
+[![PyPI](https://img.shields.io/pypi/v/tag-data-translation)](https://pypi.org/project/tag-data-translation/)
+[![pub.dev](https://img.shields.io/pub/v/tag_data_translation)](https://pub.dev/packages/tag_data_translation)
+[![Swift](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange)](https://github.com/dannyhaak/TagDataTranslation)
+[![Android](https://img.shields.io/badge/Android-GitHub_Packages-green)](https://github.com/dannyhaak/TagDataTranslation/packages)
+[![License](https://img.shields.io/badge/license-BSL--1.1-blue)](LICENSING.md)
 
 **Try it online**: https://www.mimasu.nl/tag-data-translation/try-online
 
