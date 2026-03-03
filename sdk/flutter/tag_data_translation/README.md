@@ -29,7 +29,6 @@ final binary = TDTEngine.hexToBinary('30340242201d8840009efdf7');
 final uri = TDTEngine.translate(
   binary,
   'PURE_IDENTITY',
-  params: 'tagLength=96',
 );
 // => urn:epc:id:sgtin:0037000.030241.10419703
 
@@ -37,11 +36,11 @@ final uri = TDTEngine.translate(
 final hex = TDTEngine.translate(
   'urn:epc:id:sgtin:0037000.030241.10419703',
   'TAG_ENCODING',
-  params: 'tagLength=96;filter=3',
+  params: 'filter=3;tagLength=96',
 );
 
 // safe translation (returns null on failure)
-final result = TDTEngine.tryTranslate(binary, 'PURE_IDENTITY', params: 'tagLength=96');
+final result = TDTEngine.tryTranslate(binary, 'PURE_IDENTITY');
 ```
 
 ## Error handling

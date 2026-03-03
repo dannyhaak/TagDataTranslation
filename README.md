@@ -111,8 +111,7 @@ string hex = engine.BinaryToHex(binary);
 ```csharp
 var engine = new TDTEngine();
 string binary = engine.HexToBinary("30340242201d8840009efdf7");
-string parameterList = "tagLength=96";
-string legacy = engine.Translate(binary, parameterList, "LEGACY");
+string legacy = engine.Translate(binary, "", "LEGACY");
 // legacy = "gtin=00037000302414;serial=10419703"
 ```
 
@@ -120,7 +119,7 @@ string legacy = engine.Translate(binary, parameterList, "LEGACY");
 
 ```csharp
 var engine = new TDTEngine();
-var result = engine.TranslateDetails("30340242201d8840009efdf7", "tagLength=96", "TAG_ENCODING");
+var result = engine.TranslateDetails("30340242201d8840009efdf7", "", "TAG_ENCODING");
 
 Console.WriteLine($"Pure Identity: {result.Fields["pureIdentityURI"]}");
 Console.WriteLine($"Tag URI: {result.Fields["tagURI"]}");

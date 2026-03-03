@@ -36,7 +36,6 @@ class _TdtExampleState extends State<TdtExample> {
       final uri = TDTEngine.translate(
         binary,
         'PURE_IDENTITY',
-        params: 'tagLength=96',
       );
 
       setState(() => _result = uri);

@@ -31,7 +31,7 @@ print(hex_value)  # 30340242201d8840009efdf7
 
 # decode EPC hex to all fields
 binary = engine.hex_to_binary("30340242201d8840009efdf7")
-result = engine.translate_details(binary, "tagLength=96", "TAG_ENCODING")
+result = engine.translate_details(binary, "", "TAG_ENCODING")
 print(result.output)   # urn:epc:tag:sgtin-96:1.0037000.030241.10419703
 print(result.fields)   # {'filter': '1', 'gs1companyprefix': '0037000', ...}
 ```

@@ -28,10 +28,10 @@ def main():
     print(f"  Hex:           {hex_value}")
     print(f"  Binary:        {binary[:32]}...")
 
-    pure_identity = engine.translate(binary, "tagLength=96", "PURE_IDENTITY")
+    pure_identity = engine.translate(binary, "", "PURE_IDENTITY")
     print(f"  Pure Identity: {pure_identity}")
 
-    tag_uri = engine.translate(binary, "tagLength=96", "TAG_ENCODING")
+    tag_uri = engine.translate(binary, "", "TAG_ENCODING")
     print(f"  Tag URI:       {tag_uri}")
 
     # encode: GTIN + serial -> binary -> hex
@@ -45,7 +45,7 @@ def main():
 
     # detailed translation with fields
     print(f"\nDetailed translation:")
-    result = engine.translate_details(binary, "tagLength=96", "TAG_ENCODING")
+    result = engine.translate_details(binary, "", "TAG_ENCODING")
     print(f"  Output: {result.output}")
     print(f"  Fields: {result.fields}")
 

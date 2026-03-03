@@ -23,11 +23,10 @@ public partial class MainPage : ContentPage
         try
         {
             var binary = _engine.HexToBinary(hex);
-            var parameterList = "tagLength=" + binary.Length;
 
-            var pureIdentity = _engine.Translate(binary, parameterList, "PURE_IDENTITY");
-            var tagUri = _engine.Translate(binary, parameterList, "TAG_ENCODING");
-            var legacy = _engine.Translate(binary, parameterList, "LEGACY");
+            var pureIdentity = _engine.Translate(binary, "", "PURE_IDENTITY");
+            var tagUri = _engine.Translate(binary, "", "TAG_ENCODING");
+            var legacy = _engine.Translate(binary, "", "LEGACY");
 
             ResultLabel.Text = $"Pure Identity:\n{pureIdentity}\n\n" +
                                $"Tag URI:\n{tagUri}\n\n" +

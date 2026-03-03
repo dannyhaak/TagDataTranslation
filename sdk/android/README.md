@@ -29,7 +29,7 @@ import nl.mimasu.tdt.TDTEngine
 
 val engine = TDTEngine()
 val binary = engine.hexToBinary("30340242201d8840009efdf7")
-val uri = engine.translate(binary, "tagLength=96", "PURE_IDENTITY")
+val uri = engine.translate(binary, "", "PURE_IDENTITY")
 // urn:epc:id:sgtin:0037000.030241.10419703
 ```
 

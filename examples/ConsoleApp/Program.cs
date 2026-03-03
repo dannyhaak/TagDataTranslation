@@ -22,9 +22,9 @@ Console.WriteLine($"  Hex:    {hex}\n");
 
 // decode: hex -> all representations
 var decodeBinary = engine.HexToBinary(hex);
-var pureIdentity = engine.Translate(decodeBinary, "tagLength=96", "PURE_IDENTITY");
-var tagUri = engine.Translate(decodeBinary, "tagLength=96", "TAG_ENCODING");
-var legacy = engine.Translate(decodeBinary, "tagLength=96", "LEGACY");
+var pureIdentity = engine.Translate(decodeBinary, "", "PURE_IDENTITY");
+var tagUri = engine.Translate(decodeBinary, "", "TAG_ENCODING");
+var legacy = engine.Translate(decodeBinary, "", "LEGACY");
 
 Console.WriteLine($"Decode hex to all formats:");
 Console.WriteLine($"  Pure Identity: {pureIdentity}");

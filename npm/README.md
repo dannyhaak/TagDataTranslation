@@ -38,7 +38,7 @@ console.log(hex);
 
 ```javascript
 const binary = engine.hexToBinary("30340242201d8840009efdf7");
-const uri = engine.translate(binary, "tagLength=96", "PURE_IDENTITY");
+const uri = engine.translate(binary, "", "PURE_IDENTITY");
 console.log(uri);
 // urn:epc:id:sgtin:0037000.030241.10419703
 ```

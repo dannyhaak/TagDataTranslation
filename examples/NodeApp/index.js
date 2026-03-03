@@ -32,13 +32,13 @@ async function main() {
   console.log(`  Hex:           ${hex}`);
   console.log(`  Binary:        ${binary.substring(0, 32)}...`);
 
-  const pureIdentity = engine.translate(binary, "tagLength=96", "PURE_IDENTITY");
+  const pureIdentity = engine.translate(binary, "", "PURE_IDENTITY");
   console.log(`  Pure Identity: ${pureIdentity}`);
 
-  const tagUri = engine.translate(binary, "tagLength=96", "TAG_ENCODING");
+  const tagUri = engine.translate(binary, "", "TAG_ENCODING");
   console.log(`  Tag URI:       ${tagUri}`);
 
-  const legacy = engine.translate(binary, "tagLength=96", "LEGACY");
+  const legacy = engine.translate(binary, "", "LEGACY");
   console.log(`  Legacy:        ${legacy}`);
 
   // encode: GTIN + serial -> binary -> hex

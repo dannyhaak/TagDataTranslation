@@ -36,7 +36,7 @@ import TagDataTranslation
 
 let engine = TDTEngine()
 let binary = TDTEngine.hexToBinary("30340242201d8840009efdf7")
-let uri = try engine.translate(binary, to: "PURE_IDENTITY", params: "tagLength=96")
+let uri = try engine.translate(binary, to: "PURE_IDENTITY")
 // urn:epc:id:sgtin:0037000.030241.10419703
 ```
 
