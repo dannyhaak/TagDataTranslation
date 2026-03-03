@@ -37,7 +37,10 @@ namespace TagDataTranslation
 
             for (int i = 0; i < length; i++)
             {
-                binary.Append(HexToBinaryTable[hex[i]]);
+                char c = hex[i];
+                if (c >= HexToBinaryTable.Length || HexToBinaryTable[c] == null)
+                    throw new ArgumentException($"Invalid hex character '{c}' at position {i}");
+                binary.Append(HexToBinaryTable[c]);
             }
 
             return binary.ToString();
@@ -49,6 +52,13 @@ namespace TagDataTranslation
         public static string BinaryToHex(string binary)
         {
             int length = binary.Length;
+
+            for (int i = 0; i < length; i++)
+            {
+                if (binary[i] != '0' && binary[i] != '1')
+                    throw new ArgumentException($"Invalid binary character '{binary[i]}' at position {i}");
+            }
+
             if (length % 16 != 0)
             {
                 int toPad = 16 - length % 16;

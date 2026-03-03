@@ -473,6 +473,9 @@ namespace TagDataTranslation.Encoding
                 int r = Convert.ToInt32(tripletBinary, 2);
                 pos += 16;
 
+                if (r < 1 || r > 64000)
+                    throw new ArgumentException($"Invalid Code 40 triplet value {r} (must be 1-64000)");
+
                 int i3 = (r - 1) % 40;
                 int i2 = ((r - 1 - i3) / 40) % 40;
                 int i1 = (r - 1 - i3 - 40 * i2) / 1600;
