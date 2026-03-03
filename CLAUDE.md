@@ -6,8 +6,9 @@ TagDataTranslation is a C# library implementing GS1's Tag Data Translation (TDT)
 
 ## Supported Standards
 
-- **TDT 2.2** - Full support for all standard EPC schemes (see `docs/TDT-2.2-Standard.md`)
-- **TDS 2.3** - Support for '+' and '++' schemes with hostname encoding (see `docs/TDS-2.3-Standard.md`)
+- **TDT 2.2** - Full support for all standard EPC schemes
+- **TDS 2.3** - Support for '+' and '++' schemes with hostname encoding
+- Standards in markdown are in the parent Mimasu repo: `docs/standards/md/gs1/tdt/` and `docs/standards/md/gs1/tds/`
 
 ## Tech Stack
 
@@ -226,9 +227,7 @@ The build script auto-copies `LICENSING.md` from the repo root to `npm/LICENSE.m
 | `src/TagDataTranslation/Encoding/` | Encoding helper classes |
 | `src/TagDataTranslation/Tables/` | Lookup tables (Table F, K, E, B) |
 | `test/TagDataTranslation.Tests/` | Unit tests |
-| `docs/` | Documentation and standards |
-| `docs/TDT-2.2-Standard.md` | GS1 Tag Data Translation 2.2 specification |
-| `docs/TDS-2.3-Standard.md` | GS1 Tag Data Standard 2.3 specification |
+| `docs/` | Errata and plans |
 | `docs/TDS-2.3-Errata.md` | Known errors in TDS 2.3 specification |
 | `docs/Scheme-Conversion-Errata.md` | Errors found in XML to JSON conversion |
 
@@ -277,8 +276,7 @@ Run with `dotnet run -c Release --project test/TagDataTranslation.Benchmarks`. R
 - Use `TryTranslateDetails()` for detailed translation information
 - Binary patterns must match exactly - check bit counts
 - For '++' schemes, hostname length is in sequences, not characters
-- Check `docs/TDT-2.2-Standard.md` for TDT 2.2 specification details
-- Check `docs/TDS-2.3-Standard.md` for TDS 2.3 specification details
+- GS1 standards in markdown are in the parent Mimasu repo: `docs/standards/md/gs1/`
 
 ## Important Implementation Notes
 
