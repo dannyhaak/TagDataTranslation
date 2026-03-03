@@ -198,10 +198,34 @@ Translates an EPC identifier from one representation to another.
 | Parameter | Description |
 |-----------|-------------|
 | `epcIdentifier` | The EPC to convert (binary string, hex, URI, or legacy format) |
-| `parameterList` | Semicolon-delimited key=value pairs (e.g., `filter=3;gs1companyprefixlength=7;tagLength=96`) |
-| `outputFormat` | Target format: `BINARY`, `LEGACY`, `LEGACY_AI`, `TAG_ENCODING`, `PURE_IDENTITY` |
+| `parameterList` | Semicolon-delimited key=value pairs (see Parameter Keys below) |
+| `outputFormat` | Target format (see Output Formats below) |
 
 **Returns**: The converted EPC as a string.
+
+#### Parameter Keys
+
+Pass as semicolon-delimited `key=value` pairs, e.g. `"filter=3;gs1companyprefixlength=7;tagLength=96"`.
+
+| Key | Required | Description |
+|-----|----------|-------------|
+| `filter` | Encode only | Filter value (0-7). Determines packaging level (POS item, case, pallet, etc.) |
+| `gs1companyprefixlength` | Encode only | Length of the GS1 Company Prefix (6-12). Determines the partition table entry |
+| `tagLength` | Encode only | Target tag length in bits (e.g., `96`, `198`). Selects the scheme variant |
+| `hostname` | '++' encode only | Custom hostname for branded Digital Link URIs (e.g., `coca-cola.com`) |
+
+When **decoding** (hex/binary input), no parameters are needed — the engine determines everything from the binary data.
+
+#### Output Formats
+
+| Format | Description | Example |
+|--------|-------------|---------|
+| `BINARY` | Binary bit string | `001100000011010000...` |
+| `TAG_ENCODING` | Tag URI with filter | `urn:epc:tag:sgtin-96:3.0037000.030241.10419703` |
+| `PURE_IDENTITY` | Pure Identity URI (no filter) | `urn:epc:id:sgtin:0037000.030241.10419703` |
+| `LEGACY` | Legacy key=value format | `gtin=00037000302414;serial=10419703` |
+| `LEGACY_AI` | Element string with AIs | `(01)00037000302414(21)10419703` |
+| `GS1_DIGITAL_LINK` | GS1 Digital Link URI | `https://id.gs1.org/01/00037000302414/21/10419703` |
 
 #### TranslateDetails
 
