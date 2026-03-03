@@ -1,18 +1,31 @@
 # TagDataTranslation
 
-Tag Data Translation implemented according to the **GS1 EPC Tag Data Standard (TDS) 2.3** specification for RAIN RFID.
+**Encode and decode GS1 EPC identifiers for RAIN (UHF) RFID tags.** Convert between GTIN, SSCC, SGLN, and 50+ other formats — from barcode to EPC hex and back.
 
-**Online demo**: https://www.mimasu.nl/tdt
+Implements the **GS1 EPC Tag Data Standard (TDS) 2.3** and **Tag Data Translation (TDT) 2.2** specifications. Used in production for RFID tag programming, inventory systems, and supply chain applications.
+
+[![NuGet](https://img.shields.io/nuget/v/TagDataTranslation)](https://www.nuget.org/packages/TagDataTranslation)
+[![npm](https://img.shields.io/npm/v/@mimasu/tdt)](https://www.npmjs.com/package/@mimasu/tdt)
+
+**Try it online**: https://www.mimasu.nl/tag-data-translation/try-online
+
+## Why This Library
+
+- **Spec-complete**: All 50 EPC schemes including TDS 2.3 '+' and '++' variants with Digital Link URIs
+- **Deterministic**: Every encode/decode is provably correct against the GS1 specification — no approximations, no guessing
+- **Fast**: SGTIN-96 encode in 7.8 us, decode in 7.7 us (benchmarked on Apple M1 Pro)
+- **Cross-platform**: .NET, JavaScript/TypeScript (WASM), Python, Swift, Kotlin, Flutter
+- **Production-ready**: Exception-free `TryTranslate` API for high-throughput tag programming and reading
 
 ## Features
 
-- Full TDS 2.3 / TDT 2.2 support with JSON-based scheme definitions
-- 12 '++' schemes with custom hostname encoding for branded Digital Link URIs
-- Digital Link URI generation and parsing
+- GTIN to EPC encoding (SGTIN-96, SGTIN-198) and decoding
+- SSCC, SGLN, GRAI, GIAI, GSRN, GDTI, SGCN, ITIP, GID, CPI, ADI, USDOD encoding
+- GS1 Digital Link URI generation and parsing
+- '++' schemes with custom hostname encoding for branded Digital Link URIs
 - GS1 Company Prefix lookup
 - Filter Value tables
-- Exception-free `TryTranslate` API for high-throughput scenarios
-- **Cross-platform**: .NET, .NET MAUI, Android, iOS, macCatalyst
+- Hex to binary and binary to hex conversion
 
 ## Platform Support
 
@@ -340,8 +353,19 @@ See [LICENSING.md](LICENSING.md) for full details.
 
 The included JSON and XSD artifacts are (c) GS1 (https://www.gs1.org/standards/epc-rfid/tdt).
 
+## Use Cases
+
+- **Tag programming**: Encode GTINs and SSCCs to EPC hex for writing to RAIN RFID tags
+- **Tag reading**: Decode EPC hex from RFID readers back to human-readable identifiers
+- **Inventory systems**: Translate between barcode and RFID representations
+- **Supply chain**: Convert between GS1 Digital Link URIs and EPC binary
+- **Label printing**: Generate EPC hex for RFID-enabled label printers (Zebra, SATO, etc.)
+- **Mobile RFID apps**: Encode/decode on iOS and Android via native SDKs
+
 ## Resources
 
 - [GS1 TDT Standard](https://www.gs1.org/standards/epc-rfid/tdt)
+- [GS1 Tag Data Standard (TDS)](https://www.gs1.org/standards/tds)
 - [GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link)
-- [Online Demo](https://www.mimasu.nl/tdt)
+- [Online Demo](https://www.mimasu.nl/tag-data-translation/try-online)
+- [RAIN RFID Training Academy](https://www.mimasu.nl/intro)
