@@ -278,6 +278,34 @@ Run with `dotnet run -c Release --project test/TagDataTranslation.Benchmarks`. R
 - For '++' schemes, hostname length is in sequences, not characters
 - GS1 standards in markdown are in the parent Mimasu repo: `docs/standards/md/gs1/`
 
+## Parameter Keys (parameterList argument)
+
+Six keys can be passed in the `parameterList` argument to `Translate()`:
+
+| Key | Source | Description |
+|-----|--------|-------------|
+| `filter` | TDT 2.2 | Packaging level. Range is scheme-dependent: 0-7 (3-bit, most), 0-15 (4-bit, USDOD), 0-63 (6-bit, ADI) |
+| `gs1companyprefixlength` | TDT 2.2 | GS1 Company Prefix length (6-12) |
+| `tagLength` | TDT 2.2 | Target tag length in bits (e.g., 96, 198) |
+| `dataToggle` | TDT 2.2 | AIDC data indicator (0/1) for '+' and '++' schemes |
+| `uriStem` | TDT 2.2 | Custom URI stem for GS1_DIGITAL_LINK output. Default: `https://id.gs1.org`. Code: TDTEngine.cs ~line 800 |
+
+### uriStem vs hostname
+
+Both refer to a domain name but come from different GS1 standards and serve different purposes:
+- **`uriStem`** (TDT 2.2): formatting parameter — controls the URL prefix in GS1_DIGITAL_LINK output. Not stored in tag binary.
+- **`hostname`** (TDS 2.3): identity data — encoded into '++' scheme binary via Section 14.5.16 hostname encoding. Lives on the physical tag.
+
+`hostname` is NOT a parameterList key. It's a field in the '++' scheme BARE_IDENTIFIER level (e.g., `gtin=...;serial=...;hostname=coca-cola.com`). When decoding '++' binary, hostname is extracted and used to construct GS1_DIGITAL_LINK output.
+
+## Output Formats
+
+The engine supports 7 output formats plus legacy aliases. Key notes:
+- **ELEMENT_STRING** is in the TDT 2.2 enum and the code's LevelType, but ZERO scheme JSON files define it — using it throws `TDTLevelNotFound`
+- **GS1_AI_JSON** replaced ELEMENT_STRING in TDT 2.1 as "a less ambiguous alternative"
+- **TEI** is only used by ADI-var (aerospace/defence)
+- **FormatAsAiJson** has hardcoded AI→field-name mapping that doesn't work for all schemes (GDTI returns `{}`, SGLN misses glnextension)
+
 ## Important Implementation Notes
 
 ### '+' Scheme JSON Files
