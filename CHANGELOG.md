@@ -2,6 +2,48 @@
 
 All notable changes to TagDataTranslation will be documented in this file.
 
+## [3.0.7] - 2026-03-03
+
+### Fixed
+- Input validation for `BinaryConverter` and `Code40` decoder
+
+### Changed
+- README: added platform badges, removed `tagLength` from decode examples, improved discoverability
+
+## [3.0.6] - 2026-03-03
+
+### Changed
+- README improvements for NuGet and npm discoverability
+
+## [3.0.5] - 2026-02-26
+
+### Fixed
+- Exclude `.js.symbols` file from npm package to prevent MONO_WASM warning
+
+## [3.0.4] - 2026-02-26
+
+### Added
+- +AIDC data encoding/decoding support (TDS 2.3 §15.3)
+
+### Fixed
+- Decode +AIDC data when `dataToggle=1` (case-sensitivity bug)
+- WASM trimmer for `RuntimeInformation`
+
+## [3.0.3] - 2026-02-25
+
+### Fixed
+- npm smoke test and iOS commit step in CI
+
+## [3.0.2] - 2026-02-25
+
+### Fixed
+- npm and iOS CI workflow failures
+
+## [3.0.1] - 2026-02-25
+
+### Fixed
+- CI workflow fixes and AOT-safe JSON serialization
+
 ## [3.0.0] - 2026-02-25
 
 ### Added

@@ -212,6 +212,9 @@ npm publish --access public              # stable release
 
 The build script auto-copies `LICENSING.md` from the repo root to `npm/LICENSE.md` (gitignored) so the license ships with every publish.
 
+### Release Checklist
+- **Always update `CHANGELOG.md`** before tagging a new release. Follow [Keep a Changelog](https://keepachangelog.com/) format with Added/Changed/Fixed sections.
+
 ### Package Details
 - **Scope**: `@mimasu` (public)
 - **License**: BSL-1.1
