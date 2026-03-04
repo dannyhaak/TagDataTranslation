@@ -209,10 +209,11 @@ Pass as semicolon-delimited `key=value` pairs, e.g. `"filter=3;gs1companyprefixl
 
 | Key | Required | Description |
 |-----|----------|-------------|
-| `filter` | Encode only | Filter value (0-7). Determines packaging level (POS item, case, pallet, etc.) |
+| `filter` | Encode only | Filter value. Determines packaging level (POS item, case, pallet, etc.). Range is scheme-dependent: 0-7 (3-bit, most schemes), 0-15 (4-bit, USDOD), or 0-63 (6-bit, ADI) |
 | `gs1companyprefixlength` | Encode only | Length of the GS1 Company Prefix (6-12). Determines the partition table entry |
 | `tagLength` | Encode only | Target tag length in bits (e.g., `96`, `198`). Selects the scheme variant |
-| `hostname` | '++' encode only | Custom hostname for branded Digital Link URIs (e.g., `coca-cola.com`) |
+| `dataToggle` | '+' / '++' encode only | AIDC data indicator (`0` or `1`). When `1`, additional AI data follows the EPC in tag memory |
+| `uriStem` | Optional | Custom URI stem for GS1_DIGITAL_LINK output (default: `https://id.gs1.org`). Example: `uriStem=https://example.com` |
 
 When **decoding** (hex/binary input), no parameters are needed — the engine determines everything from the binary data.
 
