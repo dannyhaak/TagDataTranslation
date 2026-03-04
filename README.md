@@ -70,31 +70,24 @@ Implements the **GS1 EPC Tag Data Standard (TDS) 2.3** and **Tag Data Translatio
 
 ## Installation
 
-### NuGet (.NET and .NET MAUI)
-
 ```bash
+# .NET
 dotnet add package TagDataTranslation
+
+# JavaScript / TypeScript
+npm install @mimasu/tdt
+
+# Python
+pip install tag-data-translation
+
+# Swift (Package.swift)
+.package(url: "https://github.com/dannyhaak/TagDataTranslation.git", from: "3.0.0")
+
+# Flutter
+flutter pub add tag_data_translation
 ```
 
-Or via Package Manager:
-```
-Install-Package TagDataTranslation
-```
-
-The NuGet package includes targets for .NET 8.0/9.0/10.0, Android, iOS, and macCatalyst. .NET MAUI projects will automatically resolve the correct platform target.
-
-### From Source
-
-```bash
-git clone https://github.com/dannyhaak/TagDataTranslation.git
-cd TagDataTranslation
-dotnet build src/TagDataTranslation/TagDataTranslation.csproj
-```
-
-## Requirements
-
-- .NET 8.0 or later (supports .NET 8.0, 9.0, and 10.0)
-- For mobile targets: .NET MAUI workload (`dotnet workload install maui`)
+The .NET package includes targets for .NET 8.0/9.0/10.0, Android, iOS, and macCatalyst. The npm package uses WebAssembly and works in Node.js and browsers.
 
 ## Quick Start
 
