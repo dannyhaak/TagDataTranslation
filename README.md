@@ -347,36 +347,6 @@ See the `examples/` directory for platform-specific sample projects:
 - `examples/MauiApp/` -- .NET MAUI cross-platform app (Android, iOS, macCatalyst)
 - `examples/NodeApp/` -- Node.js application (via WebAssembly)
 
-## Building
-
-```bash
-dotnet build src/TagDataTranslation/TagDataTranslation.csproj
-dotnet test test/TagDataTranslation.Tests/TagDataTranslation.Tests.csproj
-```
-
-## Creating a NuGet Package
-
-```bash
-dotnet pack src/TagDataTranslation/TagDataTranslation.csproj -c Release -o ./artifacts
-```
-
-To publish to NuGet.org:
-```bash
-dotnet nuget push ./artifacts/TagDataTranslation.*.nupkg --api-key YOUR_API_KEY --source https://api.nuget.org/v3/index.json
-```
-
-## Version History
-
-| Version | Changes |
-|---------|---------|
-| 3.0.0 | Cross-platform SDKs: npm (WASM), Python (pythonnet), Swift (NativeAOT), Android (NativeAOT), Flutter (dart:ffi), .NET MAUI (Android, iOS, macCatalyst); performance optimizations (regex caching, lookup tables, pre-sorted fields); BSL 1.1 licensing |
-| 2.3.0 | TDS 2.3 support with 12 new '++' schemes for custom hostname encoding in Digital Link URIs |
-| 2.1.0 | Added TryTranslate/TryTranslateDetails for exception-free high-throughput translation |
-| 2.0.1 | Multi-targeting support for .NET 8.0, 9.0, and 10.0 |
-| 2.0.0 | TDT 2.2 with JSON schemes, Digital Link support, new schemes (DSGTIN+, GDTI-113, etc.) |
-| 1.1.5 | Updated GCP prefix file, ITIP encoding fixes |
-| 1.0.0 | Initial release with TDT 1.6/1.11 support |
-
 ## License
 
 This library is licensed under the **Business Source License 1.1** (BSL 1.1).
