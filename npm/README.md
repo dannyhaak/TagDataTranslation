@@ -70,7 +70,7 @@ Initialize the WASM engine. Call once, reuse the engine instance for all transla
 
 ### `engine.translate(epcIdentifier, parameterList, outputFormat): string`
 
-Translate an EPC between encoding levels. Output formats: `BINARY`, `LEGACY`, `LEGACY_AI`, `TAG_ENCODING`, `PURE_IDENTITY`.
+Translate an EPC between encoding levels. Output formats: `BINARY`, `TAG_ENCODING`, `PURE_IDENTITY`, `BARE_IDENTIFIER`, `ELEMENT_STRING`, `GS1_DIGITAL_LINK`, `TEI`, `GS1_AI_JSON`. Legacy aliases `LEGACY` and `LEGACY_AI` are also accepted.
 
 Throws on invalid input.
 

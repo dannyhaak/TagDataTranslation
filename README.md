@@ -116,8 +116,8 @@ string hex = engine.BinaryToHex(binary);
 ```csharp
 var engine = new TDTEngine();
 string binary = engine.HexToBinary("30340242201d8840009efdf7");
-string legacy = engine.Translate(binary, "", "LEGACY");
-// legacy = "gtin=00037000302414;serial=10419703"
+string bareId = engine.Translate(binary, "", "BARE_IDENTIFIER");
+// bareId = "gtin=00037000302414;serial=10419703"
 ```
 
 ### Get All Representations
@@ -221,11 +221,18 @@ When **decoding** (hex/binary input), no parameters are needed — the engine de
 | Format | Description | Example |
 |--------|-------------|---------|
 | `BINARY` | Binary bit string | `001100000011010000...` |
-| `TAG_ENCODING` | Tag URI with filter | `urn:epc:tag:sgtin-96:3.0037000.030241.10419703` |
+| `TAG_ENCODING` | Tag URI with filter value | `urn:epc:tag:sgtin-96:3.0037000.030241.10419703` |
 | `PURE_IDENTITY` | Pure Identity URI (no filter) | `urn:epc:id:sgtin:0037000.030241.10419703` |
-| `LEGACY` | Legacy key=value format | `gtin=00037000302414;serial=10419703` |
-| `LEGACY_AI` | Element string with AIs | `(01)00037000302414(21)10419703` |
+| `BARE_IDENTIFIER` | Key=value pairs | `gtin=00037000302414;serial=10419703` |
 | `GS1_DIGITAL_LINK` | GS1 Digital Link URI | `https://id.gs1.org/01/00037000302414/21/10419703` |
+| `GS1_AI_JSON` | JSON object with AI keys | `{"01":"00037000302414","21":"10419703"}` |
+| `TEI` | Text Element Identifier (ADI only) | `ADI CAG 359F2/PNO PQ7VZ4/SEQ M37GXB92` |
+
+Legacy alias (backward-compatible):
+
+| Alias | Maps to |
+|-------|---------|
+| `LEGACY` | `BARE_IDENTIFIER` |
 
 #### TranslateDetails
 
