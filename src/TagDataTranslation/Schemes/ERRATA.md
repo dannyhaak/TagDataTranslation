@@ -38,22 +38,34 @@ The TDS 2.3 E.3 test vectors should be verified against this pattern.
 
 ---
 
-## Table F AI Encoding Issues
+## Table F AI Encoding Issues (withdrawn)
 
-### Issue: "Delimited/terminated numeric" encoding for alphanumeric AIs
+An earlier version listed "Delimited/terminated numeric" for AIs (8004) and (8010) as a Table F error. It is not: TDS 2.3 section 14.5.5 encodes the initial digits, then a `1110` delimiter followed by the variable-length alphanumeric method for the rest of the value. The encoder handles this.
 
-**Affected AIs**: 8004 (GIAI), 8010 (CPI), and potentially others
+---
 
-**Problem**: Table F lists these AIs as using "Delimited/terminated numeric" encoding (section 14.5.5), but the AI values can contain alphanumeric characters:
-- GIAI (8004): Can contain characters from `[!%-?A-Z_a-z\x22]` for the asset reference portion
-- CPI (8010): Can contain characters from `[#-/0-9A-Z]` for the component/part reference portion
+## Errors found in the TDT 2.3 public review artefacts (2026-09-15)
 
-**Impact**: The current implementation encodes these values as numeric-only, which produces incorrect binary output when the value contains non-numeric characters.
+These were present in our copies as well and are fixed here. They are reported to GS1 in `docs/TDT-2.3-Public-Review-Comments.md` in the Mimasu repository.
 
-**Potential Fix**: Either:
-1. Table F should indicate these AIs use "Delimited/terminated alphanumeric" encoding
-2. The encoder should detect alphanumeric content and switch to appropriate encoding method
-3. TDS 2.3 section 14.5.5 may need clarification for mixed-character AIs
+| File | Location | Was | Now |
+|------|----------|-----|-----|
+| ITIP-110, ITIP-212 | `itip` decimalMaximum, non-binary levels | 14 nines | 18 nines |
+| DSGTIN+ | BARE_IDENTIFIER date fields | `[01]*` | `[0-9]*` |
+| ADI-var | PURE_IDENTITY rule seq 2 | `[A-Z0-9/#-]]*` | `[A-Z0-9/#-]*` |
+| ADI-var | TEI option 7 grammar | `'/SER='` | `'/SER '` |
+| ADI-var | BINARY CAGE/DoDAAC sub-pattern | `(?:11[01]{4})\|(?:111--[01])` | `(?:110[01]{3})\|(?:11100[01])` |
+| ADI-var | `urnEncodedSerial`, `urnEncodedOriginalPartNumber` character sets | decoded set `[0-9A-Z/-]+` | escaped set `(?:[0-9A-Z-]\|%2F)*` (with `%23` prefix for '#' serials) |
+| CPI-var | BARE_IDENTIFIER option 12 `cpi` | `[A-Z0-9/#-]]*` | `[A-Z0-9/#-]*` |
+| CPI-var | PURE_IDENTITY serial | `{1,10}` | `{1,12}` |
+| CPI-var | GS1_AI_JSON grammar | `serial` (undefined) | `cpiserial` |
+| CPI-96, CPI-var | PURE_IDENTITY option 6 field seq | 1, 3, 3 | 1, 2, 3 |
+| CPI-96 | `cpiserial` maximum in BARE/AI JSON/Digital Link | 9999999999 | 2147483647 (31-bit field) |
+| GDTI-113 | BINARY serial | plain integer | TDS 14.3.6 numeric string (`prependedserial`) |
+| GIAI-202 | GS1_DIGITAL_LINK FORMAT rule character set | URN set | URL set |
+| USDOD-96 | TAG_ENCODING filter | `([0-9])` | `(1[0-5]\|[0-9])` |
+| SGLN-96, SGLN-195, SGLN+ | extension (254) | always emitted | `valueIfNull: "0"` with `[...]` conditional grammar; optional in GS1_AI_JSON |
+| 21 files with Digital Link URL character classes | `[A-Za-z0-9"._-]` | raw `"` | `%22` |
 
 ---
 

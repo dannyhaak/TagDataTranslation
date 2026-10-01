@@ -92,12 +92,12 @@
           "option": [
             {
               "optionKey": "1",
-              "pattern": "\\/8004\\/([0-9]{4}(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,26})(?:\\?|$)",
+              "pattern": "\\/8004\\/([0-9]{4}(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,26})(?:\\?|$)",
               "grammar": "uriStem '/8004/' urlEscapedGiai ",
               "field": [
                 {
                   "seq": 1,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedGiai"
                 }
               ],
@@ -120,7 +120,7 @@
               "inputFormat": "STRING",
               "seq": 1,
               "newFieldName": "urlEscapedGiai",
-              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
               "function": "URLENCODE(giai)"
             }
           ],

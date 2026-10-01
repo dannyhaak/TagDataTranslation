@@ -131,7 +131,8 @@ namespace TagDataTranslation
                         break;
 
                     default:
-                        continue;
+                        // an unknown rule function means the scheme definition cannot be honoured
+                        throw new TDTTranslationException("TDTInvalidSchemeDefinition");
                 }
 
                 if (newFieldValue == null) continue;
@@ -246,18 +247,18 @@ namespace TagDataTranslation
             {
                 try
                 {
-                    return new Regex("^" + cs + "$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(200));
+                    return new Regex("^(?:" + cs + ")$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(200));
                 }
-                catch
+                catch (ArgumentException)
                 {
-                    // invalid regex in character set pattern — cache null to avoid retrying
+                    // invalid regex in character set pattern, cache null to avoid retrying
                     return null;
                 }
             });
 
-            // null means invalid pattern — allow input through
+            // an invalid character set must not silently disable validation
             if (regex == null)
-                return true;
+                throw new TDTTranslationException("TDTInvalidSchemeDefinition");
 
             return regex.IsMatch(input);
         }

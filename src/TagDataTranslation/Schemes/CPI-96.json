@@ -831,7 +831,7 @@
                   "name": "gs1companyprefix"
                 },
                 {
-                  "seq": 3,
+                  "seq": 2,
                   "decimalMinimum": "0",
                   "decimalMaximum": "999999999",
                   "characterSet": "[0-9]*",
@@ -869,7 +869,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -891,7 +891,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -913,7 +913,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -935,7 +935,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -957,7 +957,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -979,7 +979,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1001,7 +1001,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1052,7 +1052,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1078,7 +1078,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1104,7 +1104,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1130,7 +1130,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1156,7 +1156,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1182,7 +1182,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1208,7 +1208,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1256,7 +1256,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1282,7 +1282,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1308,7 +1308,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1334,7 +1334,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1360,7 +1360,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1386,7 +1386,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }
@@ -1412,7 +1412,7 @@
                 {
                   "seq": 2,
                   "decimalMinimum": "0",
-                  "decimalMaximum": "9999999999",
+                  "decimalMaximum": "2147483647",
                   "characterSet": "[0-9]*",
                   "name": "cpiserial"
                 }

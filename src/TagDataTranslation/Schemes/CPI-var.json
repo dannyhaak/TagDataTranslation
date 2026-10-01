@@ -620,7 +620,7 @@
           "option": [
             {
               "optionKey": "12",
-              "pattern": "^urn:epc:id:cpi:([0-9]{12})\\.((?:[A-Z0-9-]|%2F|%23){1,18})\\.([0-9]{1,10})$",
+              "pattern": "^urn:epc:id:cpi:([0-9]{12})\\.((?:[A-Z0-9-]|%2F|%23){1,18})\\.([0-9]{1,12})$",
               "grammar": "'urn:epc:id:cpi:' gs1companyprefix '.' urnEncodedCompPartRef '.' cpiserial",
               "field": [
                 {
@@ -650,7 +650,7 @@
             },
             {
               "optionKey": "11",
-              "pattern": "^urn:epc:id:cpi:([0-9]{11})\\.((?:[A-Z0-9-]|%2F|%23){1,19})\\.([0-9]{1,10})$",
+              "pattern": "^urn:epc:id:cpi:([0-9]{11})\\.((?:[A-Z0-9-]|%2F|%23){1,19})\\.([0-9]{1,12})$",
               "grammar": "'urn:epc:id:cpi:' gs1companyprefix '.' urnEncodedCompPartRef '.' cpiserial",
               "field": [
                 {
@@ -680,7 +680,7 @@
             },
             {
               "optionKey": "10",
-              "pattern": "^urn:epc:id:cpi:([0-9]{10})\\.((?:[A-Z0-9-]|%2F|%23){1,20})\\.([0-9]{1,10})$",
+              "pattern": "^urn:epc:id:cpi:([0-9]{10})\\.((?:[A-Z0-9-]|%2F|%23){1,20})\\.([0-9]{1,12})$",
               "grammar": "'urn:epc:id:cpi:' gs1companyprefix '.' urnEncodedCompPartRef '.' cpiserial",
               "field": [
                 {
@@ -710,7 +710,7 @@
             },
             {
               "optionKey": "9",
-              "pattern": "^urn:epc:id:cpi:([0-9]{9})\\.((?:[A-Z0-9-]|%2F|%23){1,21})\\.([0-9]{1,10})$",
+              "pattern": "^urn:epc:id:cpi:([0-9]{9})\\.((?:[A-Z0-9-]|%2F|%23){1,21})\\.([0-9]{1,12})$",
               "grammar": "'urn:epc:id:cpi:' gs1companyprefix '.' urnEncodedCompPartRef '.' cpiserial",
               "field": [
                 {
@@ -740,7 +740,7 @@
             },
             {
               "optionKey": "8",
-              "pattern": "^urn:epc:id:cpi:([0-9]{8})\\.((?:[A-Z0-9-]|%2F|%23){1,22})\\.([0-9]{1,10})$",
+              "pattern": "^urn:epc:id:cpi:([0-9]{8})\\.((?:[A-Z0-9-]|%2F|%23){1,22})\\.([0-9]{1,12})$",
               "grammar": "'urn:epc:id:cpi:' gs1companyprefix '.' urnEncodedCompPartRef '.' cpiserial",
               "field": [
                 {
@@ -770,7 +770,7 @@
             },
             {
               "optionKey": "7",
-              "pattern": "^urn:epc:id:cpi:([0-9]{7})\\.((?:[A-Z0-9-]|%2F|%23){1,23})\\.([0-9]{1,10})$",
+              "pattern": "^urn:epc:id:cpi:([0-9]{7})\\.((?:[A-Z0-9-]|%2F|%23){1,23})\\.([0-9]{1,12})$",
               "grammar": "'urn:epc:id:cpi:' gs1companyprefix '.' urnEncodedCompPartRef '.' cpiserial",
               "field": [
                 {
@@ -800,7 +800,7 @@
             },
             {
               "optionKey": "6",
-              "pattern": "^urn:epc:id:cpi:([0-9]{6})\\.((?:[A-Z0-9-]|%2F|%23){1,24})\\.([0-9]{1,10})$",
+              "pattern": "^urn:epc:id:cpi:([0-9]{6})\\.((?:[A-Z0-9-]|%2F|%23){1,24})\\.([0-9]{1,12})$",
               "grammar": "'urn:epc:id:cpi:' gs1companyprefix '.' urnEncodedCompPartRef '.' cpiserial",
               "field": [
                 {
@@ -814,7 +814,7 @@
                   "name": "gs1companyprefix"
                 },
                 {
-                  "seq": 3,
+                  "seq": 2,
                   "compaction": "6-bit",
                   "characterSet": "(?:[A-Z0-9-]|%2F|%23)*",
                   "name": "urnEncodedCompPartRef"
@@ -860,7 +860,7 @@
               "field": [
                 {
                   "seq": 1,
-                  "characterSet": "[A-Z0-9/#-]]*",
+                  "characterSet": "[A-Z0-9/#-]*",
                   "name": "cpi",
                   "gcpOffset": 0
                 },
@@ -1021,7 +1021,7 @@
             {
               "optionKey": "12",
               "pattern": "^\\{\\s*\"8010\"\\s*:\\s*\"([0-9]{12}[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]{1,18})\"\\s*,\\s*\"8011\"\\s*:\\s*\"([0-9]{1,12})\"",
-              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' serial '\"}'",
+              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' cpiserial '\"}'",
               "aiSequence": [
                 "8010",
                 "8011"
@@ -1045,7 +1045,7 @@
             {
               "optionKey": "11",
               "pattern": "^\\{\\s*\"8010\"\\s*:\\s*\"([0-9]{11}[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]{1,19})\"\\s*,\\s*\"8011\"\\s*:\\s*\"([0-9]{1,12})\"",
-              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' serial '\"}'",
+              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' cpiserial '\"}'",
               "aiSequence": [
                 "8010",
                 "8011"
@@ -1069,7 +1069,7 @@
             {
               "optionKey": "10",
               "pattern": "^\\{\\s*\"8010\"\\s*:\\s*\"([0-9]{10}[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]{1,20})\"\\s*,\\s*\"8011\"\\s*:\\s*\"([0-9]{1,12})\"",
-              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' serial '\"}'",
+              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' cpiserial '\"}'",
               "aiSequence": [
                 "8010",
                 "8011"
@@ -1093,7 +1093,7 @@
             {
               "optionKey": "9",
               "pattern": "^\\{\\s*\"8010\"\\s*:\\s*\"([0-9]{9}[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]{1,21})\"\\s*,\\s*\"8011\"\\s*:\\s*\"([0-9]{1,12})\"",
-              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' serial '\"}'",
+              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' cpiserial '\"}'",
               "aiSequence": [
                 "8010",
                 "8011"
@@ -1117,7 +1117,7 @@
             {
               "optionKey": "8",
               "pattern": "^\\{\\s*\"8010\"\\s*:\\s*\"([0-9]{8}[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]{1,22})\"\\s*,\\s*\"8011\"\\s*:\\s*\"([0-9]{1,12})\"",
-              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' serial '\"}'",
+              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' cpiserial '\"}'",
               "aiSequence": [
                 "8010",
                 "8011"
@@ -1141,7 +1141,7 @@
             {
               "optionKey": "7",
               "pattern": "^\\{\\s*\"8010\"\\s*:\\s*\"([0-9]{7}[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]{1,23})\"\\s*,\\s*\"8011\"\\s*:\\s*\"([0-9]{1,12})\"",
-              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' serial '\"}'",
+              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' cpiserial '\"}'",
               "aiSequence": [
                 "8010",
                 "8011"
@@ -1165,7 +1165,7 @@
             {
               "optionKey": "6",
               "pattern": "^\\{\\s*\"8010\"\\s*:\\s*\"([0-9]{6}[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]{1,24})\"\\s*,\\s*\"8011\"\\s*:\\s*\"([0-9]{1,12})\"",
-              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' serial '\"}'",
+              "grammar": "'{\"8010\":\"' gs1companyprefix comppartref '\",\"8011\":\"' cpiserial '\"}'",
               "aiSequence": [
                 "8010",
                 "8011"

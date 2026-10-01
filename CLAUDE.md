@@ -54,8 +54,8 @@ Double-plus schemes like SGTIN++, SSCC++, etc. that:
 
 Two methods supported:
 1. **Code 40** (indicator bit 0): For uppercase-only hostnames
-   - 16 bits per 3 characters
-   - Character set: 0-9, A-Z, -, .
+   - 16 bits per 3 characters, r = 1600*i1 + 40*i2 + i3 + 1
+   - Character set per TDS table 14-8: PAD=0, A-Z=1-26, '-'=27, '.'=28, ':'=29, 0-9=30-39 (shared table `EncodedAICodec.UrnCode40Table`)
 
 2. **7-bit ASCII with optimizations** (indicator bit 1): For mixed-case hostnames
    - Uses optimization tables for common TLDs and subdomains
@@ -96,6 +96,13 @@ Most '++' schemes follow this structure:
 - Fixed fields (scheme-specific, BCD encoded)
 - Serial (variable-length alphanumeric)
 - Hostname (1-bit encoding + 6-bit length + data)
+
+## Validation Errors
+
+Besides the TDT 2.2 exception codes, the engine throws:
+- `TDTInvalidCheckDigit` — a GS1 key in the input has a wrong check digit (`Gs1CheckDigitValidator`)
+- `TDTInvalidSchemeDefinition` — invalid character-set regex, unknown rule function or encoding in a scheme file
+- `TDTUndefinedField` — a grammar field has no value (never silently omitted), or `dataToggle=1` without +AIDC data
 
 ## Known Issues
 
@@ -247,7 +254,7 @@ The build script auto-copies `LICENSING.md` from the repo root to `npm/LICENSE.m
 ### Caching Architecture
 The Translate() hot path uses several caches to avoid repeated work:
 - **Regex cache**: `ConcurrentDictionary<string, Regex>` in TDTEngine — compiled regex patterns shared across all engine instances
-- **Character set regex cache**: `ConcurrentDictionary<string, Regex?>` in RuleExecutor — caches ValidateCharacterset patterns (null = invalid pattern)
+- **Character set regex cache**: `ConcurrentDictionary<string, Regex?>` in RuleExecutor — caches ValidateCharacterset patterns (null = invalid pattern, reported as TDTInvalidSchemeDefinition)
 - **Grammar token cache**: `ConcurrentDictionary<string, GrammarToken[]>` in TDTEngine — parsed grammar strings cached as token arrays
 - **Pre-sorted fields/rules**: Option.Field sorted by Seq at load time; Level.ExtractRules/FormatRules pre-split and sorted at load time
 - **BinaryConverter lookup tables**: Static arrays for hex↔binary conversion (no per-character Convert calls)
@@ -307,26 +314,22 @@ The engine supports 7 output formats plus legacy aliases. Key notes:
 - **ELEMENT_STRING** is in the TDT 2.2 enum and the code's LevelType, but ZERO scheme JSON files define it — using it throws `TDTLevelNotFound`
 - **GS1_AI_JSON** replaced ELEMENT_STRING in TDT 2.1 as "a less ambiguous alternative"
 - **TEI** is only used by ADI-var (aerospace/defence)
-- **FormatAsAiJson** has hardcoded AI→field-name mapping that doesn't work for all schemes (GDTI returns `{}`, SGLN misses glnextension)
+- **GS1_AI_JSON** output is built from the scheme grammar like any other level; values are JSON-escaped and +AIDC data is added as extra members
 
 ## Important Implementation Notes
 
 ### '+' Scheme JSON Files
-The '+' scheme JSON files (SGTIN+.json, SSCC+.json, etc.) are from the GS1 standard and **should NOT be modified**. They support GS1 Digital Link URIs with ANY hostname, not just id.gs1.org.
+The '+' scheme JSON files (SGTIN+.json, SSCC+.json, etc.) are from the GS1 standard. Only change them to fix a verified error, and record it in `src/TagDataTranslation/Schemes/ERRATA.md`. They support GS1 Digital Link URIs with ANY hostname, not just id.gs1.org.
 
 ### '++' Scheme JSON Files
 The '++' scheme JSON files are custom implementations and **CAN be modified** as needed to match the TDS 2.3 specification.
 
 ### Scheme Selection Ambiguity
-When GS1_DIGITAL_LINK input is provided, both '+' and '++' schemes may match the URL pattern:
-- '+' schemes match URLs with any hostname (e.g., `https://id.gs1.org/01/...`)
-- '++' schemes also match URLs with any hostname and capture it for encoding
+Several schemes can match the same non-binary input. The engine sorts candidates by:
+1. For a Digital Link on `id.gs1.org` and for GS1_AI_JSON input (no custom hostname), '+' schemes before '++' schemes
+2. Longest `prefixMatch` (so a custom-host Digital Link selects the '++' scheme, prefix `https://`)
 
-The engine may select the '++' scheme due to more specific pattern matching. For '+' scheme tests:
-- Test GS1_DIGITAL_LINK as OUTPUT only (translate from BINARY/BARE_IDENTIFIER to GS1_DIGITAL_LINK)
-- Do NOT test GS1_DIGITAL_LINK as INPUT (ambiguous which scheme will be selected)
-
-Use `ExecuteTestsWithOutputOnly()` helper for '+' scheme tests with GS1_DIGITAL_LINK.
+CPI-var and CPI+ both match GS1_AI_JSON with `tagLength=var`; this is an open question for GS1 (TDT 2.3 review comment 5.1).
 
 ### Field Name Consistency
 Field names MUST match across all levels of a scheme:

@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using System.Linq;
 using System.Text;
 using TagDataTranslation.Models;
@@ -74,19 +75,26 @@ namespace TagDataTranslation.Encoding
                 return (null, 0);
             }
 
+            // TDS 2.3 section 14.5.13: the value is an unsigned integer of ceiling(L*log2(10)) bits, left-padded to L digits
             int length = Convert.ToInt32(binaryData.Substring(0, lengthIndicatorBits), 2);
-            int bitsConsumed = lengthIndicatorBits;
+            int valueBits = NumericStringBitLength(length);
 
-            var sb = new StringBuilder();
-            for (int i = 0; i < length && bitsConsumed + 4 <= binaryData.Length; i++)
+            if (binaryData.Length < lengthIndicatorBits + valueBits)
             {
-                int digit = Convert.ToInt32(binaryData.Substring(bitsConsumed, 4), 2);
-                sb.Append(digit);
-                bitsConsumed += 4;
+                return (null, 0);
             }
 
-            return (sb.ToString(), bitsConsumed);
+            var value = BinaryConverter.BinaryStringToBigInteger(binaryData.Substring(lengthIndicatorBits, valueBits));
+            string digits = value.ToString().PadLeft(length, '0');
+            if (digits.Length != length)
+            {
+                throw new TDTTranslationException("TDTFieldAboveMaximum");
+            }
+
+            return (digits, lengthIndicatorBits + valueBits);
         }
+
+        private static int NumericStringBitLength(int digits) => EncodedAICodec.NumericBitLength(digits);
 
         /// <summary>
         /// Decodes a delimited numeric field (TDS 2.3 section 14.5.5).
@@ -121,8 +129,8 @@ namespace TagDataTranslation.Encoding
         }
 
         /// <summary>
-        /// Encodes a variable-length numeric field (TDS 2.3).
-        /// Format: length indicator (bits) + 4-bit BCD digits
+        /// Encodes a variable-length numeric string without encoding indicator (TDS 2.3 section 14.5.13).
+        /// Format: length indicator (bits) + the digits as an unsigned integer of ceiling(L*log2(10)) bits
         /// </summary>
         public string EncodeVariableLengthNumericField(string value, VariableLengthFieldDefinition fieldDef)
         {
@@ -131,19 +139,15 @@ namespace TagDataTranslation.Encoding
                 return "";
             }
 
-            var sb = new StringBuilder();
             int lengthIndicatorBits = fieldDef.LengthIndicatorBits ?? 5;
-
-            sb.Append(Convert.ToString(value.Length, 2).PadLeft(lengthIndicatorBits, '0'));
-
-            foreach (char c in value)
+            if (!value.All(c => c >= '0' && c <= '9') || value.Length >= (1 << lengthIndicatorBits))
             {
-                if (char.IsDigit(c))
-                {
-                    int digit = c - '0';
-                    sb.Append(Convert.ToString(digit, 2).PadLeft(4, '0'));
-                }
+                throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
             }
+
+            var sb = new StringBuilder();
+            sb.Append(Convert.ToString(value.Length, 2).PadLeft(lengthIndicatorBits, '0'));
+            sb.Append(EncodedAICodec.ToBinaryString(BigInteger.Parse(value)).PadLeft(NumericStringBitLength(value.Length), '0'));
 
             return sb.ToString();
         }
@@ -193,7 +197,7 @@ namespace TagDataTranslation.Encoding
         {
             return encodingIndicator switch
             {
-                0 => tableB?.GetBitCount(charCount, 0) ?? (int)Math.Ceiling(charCount * 3.32),
+                0 => tableB?.GetBitCount(charCount, 0) ?? EncodedAICodec.NumericBitLength(charCount),
                 1 => charCount * 4,
                 2 => charCount * 4,
                 3 => charCount * 6,
@@ -224,25 +228,21 @@ namespace TagDataTranslation.Encoding
                 i++;
             }
 
-            // if there are remaining non-digit characters, encode them
-            if (i < value.Length)
+            if (i == value.Length)
             {
+                // terminator: the string is all-numeric
+                bits.Append("1111");
+            }
+            else
+            {
+                // delimiter, then the remainder using the variable-length alphanumeric method (3-bit indicator, 5-bit length)
                 string remaining = value.Substring(i);
+                var (encodingIndicator, dataBits) = EncodedAICodec.ChooseOptimalEncoding(remaining, null);
 
-                // mode switch nibble E (1110) = 7-bit ASCII mode
                 bits.Append("1110");
-
-                // encoding indicator (3 bits): 100 = 7-bit ASCII
-                bits.Append("100");
-
-                // length indicator (5 bits)
+                bits.Append(Convert.ToString(encodingIndicator, 2).PadLeft(3, '0'));
                 bits.Append(Convert.ToString(remaining.Length, 2).PadLeft(5, '0'));
-
-                // 7-bit ASCII character data
-                foreach (char c in remaining)
-                {
-                    bits.Append(Convert.ToString((int)c, 2).PadLeft(7, '0'));
-                }
+                bits.Append(dataBits);
             }
 
             return bits.ToString();
@@ -272,21 +272,19 @@ namespace TagDataTranslation.Encoding
                 }
                 else if (nibble == 14)
                 {
+                    // delimiter, then a variable-length alphanumeric remainder: 3-bit indicator, 5-bit length, data
                     bitPosition += 4;
+                    if (bitPosition + 8 > binaryData.Length) return (null, 0);
 
-                    if (bitPosition + 3 > binaryData.Length) break;
-                    bitPosition += 3;
+                    int encodingIndicator = Convert.ToInt32(binaryData.Substring(bitPosition, 3), 2);
+                    int length = Convert.ToInt32(binaryData.Substring(bitPosition + 3, 5), 2);
+                    bitPosition += 8;
 
-                    if (bitPosition + 5 > binaryData.Length) break;
-                    int length = Convert.ToInt32(binaryData.Substring(bitPosition, 5), 2);
-                    bitPosition += 5;
+                    int dataBits = EncodedAICodec.DataBitLength(encodingIndicator, length);
+                    if (bitPosition + dataBits > binaryData.Length) return (null, 0);
 
-                    for (int i = 0; i < length && bitPosition + 7 <= binaryData.Length; i++)
-                    {
-                        int code = Convert.ToInt32(binaryData.Substring(bitPosition, 7), 2);
-                        bitPosition += 7;
-                        result.Append((char)code);
-                    }
+                    result.Append(EncodedAICodec.DecodeByEncodingIndicator(binaryData.Substring(bitPosition, dataBits), length, encodingIndicator));
+                    bitPosition += dataBits;
                     break;
                 }
                 else if (nibble == 15)

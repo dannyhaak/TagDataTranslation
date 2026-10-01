@@ -88,6 +88,32 @@
           ]
         },
         {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"8017\"\\s*:\\s*\"([0-9]{18})\"",
+              "grammar": "'{\"8017\":\"' gsrnp '\"}'",
+              "aiSequence": [
+                "8017"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "999999999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 18,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gsrnp"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "type": "GS1_DIGITAL_LINK",
           "prefixMatch": "https://",
           "requiredFormattingParameters": "hostname",

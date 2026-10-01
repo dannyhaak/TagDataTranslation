@@ -90,13 +90,42 @@
           ]
         },
         {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"8010\"\\s*:\\s*\"([0-9]{4}[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]{1,26})\"\\s*,\\s*\"8011\"\\s*:\\s*\"([0-9]{1,12})\"",
+              "grammar": "'{\"8010\":\"' cpi '\",\"8011\":\"' serial '\"}'",
+              "aiSequence": [
+                "8010",
+                "8011"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "characterSet": "[\\x23\\x2D\\x2F\\x30-\\x39\\x41-\\x5A]*",
+                  "name": "cpi"
+                },
+                {
+                  "seq": 2,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "999999999999",
+                  "characterSet": "[0-9]*",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "type": "GS1_DIGITAL_LINK",
           "prefixMatch": "https://",
           "requiredFormattingParameters": "hostname",
           "option": [
             {
               "optionKey": "1",
-              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/8010\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,30})\\/8011\\/([0-9]{1,12})(?:\\?|$)",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/8010\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,30})\\/8011\\/([0-9]{1,12})(?:\\?|$)",
               "grammar": "'https://' hostname '/8010/' urlEscapedCpi '/8011/' serial",
               "aiSequence": [
                 "8010",
@@ -110,7 +139,7 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedCpi"
                 },
                 {
@@ -135,7 +164,7 @@
               "inputFormat": "STRING",
               "seq": 1,
               "newFieldName": "urlEscapedCpi",
-              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
               "function": "URLENCODE(cpi)"
             }
           ]

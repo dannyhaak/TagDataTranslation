@@ -238,6 +238,12 @@ public class Field
     public string? PadDir { get; set; }
 
     /// <summary>
+    /// Value that stands for an absent optional component, e.g. "0" for the GLN extension (254) in SGLN schemes.
+    /// </summary>
+    [JsonPropertyName("valueIfNull")]
+    public string? ValueIfNull { get; set; }
+
+    /// <summary>
     /// Compaction type for variable-length fields.
     /// </summary>
     [JsonPropertyName("compaction")]

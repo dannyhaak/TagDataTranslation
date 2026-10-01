@@ -417,8 +417,14 @@ namespace TagDataTranslation
             Scheme? inputScheme = null;
             Option? inputOption = null;
 
-            // Sort by longest prefix matches
-            inputLevelsSchemes = inputLevelsSchemes.OrderByDescending(i => i.Key.PrefixMatch?.Length ?? 0).ToDictionary(x => x.Key, y => y.Value);
+            // Sort by longest prefix matches. A Digital Link on the canonical id.gs1.org stem and a GS1_AI_JSON
+            // value carry no custom hostname, so the '+' schemes are preferred over the '++' schemes for them.
+            bool canonicalDigitalLink = IsCanonicalDigitalLink(epcIdentifier);
+            inputLevelsSchemes = inputLevelsSchemes
+                .OrderBy(i => i.Value.SupportsHostname &&
+                              (canonicalDigitalLink || i.Key.Type == "GS1_AI_JSON") ? 1 : 0)
+                .ThenByDescending(i => i.Key.PrefixMatch?.Length ?? 0)
+                .ToDictionary(x => x.Key, y => y.Value);
 
             foreach (var kvp in inputLevelsSchemes)
             {
@@ -515,6 +521,15 @@ namespace TagDataTranslation
                 var inputField = fieldsSorted[i - 1];
                 string name = inputField.Name ?? "";
                 string variableElement = match.Groups[i].Value;
+                if (!match.Groups[i].Success && inputField.ValueIfNull != null)
+                {
+                    // an absent optional component takes the value given by valueIfNull (TDT section 3.9)
+                    variableElement = inputField.ValueIfNull;
+                }
+                if (inputLevelType == LevelType.GS1_AI_JSON)
+                {
+                    variableElement = JsonUnescape(variableElement);
+                }
 
                 // Validate character set
                 if (inputField.CharacterSet != null)
@@ -630,6 +645,16 @@ namespace TagDataTranslation
                 parameterDictionary[name] = variableElement;
             }
 
+            // 4a. GS1 Digital Link query string AIs that are not part of the EPC become +AIDC data
+            if (inputLevelType == LevelType.GS1_DIGITAL_LINK)
+            {
+                ExtractDigitalLinkQueryAids(epcIdentifier, inputOption, parameterDictionary);
+            }
+            else if (inputLevelType == LevelType.GS1_AI_JSON)
+            {
+                ExtractAiJsonAdditionalAis(epcIdentifier, inputOption, parameterDictionary);
+            }
+
             // 4b. DECODE ENCODED AI DATA (for "+" schemes with BINARY input)
             int encodedAIBitsConsumed = 0;
             if (inputLevelType == LevelType.BINARY && inputOption.EncodedAI != null && inputOption.EncodedAI.Count > 0)
@@ -725,6 +750,9 @@ namespace TagDataTranslation
                 RuleExecutor.ExecuteRules(inputLevel.ExtractRules, parameterDictionary);
             }
 
+            // 5.1. Reject GS1 identification keys with a wrong check digit
+            Gs1CheckDigitValidator.Validate(epcIdentifier, inputLevelType, inputScheme.Name ?? "", parameterDictionary);
+
             // 5.5. Handle scheme-specific field conversions for '++' schemes
             var schemeName = parameterDictionary.GetValueOrDefault("schemeName", "");
             if (schemeName == "DSGTIN++")
@@ -807,6 +835,21 @@ namespace TagDataTranslation
                 }
             }
 
+            // 6.5. The +AIDC data toggle must reflect whether +AIDC data actually follows the EPC
+            if (outputFormatType == LevelType.BINARY &&
+                (outputOption.Grammar ?? "").Contains("dataToggle", StringComparison.OrdinalIgnoreCase))
+            {
+                bool hasAidc = CollectAidcEntries(parameterDictionary).Count > 0;
+                parameterDictionary.TryGetValue("datatoggle", out var suppliedToggle);
+                if (!hasAidc && suppliedToggle == "1")
+                {
+                    throw new TDTTranslationException("TDTUndefinedField");
+                }
+                string toggle = hasAidc ? "1" : "0";
+                parameterDictionary["datatoggle"] = toggle;
+                parameterDictionary["dataToggle"] = toggle;
+            }
+
             // 7. PERFORM FORMAT RULES
             if (outputLevel.FormatRules != null)
             {
@@ -824,7 +867,7 @@ namespace TagDataTranslation
             }
 
             // 8. BUILD OUTPUT VALUE FROM GRAMMAR STRING
-            string grammarstring = outputOption.Grammar ?? "";
+            string grammarstring = ResolveConditionalGrammar(outputOption.Grammar ?? "", outputOption, parameterDictionary);
 
             StringBuilder outputString = new StringBuilder(128);
 
@@ -851,22 +894,26 @@ namespace TagDataTranslation
                     // Handle serialEncoded token for "++" schemes (TDS 2.3)
                     if (s.Equals("serialEncoded", StringComparison.OrdinalIgnoreCase) && outputOption.VariableLengthField != null)
                     {
-                        if (parameterDictionary.TryGetValue(outputOption.VariableLengthField.Name ?? "serial", out var serialValue))
+                        if (!parameterDictionary.TryGetValue(outputOption.VariableLengthField.Name ?? "serial", out var serialValue) || string.IsNullOrEmpty(serialValue))
                         {
-                            var serialBits = variableLengthFieldCodec.EncodeVariableLengthField(serialValue, outputOption.VariableLengthField);
-                            outputString.Append(serialBits);
+                            // a missing component would produce an invalid EPC
+                            throw new TDTTranslationException("TDTUndefinedField");
                         }
+                        var serialBits = variableLengthFieldCodec.EncodeVariableLengthField(serialValue, outputOption.VariableLengthField);
+                        outputString.Append(serialBits);
                         continue;
                     }
 
                     // Handle serialNumericEncoded token for "++" schemes with numeric serial (SGCN++, CPI++)
                     if (s.Equals("serialNumericEncoded", StringComparison.OrdinalIgnoreCase) && outputOption.VariableLengthNumericField != null)
                     {
-                        if (parameterDictionary.TryGetValue(outputOption.VariableLengthNumericField.Name ?? "serialNumber", out var serialValue))
+                        if (!parameterDictionary.TryGetValue(outputOption.VariableLengthNumericField.Name ?? "serialNumber", out var serialValue) || string.IsNullOrEmpty(serialValue))
                         {
-                            var serialBits = variableLengthFieldCodec.EncodeVariableLengthNumericField(serialValue, outputOption.VariableLengthNumericField);
-                            outputString.Append(serialBits);
+                            // a missing component would produce an invalid EPC
+                            throw new TDTTranslationException("TDTUndefinedField");
                         }
+                        var serialBits = variableLengthFieldCodec.EncodeVariableLengthNumericField(serialValue, outputOption.VariableLengthNumericField);
+                        outputString.Append(serialBits);
                         continue;
                     }
 
@@ -880,31 +927,37 @@ namespace TagDataTranslation
                         if (outputOption.VariableLengthField != null &&
                             outputOption.VariableLengthField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
                         {
-                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            if (!parameterDictionary.TryGetValue(fieldName, out var fieldValue) || string.IsNullOrEmpty(fieldValue))
                             {
-                                var bits = variableLengthFieldCodec.EncodeVariableLengthField(fieldValue, outputOption.VariableLengthField);
-                                outputString.Append(bits);
+                                // a missing component would produce an invalid EPC
+                                throw new TDTTranslationException("TDTUndefinedField");
                             }
+                            var bits = variableLengthFieldCodec.EncodeVariableLengthField(fieldValue, outputOption.VariableLengthField);
+                            outputString.Append(bits);
                             continue;
                         }
                         else if (outputOption.VariableLengthNumericField != null &&
                                  outputOption.VariableLengthNumericField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
                         {
-                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            if (!parameterDictionary.TryGetValue(fieldName, out var fieldValue) || string.IsNullOrEmpty(fieldValue))
                             {
-                                var bits = variableLengthFieldCodec.EncodeVariableLengthNumericField(fieldValue, outputOption.VariableLengthNumericField);
-                                outputString.Append(bits);
+                                // a missing component would produce an invalid EPC
+                                throw new TDTTranslationException("TDTUndefinedField");
                             }
+                            var bits = variableLengthFieldCodec.EncodeVariableLengthNumericField(fieldValue, outputOption.VariableLengthNumericField);
+                            outputString.Append(bits);
                             continue;
                         }
                         else if (outputOption.DelimitedNumericField != null &&
                                  outputOption.DelimitedNumericField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
                         {
-                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            if (!parameterDictionary.TryGetValue(fieldName, out var fieldValue) || string.IsNullOrEmpty(fieldValue))
                             {
-                                var bits = variableLengthFieldCodec.EncodeDelimitedNumericField(fieldValue, outputOption.DelimitedNumericField);
-                                outputString.Append(bits);
+                                // a missing component would produce an invalid EPC
+                                throw new TDTTranslationException("TDTUndefinedField");
                             }
+                            var bits = variableLengthFieldCodec.EncodeDelimitedNumericField(fieldValue, outputOption.DelimitedNumericField);
+                            outputString.Append(bits);
                             continue;
                         }
                     }
@@ -919,11 +972,13 @@ namespace TagDataTranslation
                         if (outputOption.DelimitedNumericField != null &&
                             outputOption.DelimitedNumericField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
                         {
-                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            if (!parameterDictionary.TryGetValue(fieldName, out var fieldValue) || string.IsNullOrEmpty(fieldValue))
                             {
-                                var bits = variableLengthFieldCodec.EncodeDelimitedNumericField(fieldValue, outputOption.DelimitedNumericField);
-                                outputString.Append(bits);
+                                // a missing component would produce an invalid EPC
+                                throw new TDTTranslationException("TDTUndefinedField");
                             }
+                            var bits = variableLengthFieldCodec.EncodeDelimitedNumericField(fieldValue, outputOption.DelimitedNumericField);
+                            outputString.Append(bits);
                             continue;
                         }
                     }
@@ -938,11 +993,13 @@ namespace TagDataTranslation
                         if (outputOption.VariableLengthNumericField != null &&
                             outputOption.VariableLengthNumericField.Name?.Equals(fieldName, StringComparison.OrdinalIgnoreCase) == true)
                         {
-                            if (parameterDictionary.TryGetValue(fieldName, out var fieldValue))
+                            if (!parameterDictionary.TryGetValue(fieldName, out var fieldValue) || string.IsNullOrEmpty(fieldValue))
                             {
-                                var bits = variableLengthFieldCodec.EncodeVariableLengthNumericField(fieldValue, outputOption.VariableLengthNumericField);
-                                outputString.Append(bits);
+                                // a missing component would produce an invalid EPC
+                                throw new TDTTranslationException("TDTUndefinedField");
                             }
+                            var bits = variableLengthFieldCodec.EncodeVariableLengthNumericField(fieldValue, outputOption.VariableLengthNumericField);
+                            outputString.Append(bits);
                             continue;
                         }
                     }
@@ -950,11 +1007,13 @@ namespace TagDataTranslation
                     // Handle hostnameEncoded token for "++" schemes (TDS 2.3)
                     if (s.Equals("hostnameEncoded", StringComparison.OrdinalIgnoreCase) && outputOption.HostnameField != null)
                     {
-                        if (parameterDictionary.TryGetValue(outputOption.HostnameField.Name ?? "hostname", out var hostnameValue))
+                        if (!parameterDictionary.TryGetValue(outputOption.HostnameField.Name ?? "hostname", out var hostnameValue) || string.IsNullOrEmpty(hostnameValue))
                         {
-                            var hostnameBits = HostnameEncoder.Encode(hostnameValue);
-                            outputString.Append(hostnameBits);
+                            // a missing component would produce an invalid EPC
+                            throw new TDTTranslationException("TDTUndefinedField");
                         }
+                        var hostnameBits = HostnameEncoder.Encode(hostnameValue);
+                        outputString.Append(hostnameBits);
                         continue;
                     }
 
@@ -969,7 +1028,8 @@ namespace TagDataTranslation
                         }
                         else
                         {
-                            return null;
+                            // the grammar refers to a field whose value is unknown
+                            throw new TDTTranslationException("TDTUndefinedField");
                         }
                     }
 
@@ -978,6 +1038,16 @@ namespace TagDataTranslation
                     {
                         var tagEncodingField = FindCorrespondingField(outputScheme!, "TAG_ENCODING", outputOption.OptionKey ?? "", s);
                         var binaryField = outputOption.Field?.FirstOrDefault(f => f.Name == s);
+
+                        // pre-TDS 2.0 schemes encode numeric serials as integers, so leading zeros cannot be represented
+                        bool integerField = binaryField != null && binaryField.BitLength.HasValue &&
+                                            string.IsNullOrEmpty(binaryField.Compaction) && string.IsNullOrEmpty(binaryField.Encoding) &&
+                                            string.IsNullOrEmpty(binaryField.PadChar) && string.IsNullOrEmpty(tagEncodingField?.PadChar);
+                        if (integerField && outputScheme?.Name?.Contains('+') != true &&
+                            variableElement != null && variableElement.Length > 1 && variableElement[0] == '0')
+                        {
+                            throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
+                        }
 
                         variableElement = HandlePaddingOnEncode(variableElement ?? "", tagEncodingField, binaryField);
 
@@ -990,13 +1060,8 @@ namespace TagDataTranslation
                             }
                             else
                             {
-                                // Unknown encoding, treat as numeric
-                                Int64 result;
-                                if (!Int64.TryParse(variableElement, out result))
-                                {
-                                    result = 0;
-                                }
-                                variableElement = Convert.ToString(result, 2);
+                                // unknown encoding in the scheme definition
+                                throw new TDTTranslationException("TDTInvalidSchemeDefinition");
                             }
                         }
                         else if (binaryField != null && !string.IsNullOrEmpty(binaryField.Compaction))
@@ -1025,24 +1090,30 @@ namespace TagDataTranslation
                                 }
                                 variableElement = bcdBuilder.ToString();
                             }
-                            else if (BigInteger.TryParse(variableElement, out var result))
+                            else if (BigInteger.TryParse(variableElement.Length == 0 ? "0" : variableElement, out var result))
                             {
-                                // Regular binary encoding
+                                // Regular binary encoding; an empty value is zero once zero padding has been stripped (TDT figure 3-5)
                                 variableElement = EncodedAICodec.ToBinaryString(result).PadLeft(binaryField.BitLength.Value, '0');
                             }
                             else
                             {
-                                variableElement = new string('0', binaryField.BitLength.Value);
+                                // a non-numeric value must not be silently encoded as zero
+                                throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
                             }
                         }
                         else
                         {
-                            BigInteger result;
-                            if (!BigInteger.TryParse(variableElement, out result))
+                            if (!BigInteger.TryParse(variableElement.Length == 0 ? "0" : variableElement, out var result))
                             {
-                                result = 0;
+                                throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
                             }
                             variableElement = EncodedAICodec.ToBinaryString(result);
+                        }
+
+                        // a value that needs more bits than the field provides would corrupt the following fields
+                        if (binaryField?.BitLength != null && variableElement.Length > binaryField.BitLength.Value)
+                        {
+                            throw new TDTTranslationException("TDTNumericOverflow");
                         }
 
                         // Handle bit padding for non-BCD fields
@@ -1097,6 +1168,11 @@ namespace TagDataTranslation
                     // URL encoding for GS1_DIGITAL_LINK is handled by rules (URLENCODE function)
                     // DO NOT auto-encode here - the grammar may include uriStem which should not be encoded
 
+                    if (outputFormatType == LevelType.GS1_AI_JSON)
+                    {
+                        variableElement = JsonEscape(variableElement);
+                    }
+
                     outputString.Append(variableElement);
                 }
             }
@@ -1129,10 +1205,10 @@ namespace TagDataTranslation
                 }
             }
 
-            // Handle special outputs
+            // Add +AIDC data to the JSON object built from the grammar
             if (outputFormatType == LevelType.GS1_AI_JSON)
             {
-                return FormatAsAiJson(parameterDictionary, outputOption);
+                return AppendAidcToAiJson(outputString.ToString(), CollectAidcEntries(parameterDictionary));
             }
 
             // Append AIDC data to non-BINARY output formats
@@ -1486,53 +1562,137 @@ namespace TagDataTranslation
 
         #region Helper Methods - Output Formatting
 
-        private string FormatAsAiJson(Dictionary<string, string> parameterDictionary, Option outputOption)
+        /// <summary>
+        /// Resolves square-bracketed conditional parts of a grammar (TDT section 3.2). A conditional part is
+        /// omitted when any field it refers to has no value or has the value given by that field's valueIfNull.
+        /// </summary>
+        internal static string ResolveConditionalGrammar(string grammar, Option option, Dictionary<string, string> parameterDictionary)
         {
-            var aiSequence = outputOption.AiSequence ?? new List<string>();
-            var jsonObject = new Dictionary<string, string>();
+            if (grammar.IndexOf('[') < 0) return grammar;
 
-            // Map field names to AI codes
-            var aiToFieldMapping = new Dictionary<string, string>
+            var sb = new StringBuilder(grammar.Length);
+            bool inQuote = false;
+            for (int i = 0; i < grammar.Length; i++)
             {
-                { "01", "gtin" },
-                { "21", "serial" },
-                { "10", "batchlot" },
-                { "17", "expirydate" },
-                { "22", "cpv" },
-                { "00", "sscc" },
-                { "414", "gln" },
-                { "254", "glnextension" },
-                { "8003", "grai" },
-                { "8004", "giai" },
-                { "8017", "gsrnp" },
-                { "8018", "gsrn" },
-                { "253", "gdti" },
-                { "255", "gcn" },
-                { "8006", "itip" },
-                { "35", "generalmanager" },
-                { "36", "objectclass" },
-                { "37", "serialnumber" }
-            };
+                char c = grammar[i];
+                if (c == '\'') inQuote = !inQuote;
 
-            foreach (var ai in aiSequence)
-            {
-                if (aiToFieldMapping.TryGetValue(ai, out string? fieldName))
+                if (inQuote || c != '[')
                 {
-                    if (parameterDictionary.TryGetValue(fieldName!, out string? fieldValue))
-                    {
-                        jsonObject[ai] = fieldValue;
-                    }
+                    sb.Append(c);
+                    continue;
                 }
-            }
 
-            // include AIDC entries
-            var aidcEntries = CollectAidcEntries(parameterDictionary);
+                int close = -1;
+                bool quoted = false;
+                for (int j = i + 1; j < grammar.Length; j++)
+                {
+                    if (grammar[j] == '\'') quoted = !quoted;
+                    else if (!quoted && grammar[j] == ']') { close = j; break; }
+                }
+                if (close < 0) throw new TDTTranslationException("TDTInvalidSchemeDefinition");
+
+                string part = grammar.Substring(i + 1, close - i - 1);
+                bool include = ParseGrammarTokens(part).Where(t => !t.IsLiteral).All(t =>
+                {
+                    string name = t.Value.Trim();
+                    if (!parameterDictionary.TryGetValue(name, out var value) || string.IsNullOrEmpty(value)) return false;
+                    var field = option.Field?.FirstOrDefault(f => f.Name == name);
+                    return field?.ValueIfNull == null || value != field.ValueIfNull;
+                });
+
+                if (include) sb.Append(' ').Append(part).Append(' ');
+                i = close;
+            }
+            return sb.ToString();
+        }
+
+        private static string JsonEscape(string value) =>
+            value.Replace("\\", "\\\\").Replace("\"", "\\\"");
+
+        private static string JsonUnescape(string value) =>
+            value.Replace("\\\"", "\"").Replace("\\\\", "\\");
+
+        /// <summary>
+        /// Inserts +AIDC data as additional members of the GS1_AI_JSON object built from the grammar.
+        /// </summary>
+        private static string AppendAidcToAiJson(string json, List<Models.AidcEntry> aidcEntries)
+        {
+            if (aidcEntries.Count == 0) return json;
+
+            int close = json.LastIndexOf('}');
+            if (close < 0) throw new TDTTranslationException("TDTInvalidSchemeDefinition");
+
+            var sb = new StringBuilder(json.Substring(0, close));
+            bool empty = sb.ToString().TrimEnd().EndsWith("{");
             foreach (var entry in aidcEntries)
             {
-                jsonObject[entry.AI] = entry.Value;
+                if (!empty) sb.Append(',');
+                sb.Append('"').Append(entry.AI).Append("\":\"").Append(JsonEscape(entry.Value)).Append('"');
+                empty = false;
+            }
+            sb.Append(json.Substring(close));
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Stores GS1 Application Identifiers in a GS1_AI_JSON input that are not part of the EPC as aidc_* parameters.
+        /// </summary>
+        private static void ExtractAiJsonAdditionalAis(string input, Option option, Dictionary<string, string> parameterDictionary)
+        {
+            JsonDocument doc;
+            try
+            {
+                doc = JsonDocument.Parse(input);
+            }
+            catch (JsonException)
+            {
+                throw new TDTTranslationException("TDTOptionNotFound");
             }
 
-            return JsonSerializer.Serialize(jsonObject, TdtJsonContext.Default.DictionaryStringString);
+            using (doc)
+            {
+                if (doc.RootElement.ValueKind != JsonValueKind.Object) return;
+                var encodedInEpc = new HashSet<string>(option.AiSequence ?? new List<string>());
+                foreach (var property in doc.RootElement.EnumerateObject())
+                {
+                    if (encodedInEpc.Contains(property.Name)) continue;
+                    if (property.Value.ValueKind != JsonValueKind.String)
+                        throw new TDTTranslationException("TDTFieldOutsideCharacterSet");
+                    parameterDictionary[$"aidc_{property.Name}"] = property.Value.GetString()!;
+                }
+            }
+        }
+
+        private static bool IsCanonicalDigitalLink(string input) =>
+            input.StartsWith("https://id.gs1.org/", StringComparison.OrdinalIgnoreCase) ||
+            input.StartsWith("http://id.gs1.org/", StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Stores GS1 Application Identifiers from the Digital Link query string as aidc_* parameters,
+        /// skipping those already encoded within the EPC (listed in the option's aiSequence).
+        /// </summary>
+        private static void ExtractDigitalLinkQueryAids(string input, Option option, Dictionary<string, string> parameterDictionary)
+        {
+            int queryStart = input.IndexOf('?');
+            if (queryStart < 0) return;
+
+            var encodedInEpc = new HashSet<string>(option.AiSequence ?? new List<string>());
+            string query = input.Substring(queryStart + 1);
+            int fragment = query.IndexOf('#');
+            if (fragment >= 0) query = query.Substring(0, fragment);
+
+            foreach (var pair in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
+            {
+                int eq = pair.IndexOf('=');
+                if (eq <= 0) continue;
+
+                string key = pair.Substring(0, eq);
+                if (key.Length < 2 || key.Length > 4 || !key.All(char.IsAsciiDigit)) continue;
+                if (encodedInEpc.Contains(key)) continue;
+
+                parameterDictionary[$"aidc_{key}"] = Uri.UnescapeDataString(pair.Substring(eq + 1));
+            }
         }
 
         /// <summary>

@@ -905,7 +905,7 @@
             {
               "optionKey": "12",
               "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -921,14 +921,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "11",
               "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -944,14 +945,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "10",
               "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -967,14 +969,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "9",
               "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -990,14 +993,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "8",
               "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1013,14 +1017,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "7",
               "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1036,14 +1041,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "6",
               "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1059,7 +1065,8 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             }
@@ -1117,8 +1124,8 @@
           "option": [
             {
               "optionKey": "12",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1138,14 +1145,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "11",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1165,14 +1173,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "10",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1192,14 +1201,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "9",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1219,14 +1229,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "8",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1246,14 +1257,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "7",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1273,14 +1285,15 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "6",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1300,7 +1313,8 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             }
@@ -1359,8 +1373,8 @@
           "option": [
             {
               "optionKey": "12",
-              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' urlEscapedSerial",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' urlEscapedSerial]",
               "field": [
                 {
                   "seq": 1,
@@ -1375,8 +1389,9 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
-                  "name": "urlEscapedSerial"
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1386,8 +1401,8 @@
             },
             {
               "optionKey": "11",
-              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' urlEscapedSerial",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' urlEscapedSerial]",
               "field": [
                 {
                   "seq": 1,
@@ -1402,8 +1417,9 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
-                  "name": "urlEscapedSerial"
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1413,8 +1429,8 @@
             },
             {
               "optionKey": "10",
-              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' urlEscapedSerial",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' urlEscapedSerial]",
               "field": [
                 {
                   "seq": 1,
@@ -1429,8 +1445,9 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
-                  "name": "urlEscapedSerial"
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1440,8 +1457,8 @@
             },
             {
               "optionKey": "9",
-              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' urlEscapedSerial",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' urlEscapedSerial]",
               "field": [
                 {
                   "seq": 1,
@@ -1456,8 +1473,9 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
-                  "name": "urlEscapedSerial"
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1467,8 +1485,8 @@
             },
             {
               "optionKey": "8",
-              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' urlEscapedSerial",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' urlEscapedSerial]",
               "field": [
                 {
                   "seq": 1,
@@ -1483,8 +1501,9 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
-                  "name": "urlEscapedSerial"
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1494,8 +1513,8 @@
             },
             {
               "optionKey": "7",
-              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' urlEscapedSerial",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' urlEscapedSerial]",
               "field": [
                 {
                   "seq": 1,
@@ -1510,8 +1529,9 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
-                  "name": "urlEscapedSerial"
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1521,8 +1541,8 @@
             },
             {
               "optionKey": "6",
-              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' urlEscapedSerial",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' urlEscapedSerial]",
               "field": [
                 {
                   "seq": 1,
@@ -1537,8 +1557,9 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
-                  "name": "urlEscapedSerial"
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1604,7 +1625,7 @@
               "inputFormat": "STRING",
               "seq": 3,
               "newFieldName": "urlEscapedSerial",
-              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
               "function": "URLENCODE(serial)"
             }
           ],

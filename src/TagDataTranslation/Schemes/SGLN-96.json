@@ -904,7 +904,7 @@
             {
               "optionKey": "12",
               "pattern": "^gln=([0-9]{13})(?:;serial=([0-9]{1,13}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -922,14 +922,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "11",
               "pattern": "^gln=([0-9]{13})(?:;serial=([0-9]{1,13}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -947,14 +948,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "10",
               "pattern": "^gln=([0-9]{13})(?:;serial=([0-9]{1,13}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -972,14 +974,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "9",
               "pattern": "^gln=([0-9]{13})(?:;serial=([0-9]{1,13}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -997,14 +1000,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "8",
               "pattern": "^gln=([0-9]{13})(?:;serial=([0-9]{1,13}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1022,14 +1026,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "7",
               "pattern": "^gln=([0-9]{13})(?:;serial=([0-9]{1,13}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1047,14 +1052,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "6",
               "pattern": "^gln=([0-9]{13})(?:;serial=([0-9]{1,13}))?$",
-              "grammar": "'gln=' gs1companyprefix locationref checkdigit ';serial=' serial",
+              "grammar": "'gln=' gs1companyprefix locationref checkdigit [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1072,7 +1078,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             }
@@ -1130,8 +1137,8 @@
           "option": [
             {
               "optionKey": "12",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1153,14 +1160,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "11",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1182,14 +1190,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "10",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1211,14 +1220,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "9",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1240,14 +1250,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "8",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1269,14 +1280,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "7",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1298,14 +1310,15 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             },
             {
               "optionKey": "6",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\"",
-              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"([0-9]{1,13})\")?",
+              "grammar": "'{\"414\":\"' gs1companyprefix locationref checkdigit ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -1327,7 +1340,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             }
@@ -1387,7 +1401,7 @@
             {
               "optionKey": "12",
               "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/([0-9]{1,13}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' serial",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1405,7 +1419,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1416,7 +1431,7 @@
             {
               "optionKey": "11",
               "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/([0-9]{1,13}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' serial",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1434,7 +1449,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1445,7 +1461,7 @@
             {
               "optionKey": "10",
               "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/([0-9]{1,13}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' serial",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1463,7 +1479,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1474,7 +1491,7 @@
             {
               "optionKey": "9",
               "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/([0-9]{1,13}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' serial",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1492,7 +1509,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1503,7 +1521,7 @@
             {
               "optionKey": "8",
               "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/([0-9]{1,13}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' serial",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1521,7 +1539,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1532,7 +1551,7 @@
             {
               "optionKey": "7",
               "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/([0-9]{1,13}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' serial",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1550,7 +1569,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -1561,7 +1581,7 @@
             {
               "optionKey": "6",
               "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/([0-9]{1,13}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit '/254/' serial",
+              "grammar": "uriStem '/414/' gs1companyprefix locationref checkdigit ['/254/' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -1579,7 +1599,8 @@
                   "decimalMinimum": "0",
                   "decimalMaximum": "2199023255551",
                   "characterSet": "[0-9]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [

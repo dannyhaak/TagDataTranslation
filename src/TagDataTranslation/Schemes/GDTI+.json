@@ -92,12 +92,12 @@
           "option": [
             {
               "optionKey": "1",
-              "pattern": "\\/253\\/([0-9]{13}(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,17})(?:\\?|$)",
+              "pattern": "\\/253\\/([0-9]{13}(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,17})(?:\\?|$)",
               "grammar": "uriStem '/253/' urlEscapedGdti ",
               "field": [
                 {
                   "seq": 1,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedGdti"
                 }
               ],
@@ -120,7 +120,7 @@
               "inputFormat": "STRING",
               "seq": 1,
               "newFieldName": "urlEscapedGdti",
-              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
               "function": "URLENCODE(gdti)"
             }
           ],

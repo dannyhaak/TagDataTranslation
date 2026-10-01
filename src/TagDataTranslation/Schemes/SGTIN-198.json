@@ -1432,7 +1432,7 @@
           "option": [
             {
               "optionKey": "12",
-              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
               "grammar": "uriStem '/01/' indicatordigit gs1companyprefix itemrefremainder checkdigit '/21/' urlEscapedSerial",
               "field": [
                 {
@@ -1448,7 +1448,7 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedSerial"
                 }
               ],
@@ -1459,7 +1459,7 @@
             },
             {
               "optionKey": "11",
-              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
               "grammar": "uriStem '/01/' indicatordigit gs1companyprefix itemrefremainder checkdigit '/21/' urlEscapedSerial",
               "field": [
                 {
@@ -1475,7 +1475,7 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedSerial"
                 }
               ],
@@ -1486,7 +1486,7 @@
             },
             {
               "optionKey": "10",
-              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
               "grammar": "uriStem '/01/' indicatordigit gs1companyprefix itemrefremainder checkdigit '/21/' urlEscapedSerial",
               "field": [
                 {
@@ -1502,7 +1502,7 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedSerial"
                 }
               ],
@@ -1513,7 +1513,7 @@
             },
             {
               "optionKey": "9",
-              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
               "grammar": "uriStem '/01/' indicatordigit gs1companyprefix itemrefremainder checkdigit '/21/' urlEscapedSerial",
               "field": [
                 {
@@ -1529,7 +1529,7 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedSerial"
                 }
               ],
@@ -1540,7 +1540,7 @@
             },
             {
               "optionKey": "8",
-              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
               "grammar": "uriStem '/01/' indicatordigit gs1companyprefix itemrefremainder checkdigit '/21/' urlEscapedSerial",
               "field": [
                 {
@@ -1556,7 +1556,7 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedSerial"
                 }
               ],
@@ -1567,7 +1567,7 @@
             },
             {
               "optionKey": "7",
-              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
               "grammar": "uriStem '/01/' indicatordigit gs1companyprefix itemrefremainder checkdigit '/21/' urlEscapedSerial",
               "field": [
                 {
@@ -1583,7 +1583,7 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedSerial"
                 }
               ],
@@ -1594,7 +1594,7 @@
             },
             {
               "optionKey": "6",
-              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "pattern": "\\/01\\/([0-9]{14})\\/21\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
               "grammar": "uriStem '/01/' indicatordigit gs1companyprefix itemrefremainder checkdigit '/21/' urlEscapedSerial",
               "field": [
                 {
@@ -1610,7 +1610,7 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedSerial"
                 }
               ],
@@ -1711,7 +1711,7 @@
               "inputFormat": "STRING",
               "seq": 5,
               "newFieldName": "urlEscapedSerial",
-              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
               "function": "URLENCODE(serial)"
             }
           ]

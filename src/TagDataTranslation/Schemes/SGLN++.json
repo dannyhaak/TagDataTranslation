@@ -101,13 +101,46 @@
           ]
         },
         {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gln ['\",\"254\":\"' serial] '\"}'",
+              "aiSequence": [
+                "414",
+                "254"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gln"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[!%-?A-Z_a-z\\x22]*",
+                  "name": "serial",
+                  "valueIfNull": "0"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "type": "GS1_DIGITAL_LINK",
           "prefixMatch": "https://",
           "requiredFormattingParameters": "hostname",
           "option": [
             {
               "optionKey": "1",
-              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/414\\/([0-9]{13})\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
+              "pattern": "^https:\\/\\/([a-zA-Z0-9][a-zA-Z0-9.-]{0,62})\\/414\\/([0-9]{13})\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20})(?:\\?|$)",
               "grammar": "'https://' hostname '/414/' gln '/254/' urlEscapedExtension",
               "aiSequence": [
                 "414",
@@ -131,7 +164,7 @@
                 },
                 {
                   "seq": 3,
-                  "characterSet": "((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
                   "name": "urlEscapedExtension"
                 }
               ]
@@ -151,7 +184,7 @@
               "inputFormat": "STRING",
               "seq": 1,
               "newFieldName": "urlEscapedExtension",
-              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
               "function": "URLENCODE(serial)"
             }
           ]

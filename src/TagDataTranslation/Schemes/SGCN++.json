@@ -100,6 +100,37 @@
           ]
         },
         {
+          "type": "GS1_AI_JSON",
+          "prefixMatch": "{",
+          "option": [
+            {
+              "optionKey": "1",
+              "pattern": "^\\{\\s*\"255\"\\s*:\\s*\"([0-9]{13})([0-9]{1,12})\"",
+              "grammar": "'{\"255\":\"' gcn serial '\"}'",
+              "aiSequence": [
+                "255"
+              ],
+              "field": [
+                {
+                  "seq": 1,
+                  "decimalMinimum": "0",
+                  "decimalMaximum": "9999999999999",
+                  "characterSet": "[0-9]*",
+                  "length": 13,
+                  "padChar": "0",
+                  "padDir": "LEFT",
+                  "name": "gcn"
+                },
+                {
+                  "seq": 2,
+                  "characterSet": "[0-9]*",
+                  "name": "serial"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "type": "GS1_DIGITAL_LINK",
           "prefixMatch": "https://",
           "requiredFormattingParameters": "hostname",

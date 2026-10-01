@@ -458,7 +458,7 @@ namespace TagDataTranslation.Encoding
             {
                 dataBits = encodingIndicator switch
                 {
-                    0 => (int)Math.Ceiling(length * 3.32),
+                    0 => NumericBitLength(length),
                     1 => length * 4,
                     2 => length * 4,
                     3 => length * 6,
@@ -533,6 +533,26 @@ namespace TagDataTranslation.Encoding
             };
         }
 
+        /// <summary>
+        /// ceiling(digits * log2(10)) computed exactly: the bit length of 10^digits, which is never a power of two.
+        /// </summary>
+        internal static int NumericBitLength(int digits) =>
+            digits <= 0 ? 0 : (int)BigInteger.Pow(10, digits).GetBitLength();
+
+        /// <summary>
+        /// Number of data bits used by a variable-length alphanumeric value (TDS 2.3 section 14.5.6) of the given length.
+        /// </summary>
+        internal static int DataBitLength(int encodingIndicator, int length) => encodingIndicator switch
+        {
+            0 => NumericBitLength(length),
+            1 => length * 4,
+            2 => length * 4,
+            3 => length * 6,
+            4 => length * 7,
+            5 => ((length + 2) / 3) * 16,
+            _ => throw new TDTTranslationException("TDTUnknownEncodingIndicator")
+        };
+
         internal static string EncodeVariableLengthInteger(string value, TableB? tableB)
         {
             if (string.IsNullOrEmpty(value) || !BigInteger.TryParse(value, out var numericValue))
@@ -540,7 +560,7 @@ namespace TagDataTranslation.Encoding
                 return "";
             }
 
-            int bitCount = tableB?.GetBitCount(value.Length, 0) ?? (int)Math.Ceiling(value.Length * 3.32);
+            int bitCount = tableB?.GetBitCount(value.Length, 0) ?? NumericBitLength(value.Length);
             var binary = ToBinaryString(numericValue);
             return binary.PadLeft(bitCount, '0');
         }
@@ -592,32 +612,29 @@ namespace TagDataTranslation.Encoding
             return bits.ToString();
         }
 
+        // URN Code 40 character table per TDS 2.3 table 14-8, index 0 is the pad character
+        internal const string UrnCode40Table = "\0ABCDEFGHIJKLMNOPQRSTUVWXYZ-.:0123456789";
+
         internal static string EncodeUrnCode40(string value)
         {
-            const string code40Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-.:";
             var bits = new StringBuilder();
 
             for (int i = 0; i < value.Length; i += 3)
             {
-                int tripletValue = 0;
+                var indices = new int[3];
                 for (int j = 0; j < 3 && i + j < value.Length; j++)
                 {
-                    char c = char.ToUpper(value[i + j]);
-                    int charIndex = code40Chars.IndexOf(c);
-                    if (charIndex < 0) charIndex = 0;
-                    tripletValue = tripletValue * 40 + charIndex;
-                }
-
-                int remaining = Math.Min(3, value.Length - i);
-                if (remaining < 3)
-                {
-                    for (int j = remaining; j < 3; j++)
+                    char c = value[i + j];
+                    int index = c == '\0' ? -1 : UrnCode40Table.IndexOf(c);
+                    if (index < 1)
                     {
-                        tripletValue = tripletValue * 40;
+                        throw new ArgumentException($"Character '{c}' cannot be encoded using URN Code 40");
                     }
+                    indices[j] = index;
                 }
 
-                bits.Append(Convert.ToString(tripletValue, 2).PadLeft(16, '0'));
+                int r = 1600 * indices[0] + 40 * indices[1] + indices[2] + 1;
+                bits.Append(Convert.ToString(r, 2).PadLeft(16, '0'));
             }
 
             return bits.ToString();
@@ -725,26 +742,40 @@ namespace TagDataTranslation.Encoding
 
         internal static string DecodeUrnCode40(string dataBits, int length)
         {
-            const string code40Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-.:";
             var result = new StringBuilder();
+            int triplets = (length + 2) / 3;
 
-            for (int i = 0; i < dataBits.Length && result.Length < length; i += 16)
+            if (dataBits.Length < triplets * 16)
             {
-                if (i + 16 <= dataBits.Length)
+                throw new ArgumentException("Binary string too short for URN Code 40 decoding");
+            }
+
+            for (int t = 0; t < triplets; t++)
+            {
+                int r = Convert.ToInt32(dataBits.Substring(t * 16, 16), 2);
+                if (r < 1 || r > 64000)
                 {
-                    int tripletValue = Convert.ToInt32(dataBits.Substring(i, 16), 2);
+                    throw new ArgumentException($"Invalid URN Code 40 triplet value {r} (must be 1-64000)");
+                }
 
-                    int c3 = tripletValue % 40;
-                    tripletValue /= 40;
-                    int c2 = tripletValue % 40;
-                    tripletValue /= 40;
-                    int c1 = tripletValue % 40;
+                int i3 = (r - 1) % 40;
+                int i2 = ((r - 1 - i3) / 40) % 40;
+                int i1 = (r - 1 - i3 - 40 * i2) / 1600;
 
-                    if (result.Length < length && c1 < code40Chars.Length) result.Append(code40Chars[c1]);
-                    if (result.Length < length && c2 < code40Chars.Length) result.Append(code40Chars[c2]);
-                    if (result.Length < length && c3 < code40Chars.Length) result.Append(code40Chars[c3]);
+                foreach (int index in new[] { i1, i2, i3 })
+                {
+                    if (index > 0 && result.Length < length)
+                    {
+                        result.Append(UrnCode40Table[index]);
+                    }
                 }
             }
+
+            if (result.Length != length)
+            {
+                throw new ArgumentException($"URN Code 40 data decodes to {result.Length} characters, expected {length}");
+            }
+
             return result.ToString();
         }
 
@@ -786,11 +817,7 @@ namespace TagDataTranslation.Encoding
                 c == '-' || c == '_');
 
         internal static bool IsUrnCode40(string value) =>
-            !string.IsNullOrEmpty(value) && value.All(c =>
-                (c >= '0' && c <= '9') ||
-                (c >= 'A' && c <= 'Z') ||
-                (c >= 'a' && c <= 'z') ||
-                c == '-' || c == '.' || c == ':');
+            !string.IsNullOrEmpty(value) && value.All(c => c != '\0' && UrnCode40Table.IndexOf(c) > 0);
 
         #endregion
 

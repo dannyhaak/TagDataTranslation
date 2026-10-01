@@ -12,9 +12,6 @@ namespace TagDataTranslation.Encoding
     /// </summary>
     public class HostnameEncoder
     {
-        // URN Code 40 character set (same as Table B-1)
-        private static readonly string Code40Chars = "#-./0123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
         // 7-bit optimization table A - maps binary to string
         private static readonly Dictionary<string, string> OptTableA = new()
         {
@@ -226,7 +223,7 @@ namespace TagDataTranslation.Encoding
         /// </summary>
         public static bool CanUseCode40(string hostname)
         {
-            return hostname.All(c => Code40Chars.Contains(c));
+            return EncodedAICodec.IsUrnCode40(hostname);
         }
 
         /// <summary>
@@ -266,24 +263,7 @@ namespace TagDataTranslation.Encoding
             var lengthBinary = Convert.ToString(hostname.Length, 2).PadLeft(6, '0');
             sb.Append(lengthBinary);
 
-            // Pad hostname to multiple of 3
-            var padded = hostname;
-            while (padded.Length % 3 != 0)
-            {
-                padded += "#"; // Pad character (index 0)
-            }
-
-            // Encode each triplet
-            for (int i = 0; i < padded.Length; i += 3)
-            {
-                int i1 = Code40Chars.IndexOf(padded[i]);
-                int i2 = Code40Chars.IndexOf(padded[i + 1]);
-                int i3 = Code40Chars.IndexOf(padded[i + 2]);
-
-                int r = 1600 * i1 + 40 * i2 + i3 + 1;
-                var tripletBinary = Convert.ToString(r, 2).PadLeft(16, '0');
-                sb.Append(tripletBinary);
-            }
+            sb.Append(EncodedAICodec.EncodeUrnCode40(hostname));
 
             return sb.ToString();
         }
@@ -459,36 +439,11 @@ namespace TagDataTranslation.Encoding
             int length = Convert.ToInt32(lengthBinary, 2);
             pos += 6;
 
-            // Calculate number of triplets
             int triplets = (length + 2) / 3;
+            if (pos + triplets * 16 > binary.Length)
+                throw new ArgumentException("Binary string too short for Code 40 decoding");
 
-            var sb = new StringBuilder();
-
-            for (int t = 0; t < triplets; t++)
-            {
-                if (pos + 16 > binary.Length)
-                    throw new ArgumentException("Binary string too short for Code 40 decoding");
-
-                var tripletBinary = binary.Substring(pos, 16);
-                int r = Convert.ToInt32(tripletBinary, 2);
-                pos += 16;
-
-                if (r < 1 || r > 64000)
-                    throw new ArgumentException($"Invalid Code 40 triplet value {r} (must be 1-64000)");
-
-                int i3 = (r - 1) % 40;
-                int i2 = ((r - 1 - i3) / 40) % 40;
-                int i1 = (r - 1 - i3 - 40 * i2) / 1600;
-
-                sb.Append(Code40Chars[i1]);
-                if (i2 > 0 || sb.Length < length)
-                    sb.Append(Code40Chars[i2]);
-                if (i3 > 0 || sb.Length < length)
-                    sb.Append(Code40Chars[i3]);
-            }
-
-            // Trim to actual length (remove padding)
-            return sb.ToString().Substring(0, length);
+            return EncodedAICodec.DecodeUrnCode40(binary.Substring(pos, triplets * 16), length);
         }
 
         /// <summary>

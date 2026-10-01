@@ -58,7 +58,7 @@
             {
               "optionKey": "1",
               "pattern": "^gln=([0-9]{13})(?:;serial=([!%-?A-Z_a-z\\x22]{1,20}))?$",
-              "grammar": "'gln=' gln ';serial=' serial",
+              "grammar": "'gln=' gln [';serial=' serial]",
               "field": [
                 {
                   "seq": 1,
@@ -73,7 +73,8 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             }
@@ -85,8 +86,8 @@
           "option": [
             {
               "optionKey": "1",
-              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\"",
-              "grammar": "'{\"414\":\"' gln '\",\"254\":\"' serial '\"}'",
+              "pattern": "^\\{\\s*\"414\"\\s*:\\s*\"([0-9]{13})\"(?:\\s*,\\s*\"254\"\\s*:\\s*\"((?:[!%-?A-Z_a-z]|\\\\\"){1,20})\")?",
+              "grammar": "'{\"414\":\"' gln ['\",\"254\":\"' serial] '\"}'",
               "aiSequence": [
                 "414",
                 "254"
@@ -105,7 +106,8 @@
                 {
                   "seq": 2,
                   "characterSet": "[!%-?A-Z_a-z\\x22]*",
-                  "name": "serial"
+                  "name": "serial",
+                  "valueIfNull": "0"
                 }
               ]
             }
@@ -118,8 +120,8 @@
           "option": [
             {
               "optionKey": "1",
-              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
-              "grammar": "uriStem '/414/' gln '/254/' urlEscapedSerial",
+              "pattern": "\\/414\\/([0-9]{13})(?:\\/254\\/((?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25){1,20}))?(?:\\?|$)",
+              "grammar": "uriStem '/414/' gln ['/254/' urlEscapedSerial]",
               "field": [
                 {
                   "seq": 1,
@@ -133,8 +135,9 @@
                 },
                 {
                   "seq": 2,
-                  "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
-                  "name": "urlEscapedSerial"
+                  "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+                  "name": "urlEscapedSerial",
+                  "valueIfNull": "0"
                 }
               ],
               "aiSequence": [
@@ -157,7 +160,7 @@
               "inputFormat": "STRING",
               "seq": 1,
               "newFieldName": "urlEscapedSerial",
-              "characterSet": "(?:[A-Za-z0-9\"._-]|%21|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
+              "characterSet": "(?:[A-Za-z0-9._-]|%21|%22|%26|%27|%28|%29|%2A|%2B|%2C|%2F|%3A|%3B|%3C|%3D|%3E|%3F|%25)*",
               "function": "URLENCODE(serial)"
             }
           ],
