@@ -205,16 +205,17 @@ The npm package wraps the .NET library via WebAssembly. The build pipeline:
 - **Initialization order**: Call `dotnet.create()`, then `getAssemblyExports()`, then `runMain()`
 
 ### Publishing to npm
+Pushing a `v*` tag publishes the package via `.github/workflows/release-npm.yml` using **npm trusted publishing** (GitHub OIDC, no `NPM_TOKEN`). The trusted publisher is configured on npmjs.com for `@mimasu/tdt`: repository `dannyhaak/TagDataTranslation`, workflow `release-npm.yml`.
+
+To publish an existing tag again (for example after a failed run), run the workflow manually:
 ```bash
-# Build WASM + copy license
+gh workflow run release-npm.yml -R dannyhaak/TagDataTranslation -f tag=v4.0.0
+```
+A re-run of an old run would use the workflow file from that tag, so use `workflow_dispatch` instead.
+
+Local build only (no publish):
+```bash
 cd npm && npm run build
-
-# Set version
-npm version 3.x.x --no-git-tag-version
-
-# Publish (opens browser for auth challenge)
-npm publish --tag beta --access public   # prerelease
-npm publish --access public              # stable release
 ```
 
 The build script auto-copies `LICENSING.md` from the repo root to `npm/LICENSE.md` (gitignored) so the license ships with every publish.
