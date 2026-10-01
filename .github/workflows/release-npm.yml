@@ -3,12 +3,27 @@ name: Release npm
 on:
   push:
     tags: ["v*"]
+  # publish an existing tag again, e.g. after a failed publish
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag to publish (e.g. v4.0.0)"
+        required: true
+
+# npm trusted publishing: authenticates with a GitHub OIDC token, no NPM_TOKEN secret
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -18,12 +33,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: https://registry.npmjs.org/
+
+      # trusted publishing needs npm 11.5.1 or later
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Set version from tag
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${RELEASE_TAG#v}"
           cd npm && npm version "$VERSION" --no-git-tag-version --allow-same-version
 
       - name: Install WASM workload
@@ -37,5 +56,3 @@ jobs:
 
       - name: Publish to npm
         run: cd npm && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
