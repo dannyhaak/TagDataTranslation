@@ -32,13 +32,14 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
+        # no registry-url: it makes setup-node write a placeholder NODE_AUTH_TOKEN to .npmrc,
+        # which npm would send instead of doing the trusted publishing (OIDC) exchange
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org/
 
       # trusted publishing needs npm 11.5.1 or later
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@latest && npm --version
 
       - name: Set version from tag
         run: |
