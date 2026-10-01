@@ -2,9 +2,11 @@
 
 All notable changes to TagDataTranslation will be documented in this file.
 
-## [Unreleased]
+## [4.0.0] - 2026-10-01
 
-Fixes found while reviewing the TDT 2.3 public review draft (September 2026). Several of these change binary output; the old output was wrong.
+Fixes found while reviewing the TDT 2.3 public review draft (September 2026).
+
+**Breaking:** binary output changes for URN Code 40 values and hostnames, CPI++, SGCN++ and GDTI-113 (the old output did not follow TDS 2.3), and input that used to be accepted now throws (see Changed).
 
 ### Fixed
 - URN Code 40 now follows TDS 2.3 table 14-8 (PAD, A-Z, `-`, `.`, `:`, 0-9) and the `+1` offset, for both variable-length alphanumeric values and '++' hostnames. Lowercase values are no longer upper-cased (which was lossy). **Changes binary output.**
